@@ -10,12 +10,13 @@ export default defineNuxtConfig({
 			icons: {
 				defaultSet: 'unocss-mdi'
 			},
-			theme:{
+			theme: {
 				defaultTheme: 'myCustomTheme',
-				themes:{
-					myCustomTheme:{
-						colors:{
-							primary: '#15a195'
+				themes: {
+					myCustomTheme: {
+						colors: {
+							primary: '#15a195',
+							secondary: '#1a478fff'
 						}
 					}
 				}
