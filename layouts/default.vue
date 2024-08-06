@@ -1,13 +1,7 @@
 <template>
-  <div>
-    <slot />
-  </div>
+  <v-layout>
+    <v-main>
+			<slot />
+		</v-main>
+  </v-layout>
 </template>
-
-<script setup>
-
-</script>
-
-<style>
-
-</style>

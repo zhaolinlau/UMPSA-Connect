@@ -31,11 +31,6 @@ export default defineNuxtConfig({
 			exclude: [],
 			cookieRedirect: false,
 		},
-		cookieOptions: {
-			maxAge: 60 * 60 * 8,
-			sameSite: 'lax',
-			secure: true
-		},
 		clientOptions: {
 			auth: {
 				flowType: 'pkce',
@@ -43,6 +38,11 @@ export default defineNuxtConfig({
 				detectSessionInUrl: true,
 				persistSession: true,
 			},
+		},
+		cookieOptions: {
+			maxAge: 60 * 60 * 8,
+			sameSite: 'lax',
+			secure: true
 		}
 	}
 })
