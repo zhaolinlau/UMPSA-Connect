@@ -42,5 +42,10 @@ export default defineNuxtConfig({
 			sameSite: 'lax',
 			secure: true
 		}
+	},
+	runtimeConfig:{
+		public:{
+			siteUrl: process.env.NUXT_PUBLIC_SITE_URL
+		}
 	}
 })

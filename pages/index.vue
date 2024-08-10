@@ -1,8 +1,3 @@
-<template>
-	{{ user.email }}
-	<VBtn @click="logout" color="error" text="Logout" />
-</template>
-
 <script setup>
 const user = useSupabaseUser()
 const client = useSupabaseClient()
@@ -13,3 +8,7 @@ const logout = async () => {
 	await navigateTo('/login')
 }
 </script>
+<template>
+	{{ user.email }}
+	<VBtn @click="logout" color="error" text="Logout" />
+</template>
