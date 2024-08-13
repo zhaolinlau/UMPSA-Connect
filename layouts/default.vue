@@ -40,6 +40,8 @@ const logout = async () => {
 	if (error) showError(error.message)
 	await navigateTo('/login')
 }
+
+const user = useSupabaseUser()
 </script>
 
 <template>
@@ -47,6 +49,11 @@ const logout = async () => {
 		<v-app-bar title="UMPSA Connect"></v-app-bar>
 		<v-navigation-drawer>
 			<v-list>
+				<v-list>
+					<v-list-item :subtitle="user.email" :title="user.email.split('@')[0].toLocaleUpperCase()"></v-list-item>
+				</v-list>
+
+				<v-divider></v-divider>
 				<VListSubheader title="GENERAL" />
 				<v-list-item v-for="navItem in generalNavItems.General" :key="navItem" :title="navItem.title" :to="navItem.to"
 					:active="router.currentRoute.value.path == navItem.to ? true : false" color="primary" />

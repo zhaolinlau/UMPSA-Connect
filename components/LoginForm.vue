@@ -59,17 +59,9 @@ const googleLogin = async () => {
 					:type="visible ? 'text' : 'password'" placeholder="example12345" prepend-inner-icon="i-mdi:lock-outline"
 					@click:append-inner="visible = !visible" />
 
-				<v-row>
-					<v-col cols="12">
-						<VBtn text="Login" type="submit" color="primary" block />
-					</v-col>
-					<v-col cols="12">
-						<VBtn text="Login with Google" type="button" block @click="googleLogin" />
-					</v-col>
-				</v-row>
+				<VBtn text="Login" type="submit" color="primary" block />
+				<VBtn text="Login with Google" class="mt-3" type="button" block @click="googleLogin" />
 			</v-form>
 		</v-col>
 	</v-row>
-
-
 </template>
