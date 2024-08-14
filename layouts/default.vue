@@ -1,7 +1,7 @@
 <script setup>
 const router = useRouter()
 const client = useSupabaseClient()
-
+const drawer = ref(true)
 const generalNavItems = ref(
 	{
 		General: [
@@ -37,8 +37,11 @@ const generalNavItems = ref(
 
 const logout = async () => {
 	const { error } = await client.auth.signOut()
-	if (error) showError(error.message)
-	await navigateTo('/login')
+	if (error) {
+		showError({ statusCode: error.status, statusMessage: error.message })
+	} else {
+		await navigateTo('/login')
+	}
 }
 
 const user = useSupabaseUser()
@@ -46,8 +49,18 @@ const user = useSupabaseUser()
 
 <template>
 	<v-layout>
-		<v-app-bar title="UMPSA Connect"></v-app-bar>
-		<v-navigation-drawer>
+		<v-app-bar title="UMPSA Connect" scroll-behavior="hide">
+			<template #prepend>
+				<VAppBarNavIcon @click.stop="drawer = !drawer" class="hidden-lg-and-up" />
+			</template>
+			<template #append>
+				<v-btn icon="i-mdi:magnify"></v-btn>
+				<v-btn icon="i-mdi:plus"></v-btn>
+				<v-btn icon="i-mdi:bell"></v-btn>
+			</template>
+		</v-app-bar>
+
+		<v-navigation-drawer v-model="drawer" :scrim="false">
 			<v-list>
 				<v-list>
 					<v-list-item :subtitle="user.email" :title="user.email.split('@')[0].toLocaleUpperCase()"></v-list-item>
@@ -67,6 +80,7 @@ const user = useSupabaseUser()
 				</div>
 			</template>
 		</v-navigation-drawer>
+
 		<v-main>
 			<slot />
 		</v-main>
