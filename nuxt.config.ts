@@ -2,7 +2,7 @@
 export default defineNuxtConfig({
 	devtools: { enabled: true },
 	compatibilityDate: "2024-08-06",
-	modules: ["vuetify-nuxt-module", "@nuxtjs/supabase", "@unocss/nuxt"],
+	modules: ["vuetify-nuxt-module", "@nuxtjs/supabase", "@unocss/nuxt", "nuxt-security"],
 	vuetify: {
 		vuetifyOptions: {
 			icons: {
@@ -43,9 +43,18 @@ export default defineNuxtConfig({
 			secure: true
 		}
 	},
-	runtimeConfig:{
-		public:{
+	runtimeConfig: {
+		public: {
 			siteUrl: process.env.NUXT_PUBLIC_SITE_URL
 		}
+	},
+	security: {
+		headers: {
+			contentSecurityPolicy: {
+				"img-src": false
+			},
+			crossOriginEmbedderPolicy: process.env.NODE_ENV === 'development' ? 'unsafe-none' : 'require-corp',
+		},
+		csrf: true
 	}
 })
