@@ -27,6 +27,29 @@ const googleLogin = async () => {
 	const { error } = await client.auth.signInWithOAuth({
 		provider: 'google',
 		options: {
+			queryParams: {
+				access_type: 'offline',
+				prompt: 'consent',
+			},
+			redirectTo: `${config.public.siteUrl}/confirm`
+		}
+	})
+
+	if (error) {
+		loginError.value = error.message
+		loginAlert.value = true
+	} else {
+		await navigateTo('/')
+		loginError.value = ''
+		loginAlert.value = false
+	}
+}
+
+const microsoftLogin = async () => {
+	const { error } = await client.auth.signInWithOAuth({
+		provider: 'azure',
+		options: {
+			scopes: ['email', 'offline_access'],
 			redirectTo: `${config.public.siteUrl}/confirm`
 		}
 	})
@@ -61,6 +84,7 @@ const googleLogin = async () => {
 
 				<VBtn text="Login" type="submit" color="primary" block />
 				<VBtn text="Login with Google" class="mt-3" type="button" block @click="googleLogin" />
+				<VBtn text="Login with Microsoft" class="mt-3" type="button" block @click="microsoftLogin" />
 			</v-form>
 		</v-col>
 	</v-row>
