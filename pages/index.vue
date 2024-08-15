@@ -1,17 +1,36 @@
 <script setup>
-const { data: posts, error: postsError } = useFetch('/api/posts', {
+const client = useSupabaseClient()
+
+const { data: posts, refresh: refreshPosts, status: postsStatus } = useFetch('/api/posts', {
 	method: 'get'
 })
-console.log(posts.value)
-if (postsError.value) console.error(postsError.value.message)
+
+const postsChannel = client.channel('public:posts').on(
+	'postgres_changes',
+	{ event: '*', schema: 'public', table: 'posts' },
+	() => refreshPosts()
+)
+
+onMounted(() => {
+	postsChannel.subscribe()
+})
+
+onUnmounted(() => {
+	client.removeChannel(postsChannel)
+})
 </script>
 
 <template>
+	<v-overlay class="align-center justify-center" :model-value="postsStatus == 'pending' ? true : false">
+		<v-progress-circular color="primary" size="64" indeterminate></v-progress-circular>
+	</v-overlay>
+
 	<v-container>
-		<v-row>
-			<v-col cols="12" lg="4" v-for="post in posts">
+		<v-row align="center">
+			<v-col cols="12" md="6" lg="3" v-for="post in posts">
 				<v-card>
-					<v-img height="250" src="https://cdn.vuetifyjs.com/images/cards/cooking.png" cover></v-img>
+					<VImg max-height="300" min-height="300" :src="client.storage.from('images').getPublicUrl(`public/${post.id}/${post.media}`).data.publicUrl"
+						:alt="post.media" cover v-if="post.media" />
 					<v-card-item>
 						<v-card-title>{{ post.title }}</v-card-title>
 					</v-card-item>
