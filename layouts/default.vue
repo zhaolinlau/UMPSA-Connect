@@ -1,6 +1,7 @@
 <script setup>
 const router = useRouter()
 const client = useSupabaseClient()
+const user = useSupabaseUser()
 const drawer = ref(true)
 const generalNavItems = ref(
 	{
@@ -43,8 +44,6 @@ const logout = async () => {
 		await navigateTo('/login')
 	}
 }
-
-const user = useSupabaseUser()
 </script>
 
 <template>
@@ -55,7 +54,7 @@ const user = useSupabaseUser()
 			</template>
 			<template #append>
 				<v-btn icon="i-mdi:magnify"></v-btn>
-				<v-btn icon="i-mdi:plus"></v-btn>
+				<CreatePost />
 				<v-btn icon="i-mdi:bell"></v-btn>
 			</template>
 		</v-app-bar>
