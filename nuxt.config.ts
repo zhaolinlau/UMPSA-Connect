@@ -53,8 +53,7 @@ export default defineNuxtConfig({
 			contentSecurityPolicy: {
 				"img-src": ["'self'", "data:", `${process.env.SUPABASE_URL}`]
 			},
-			crossOriginEmbedderPolicy: process.env.NODE_ENV === 'development' ? 'unsafe-none' : 'require-corp',
-			crossOriginResourcePolicy: 'cross-origin'
+			crossOriginEmbedderPolicy: process.env.NODE_ENV === 'development' ? 'unsafe-none' : 'credentialless'
 		},
 		csrf: true
 	}
