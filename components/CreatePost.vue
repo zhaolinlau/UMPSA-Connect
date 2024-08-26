@@ -70,12 +70,12 @@ const resetPostForm = async () => {
 		<v-card title="Create Post">
 			<v-form @submit.prevent="createPost" ref="postFormRef">
 				<v-container>
-					<VTextField prepend-icon="i-mdi:format-title" v-model="postForm.title" label="Title"
+					<VTextField prepend-icon="mdi-format-title" v-model="postForm.title" label="Title"
 						placeholder="What do you want to ask or share?" :rules="postRules.title" />
-					<VSelect prepend-icon="i-mdi:category" v-model="postForm.category" label="Category"
+					<VSelect prepend-icon="mdi-category" v-model="postForm.category" label="Category"
 						:items="['General', 'Question', 'Event']" :rules="postRules.category" />
 					<VFileInput accept="image/*" v-model:model-value="postForm.media" label="Media" />
-					<VTextarea prepend-icon="i-mdi:text" v-model="postForm.content" label="Body" placeholder="Say something...."
+					<VTextarea prepend-icon="mdi-text" v-model="postForm.content" label="Body" placeholder="Say something...."
 						clearable />
 				</v-container>
 				<v-card-actions>
