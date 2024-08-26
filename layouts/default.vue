@@ -39,7 +39,7 @@ const generalNavItems = ref(
 const logout = async () => {
 	const { error } = await client.auth.signOut()
 	if (error) {
-		showError({ statusCode: error.status, statusMessage: error.message })
+		console.error(error.message)
 	} else {
 		await navigateTo('/login')
 	}
@@ -53,9 +53,9 @@ const logout = async () => {
 				<VAppBarNavIcon @click.stop="drawer = !drawer" class="hidden-lg-and-up" />
 			</template>
 			<template #append>
-				<v-btn icon="i-mdi:magnify"></v-btn>
+				<v-btn icon="mdi-magnify"></v-btn>
 				<CreatePost />
-				<v-btn icon="i-mdi:bell"></v-btn>
+				<v-btn icon="mdi-bell"></v-btn>
 			</template>
 		</v-app-bar>
 
@@ -74,6 +74,9 @@ const logout = async () => {
 					:to="navItem.to" :active="router.currentRoute.value.path == navItem.to ? true : false" color="primary" />
 			</v-list>
 			<template #append>
+				<v-footer class="text-center">
+					UMPSA Connect © {{ new Date().getFullYear() }} All Rights Reserved.
+				</v-footer>
 				<div class="pa-2">
 					<VBtn @click="logout" color="error" block text="Logout" />
 				</div>
