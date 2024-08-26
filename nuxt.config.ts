@@ -2,11 +2,11 @@
 export default defineNuxtConfig({
 	devtools: { enabled: true },
 	compatibilityDate: "2024-08-06",
-	modules: ["vuetify-nuxt-module", "@nuxtjs/supabase", "@unocss/nuxt", "nuxt-security"],
+	modules: ["vuetify-nuxt-module", "@nuxtjs/supabase", "nuxt-security"],
 	vuetify: {
 		vuetifyOptions: {
 			icons: {
-				defaultSet: 'unocss-mdi'
+				defaultSet: 'mdi'
 			},
 			theme: {
 				defaultTheme: 'myCustomTheme',
