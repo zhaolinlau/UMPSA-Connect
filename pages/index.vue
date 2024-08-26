@@ -1,9 +1,22 @@
 <script setup>
 const client = useSupabaseClient()
+const user = useSupabaseUser()
 
-const { data: posts, refresh: refreshPosts, status: postsStatus } = useFetch('/api/posts', {
+const { data: posts, refresh: refreshPosts, status: postsStatus, error: postsError } = useFetch('/api/posts', {
 	method: 'get'
 })
+
+if (postsError.value) console.error(postsError.value.message)
+
+const deletePost = async (post_id, post_media) => {
+	await $fetch('/api/posts', {
+		method: 'delete',
+		body: {
+			post_id,
+			post_media
+		}
+	})
+}
 
 const postsChannel = client.channel('public:posts').on(
 	'postgres_changes',
@@ -26,17 +39,42 @@ onUnmounted(() => {
 	</v-overlay>
 
 	<v-container>
-		<v-row align="center">
-			<v-col cols="12" md="6" lg="3" v-for="post in posts">
-				<v-card>
-					<VImg max-height="300" min-height="300" :src="client.storage.from('images').getPublicUrl(`public/${post.id}/${post.media}`).data.publicUrl"
-						:alt="post.media" cover v-if="post.media" />
+		<v-row justify="center">
+			<v-col lg="7" v-for="post in posts">
+				<v-card hover>
 					<v-card-item>
+						<v-chip>{{ post.category }}</v-chip>
 						<v-card-title>{{ post.title }}</v-card-title>
+						<v-card-subtitle>{{ Date(post.created_at).toLocaleString('en-GB', { timeZone: 'Asia/Kuala_Lumpur' })
+							}}</v-card-subtitle>
 					</v-card-item>
-					<v-card-text class="text-truncate">
+
+					<VImg max-height="500"
+						:src="client.storage.from('images').getPublicUrl(`posts/${post.id}/${post.media}`).data.publicUrl"
+						:alt="post.media" v-if="post.media" />
+
+					<v-card-text>
 						{{ post.content }}
 					</v-card-text>
+
+					<v-card-actions>
+						<VBtn text="Upvote" prepend-icon="mdi-vote" />
+						<VBtn text="Comment" prepend-icon="mdi-comment" />
+						<v-spacer></v-spacer>
+						<v-menu location="top">
+							<template v-slot:activator="{ props }">
+								<v-btn icon="mdi-dots-horizontal" v-bind="props"></v-btn>
+							</template>
+
+							<v-list>
+								<v-list-item title="Edit" prepend-icon="mdi-pencil" v-if="post.user_id == user.id"></v-list-item>
+								<v-list-item title="Bookmark" prepend-icon="mdi-bookmark"></v-list-item>
+								<v-list-item @click="deletePost(post.id, post.media)" title="Delete" prepend-icon="mdi-delete"
+									v-if="post.user_id == user.id"></v-list-item>
+								<v-list-item title="Report" prepend-icon="mdi-alert" v-if="post.user_id != user.id"></v-list-item>
+							</v-list>
+						</v-menu>
+					</v-card-actions>
 				</v-card>
 			</v-col>
 		</v-row>
