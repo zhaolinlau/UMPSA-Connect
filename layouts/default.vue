@@ -2,7 +2,7 @@
 const router = useRouter()
 const client = useSupabaseClient()
 const user = useSupabaseUser()
-const drawer = ref(true)
+const drawer = ref(null)
 const generalNavItems = ref(
 	{
 		General: [
