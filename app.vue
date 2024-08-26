@@ -1,3 +1,9 @@
+<script setup>
+useHead({
+	title: 'UMPSA Connect'
+})
+</script>
+
 <template>
 	<NuxtRouteAnnouncer />
 	<NuxtLoadingIndicator />
@@ -7,14 +13,3 @@
 		</v-app>
 	</NuxtLayout>
 </template>
-
-<script setup>
-useHead({
-	htmlAttrs: {
-		class: 'h-100'
-	},
-	bodyAttrs: {
-		class: 'h-100'
-	}
-})
-</script>
