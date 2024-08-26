@@ -75,11 +75,11 @@ const microsoftLogin = async () => {
 		<v-col cols="12">
 			<v-form @submit.prevent="login">
 
-				<VTextField label="Email" placeholder="you@example.com" v-model="email" prepend-inner-icon="i-mdi:email-outline"
+				<VTextField label="Email" placeholder="you@example.com" v-model="email" prepend-inner-icon="mdi-email-outline"
 					type="email" />
 
-				<VTextField label="Password" v-model="password" :append-inner-icon="visible ? 'i-mdi:eye-off' : 'i-mdi:eye'"
-					:type="visible ? 'text' : 'password'" placeholder="example12345" prepend-inner-icon="i-mdi:lock-outline"
+				<VTextField label="Password" v-model="password" :append-inner-icon="visible ? 'mdi-eye-off' : 'mdi-eye'"
+					:type="visible ? 'text' : 'password'" placeholder="example12345" prepend-inner-icon="mdi-lock-outline"
 					@click:append-inner="visible = !visible" />
 
 				<VBtn text="Login" type="submit" color="primary" block />
