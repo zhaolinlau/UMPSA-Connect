@@ -72,7 +72,7 @@ const resetPostForm = async () => {
 				<v-container>
 					<VTextField prepend-icon="mdi-format-title" v-model="postForm.title" label="Title"
 						placeholder="What do you want to ask or share?" :rules="postRules.title" />
-					<VSelect prepend-icon="mdi-category" v-model="postForm.category" label="Category"
+					<VSelect prepend-icon="mdi-shape" v-model="postForm.category" label="Category"
 						:items="['General', 'Question', 'Event']" :rules="postRules.category" />
 					<VFileInput accept="image/*" v-model:model-value="postForm.media" label="Media" />
 					<VTextarea prepend-icon="mdi-text" v-model="postForm.content" label="Body" placeholder="Say something...."
