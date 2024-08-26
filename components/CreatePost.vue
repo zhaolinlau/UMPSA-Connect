@@ -7,6 +7,8 @@ const postForm = ref({
 	media: null
 })
 
+const postFormRef = ref(null)
+
 const postFormDialog = ref(false)
 
 const postRules = ref({
@@ -25,50 +27,48 @@ const postRules = ref({
 })
 
 const createPost = async () => {
-	const { data: post, error: postError } = await client.from('posts').insert([
-		{
-			title: postForm.value.title,
-			category: postForm.value.category,
-			content: postForm.value.content,
-			media: postForm.value.media ? postForm.value.media.name : ''
-		},
-	]).select()
-	if (postError) {
-		showError(postError)
-	} else {
-		if (postForm.value.media) {
-			const { error: mediaError } = await client.storage.from('images')
-				.upload(`public/${post[0].id}/${postForm.value.media.name}`, postForm.value.media, {
-					cacheControl: '3600',
-					upsert: false
-				})
-			if (mediaError) {
-				showError(mediaError)
+	const { valid } = await postFormRef.value.validate()
+	if (valid) {
+		const { data: post, error: postError } = await client.from('posts').insert([
+			{
+				title: postForm.value.title,
+				category: postForm.value.category,
+				content: postForm.value.content,
+				media: postForm.value.media ? postForm.value.media.name : ''
+			},
+		]).select()
+		if (postError) {
+			console.error(postError)
+		} else {
+			if (postForm.value.media) {
+				const { error: mediaError } = await client.storage.from('images')
+					.upload(`posts/${post[0].id}/${postForm.value.media.name}`, postForm.value.media, {
+						cacheControl: '3600',
+						upsert: false
+					})
+				if (mediaError) {
+					console.error(mediaError)
+				} else {
+					resetPostForm()
+				}
 			} else {
 				resetPostForm()
 			}
-		} else {
-			resetPostForm()
 		}
 	}
 }
 
 const resetPostForm = async () => {
 	postFormDialog.value = false
-	postForm.value = {
-		title: '',
-		content: '',
-		category: '',
-		media: null,
-	}
+	postFormRef.value.reset()
 }
 </script>
 
 <template>
-	<VBtn icon="i-mdi:plus" @click="postFormDialog = true" />
+	<VBtn icon="mdi-plus" @click="postFormDialog = true" />
 	<v-dialog max-width="500" v-model:model-value="postFormDialog">
 		<v-card title="Create Post">
-			<v-form @submit.prevent="createPost">
+			<v-form @submit.prevent="createPost" ref="postFormRef">
 				<v-container>
 					<VTextField prepend-icon="i-mdi:format-title" v-model="postForm.title" label="Title"
 						placeholder="What do you want to ask or share?" :rules="postRules.title" />
