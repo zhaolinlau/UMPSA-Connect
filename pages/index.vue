@@ -24,13 +24,31 @@ const postsChannel = client.channel('public:posts').on(
 	() => refreshPosts()
 )
 
+const votesChannel = client.channel('public:votes').on(
+	'postgres_changes',
+	{ event: '*', schema: 'public', table: 'votes' },
+	() => refreshPosts()
+)
+
 onMounted(() => {
 	postsChannel.subscribe()
+	votesChannel.subscribe()
 })
 
 onUnmounted(() => {
 	client.removeChannel(postsChannel)
+	client.removeChannel(votesChannel)
 })
+
+const createVote = async (post_id) => {
+	const { error: voteError } = await client.from('votes').insert([
+		{
+			post_id: post_id
+		},
+	]).select()
+
+	if (voteError) console.error(voteError.message)
+}
 </script>
 
 <template>
@@ -45,8 +63,9 @@ onUnmounted(() => {
 					<v-card-item>
 						<v-chip>{{ post.category }}</v-chip>
 						<v-card-title>{{ post.title }}</v-card-title>
-						<v-card-subtitle>{{ Date(post.created_at).toLocaleString('en-GB', { timeZone: 'Asia/Kuala_Lumpur' })
-							}}</v-card-subtitle>
+						<v-card-subtitle>
+							{{ Date(post.created_at).toLocaleString('en-GB', { timeZone: 'Asia/Kuala_Lumpur' }) }}
+						</v-card-subtitle>
 					</v-card-item>
 
 					<VImg max-height="500"
@@ -58,7 +77,10 @@ onUnmounted(() => {
 					</v-card-text>
 
 					<v-card-actions>
-						<VBtn text="Upvote" prepend-icon="mdi-vote" />
+						<v-badge color="primary" :content="post.votes[0].count">
+							<VBtn text="Upvote" prepend-icon="mdi-vote" @click="createVote(post.id)" />
+						</v-badge>
+
 						<VBtn text="Comment" prepend-icon="mdi-comment" />
 						<v-spacer></v-spacer>
 						<v-menu location="top">
