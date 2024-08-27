@@ -9,13 +9,17 @@ const { data: posts, refresh: refreshPosts, error: postsError } = useFetch('/api
 if (postsError.value) console.error(postsError.value.message)
 
 const deletePost = async (post_id, post_media) => {
-	await $fetch('/api/posts', {
-		method: 'delete',
-		body: {
-			post_id,
-			post_media
-		}
-	})
+	try {
+		await $fetch('/api/posts', {
+			method: 'delete',
+			body: {
+				post_id,
+				post_media
+			}
+		})
+	} catch (error) {
+		console.error(error.message)
+	}
 }
 
 const postsChannel = client.channel('public:posts').on(
@@ -41,19 +45,29 @@ onUnmounted(() => {
 })
 
 const createVote = async (post_id) => {
-	const { error: voteError } = await client.from('votes').insert([
-		{
-			post_id: post_id
-		},
-	]).select()
-
-	if (voteError) console.error(voteError.message)
+	try {
+		await $fetch('/api/votes', {
+			method: 'post',
+			body: {
+				post_id
+			}
+		})
+	} catch (error) {
+		console.error(error.message)
+	}
 }
 
 const deleteVote = async (vote_id) => {
-	const { error: deleteVoteError } = await client.from('votes').delete().eq('id', vote_id)
-
-	if (deleteVoteError) console.error(deleteVoteError.message)
+	try {
+		await $fetch('/api/votes', {
+			method: 'delete',
+			body: {
+				vote_id
+			}
+		})
+	} catch (error) {
+		console.error(error.message)
+	}
 }
 </script>
 
