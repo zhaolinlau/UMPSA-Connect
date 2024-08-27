@@ -82,9 +82,10 @@ const microsoftLogin = async () => {
 					:type="visible ? 'text' : 'password'" placeholder="example12345" prepend-inner-icon="mdi-lock-outline"
 					@click:append-inner="visible = !visible" />
 
-				<VBtn text="Login" type="submit" color="primary" block />
-				<VBtn text="Login with Google" class="mt-3" type="button" block @click="googleLogin" />
-				<VBtn text="Login with Microsoft" class="mt-3" type="button" block @click="microsoftLogin" />
+				<VBtn class="mb-4" text="Login" prepend-icon="mdi-login" type="submit" color="primary" block />
+				<v-divider>OR</v-divider>
+				<VBtn text="Continue with" append-icon="mdi-google" class="mt-3" type="button" block @click="googleLogin" />
+				<VBtn text="Continue with" append-icon="mdi-microsoft" class="mt-3" type="button" block @click="microsoftLogin" />
 			</v-form>
 		</v-col>
 	</v-row>

@@ -78,7 +78,7 @@ const logout = async () => {
 					UMPSA Connect © {{ new Date().getFullYear() }} All Rights Reserved.
 				</v-footer>
 				<div class="pa-2">
-					<VBtn @click="logout" color="error" block text="Logout" />
+					<VBtn @click="logout" prepend-icon="mdi-logout" color="error" block text="Logout" />
 				</div>
 			</template>
 		</v-navigation-drawer>
