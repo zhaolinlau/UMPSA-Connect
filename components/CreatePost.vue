@@ -6,6 +6,7 @@ const postForm = ref({
 	category: '',
 	media: null
 })
+const posting = ref(false)
 
 const postFormRef = ref(null)
 
@@ -27,34 +28,41 @@ const postRules = ref({
 })
 
 const createPost = async () => {
-	const { valid } = await postFormRef.value.validate()
-	if (valid) {
-		const { data: post, error: postError } = await client.from('posts').insert([
-			{
-				title: postForm.value.title,
-				category: postForm.value.category,
-				content: postForm.value.content,
-				media: postForm.value.media ? postForm.value.media.name : ''
-			},
-		]).select()
-		if (postError) {
-			console.error(postError)
-		} else {
-			if (postForm.value.media) {
-				const { error: mediaError } = await client.storage.from('images')
-					.upload(`posts/${post[0].id}/${postForm.value.media.name}`, postForm.value.media, {
-						cacheControl: '3600',
-						upsert: false
-					})
-				if (mediaError) {
-					console.error(mediaError)
+	try {
+		posting.value = true
+		const { valid } = await postFormRef.value.validate()
+		if (valid) {
+			const { data: post, error: postError } = await client.from('posts').insert([
+				{
+					title: postForm.value.title,
+					category: postForm.value.category,
+					content: postForm.value.content,
+					media: postForm.value.media ? postForm.value.media.name : ''
+				},
+			]).select()
+			if (postError) {
+				console.error(postError)
+			} else {
+				if (postForm.value.media) {
+					const { error: mediaError } = await client.storage.from('images')
+						.upload(`posts/${post[0].id}/${postForm.value.media.name}`, postForm.value.media, {
+							cacheControl: '3600',
+							upsert: false
+						})
+					if (mediaError) {
+						console.error(mediaError)
+					} else {
+						resetPostForm()
+					}
 				} else {
 					resetPostForm()
 				}
-			} else {
-				resetPostForm()
 			}
 		}
+	} catch (error) {
+		console.error(error.message)
+	} finally {
+		posting.value = false
 	}
 }
 
@@ -65,6 +73,10 @@ const resetPostForm = async () => {
 </script>
 
 <template>
+	<v-overlay class="align-center justify-center" :model-value="posting ? true : false">
+		<v-progress-circular color="primary" size="64" indeterminate></v-progress-circular>
+	</v-overlay>
+
 	<VBtn icon="mdi-plus" @click="postFormDialog = true" />
 	<v-dialog max-width="500" v-model:model-value="postFormDialog">
 		<v-card title="Create Post">

@@ -2,7 +2,7 @@
 const client = useSupabaseClient()
 const user = useSupabaseUser()
 
-const { data: posts, refresh: refreshPosts, status: postsStatus, error: postsError } = useFetch('/api/posts', {
+const { data: posts, refresh: refreshPosts, error: postsError } = useFetch('/api/posts', {
 	method: 'get'
 })
 
@@ -49,22 +49,33 @@ const createVote = async (post_id) => {
 
 	if (voteError) console.error(voteError.message)
 }
+
+const deleteVote = async (vote_id) => {
+	const { error: deleteVoteError } = await client.from('votes').delete().eq('id', vote_id)
+
+	if (deleteVoteError) console.error(deleteVoteError.message)
+}
 </script>
 
 <template>
-	<v-overlay class="align-center justify-center" :model-value="postsStatus == 'pending' ? true : false">
-		<v-progress-circular color="primary" size="64" indeterminate></v-progress-circular>
-	</v-overlay>
+
 
 	<v-container>
 		<v-row justify="center">
+			<template v-if="!posts">
+				<v-col cols="12" lg="7" v-for="skeleton in 2">
+					<v-skeleton-loader type="chip, heading, subtitle, image, text, actions"></v-skeleton-loader>
+				</v-col>
+			</template>
 			<v-col lg="7" v-for="post in posts">
 				<v-card hover>
 					<v-card-item>
 						<v-chip>{{ post.category }}</v-chip>
 						<v-card-title>{{ post.title }}</v-card-title>
 						<v-card-subtitle>
-							{{ Date(post.created_at).toLocaleString('en-GB', { timeZone: 'Asia/Kuala_Lumpur' }) }}
+							{{ new Date(post.created_at).getDate() }}/{{ new Date(post.created_at).getMonth() }}/{{ new
+								Date(post.created_at).getFullYear() }} {{ new Date(post.created_at).getHours() }}:{{ new
+								Date(post.created_at).getMinutes() }}:{{ new Date(post.created_at).getSeconds() }}
 						</v-card-subtitle>
 					</v-card-item>
 
@@ -77,8 +88,10 @@ const createVote = async (post_id) => {
 					</v-card-text>
 
 					<v-card-actions>
-						<v-badge color="primary" :content="post.votes[0].count">
-							<VBtn text="Upvote" prepend-icon="mdi-vote" @click="createVote(post.id)" />
+						<v-badge color="primary" :content="post.votes.length">
+							<VBtn color="primary" text="Upvote" prepend-icon="mdi-vote"
+								@click="post.votes.some(vote => vote.user_id == user.id) ? deleteVote(post.votes.find(vote => vote.user_id == user.id).id) : createVote(post.id)"
+								:active="post.votes.some(vote => vote.user_id == user.id) ? true : false" />
 						</v-badge>
 
 						<VBtn text="Comment" prepend-icon="mdi-comment" />
