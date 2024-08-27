@@ -108,7 +108,7 @@ const deleteVote = async (vote_id) => {
 								:active="post.votes.some(vote => vote.user_id == user.id) ? true : false" />
 						</v-badge>
 
-						<VBtn text="Comment" prepend-icon="mdi-comment" />
+						<VBtn text="Comment" prepend-icon="mdi-comment" :to="`/posts/${post.id}`" />
 						<v-spacer></v-spacer>
 						<v-menu location="top">
 							<template v-slot:activator="{ props }">
