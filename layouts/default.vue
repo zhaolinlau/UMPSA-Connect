@@ -22,15 +22,15 @@ const generalNavItems = ref(
 		Administration: [
 			{
 				title: 'Staffs',
-				to: '/staffs'
+				to: '/admin/staffs'
 			},
 			{
 				title: 'Students',
-				to: '/students'
+				to: '/admin/students'
 			},
 			{
 				title: 'Reports',
-				to: '/reports'
+				to: '/admin/reports'
 			}
 		]
 	}
