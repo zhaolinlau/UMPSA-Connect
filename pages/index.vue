@@ -95,7 +95,7 @@ const deleteVote = async (vote_id) => {
 
 					<VImg max-height="500"
 						:src="client.storage.from('images').getPublicUrl(`posts/${post.id}/${post.media}`).data.publicUrl"
-						:alt="post.media" v-if="post.media" />
+						:alt="post.media" v-if="post.media" :draggable="false" />
 
 					<v-card-text v-if="post.content">
 						{{ post.content }}
