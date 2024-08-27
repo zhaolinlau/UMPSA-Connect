@@ -10,14 +10,14 @@ const loginAlert = ref(false)
 const login = async () => {
 	const { error } = await client.auth.signInWithPassword({
 		email: email.value,
-		password: password.value,
+		password: password.value
 	})
 
 	if (error) {
 		loginError.value = error.message
 		loginAlert.value = true
 	} else {
-		await navigateTo('/')
+		await navigateTo('/confirm')
 		loginError.value = ''
 		loginAlert.value = false
 	}
