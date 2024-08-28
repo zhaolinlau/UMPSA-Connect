@@ -12,14 +12,14 @@ definePageMeta({
 				<v-row>
 					<v-col cols="12" class="d-flex align-center">
 						<v-avatar :rounded="0" size="100" :border="0">
-							<VImg src="/img/logo.webp" alt="logo.webp" />
+							<VImg src="/img/logo.webp" alt="logo.webp" :draggable="false" />
 						</v-avatar>
 						<p class="ml-3 text-h5 text-lg-h4">
 							UMPSA Connect
 						</p>
 					</v-col>
 					<v-col cols="12" class="hidden-sm-and-down">
-						<VImg src="/img/online_connection.webp" alt="online_connection.webp" />
+						<VImg src="/img/online_connection.webp" alt="online_connection.webp" :draggable="false" />
 					</v-col>
 				</v-row>
 			</v-col>
