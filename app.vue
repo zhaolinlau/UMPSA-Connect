@@ -6,7 +6,10 @@ useHead({
 			name: 'google-site-verification',
 			content: 'VtoMnB1qYS9XFl4WG3wUGq17dPOTwoH5vyWofp90A-Y'
 		}
-	]
+	],
+	htmlAttrs: {
+		lang: 'en'
+	}
 })
 
 useSeoMeta({
