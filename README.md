@@ -8,8 +8,10 @@
 
 ![security_test.png](public/img/security_test.png)
 
-UMPSA Connect has successfully passed all web security tests on the [Mozilla Developer Network HTTP Observatory](https://developer.mozilla.org/en-US/observatory).
+UMPSA Connect has successfully passed all web security tests on the [Mozilla Developer Network HTTP Observatory](https://developer.mozilla.org/en-US/observatory). To verify the results, you can view the [HTTP Observatory Report](https://developer.mozilla.org/en-US/observatory/analyze?host=umpsa-connect.vercel.app).
 
-To verify the results, you can view the [HTTP Observatory Report](https://developer.mozilla.org/en-US/observatory/analyze?host=umpsa-connect.vercel.app).
+## Web Performance Test
 
+![performance_test.png](public/img/performance_test.png)
 
+UMPSA Connect scored 97 on [Google PageSpeed Insights](https://pagespeed.web.dev/), with key metrics like a First Contentful Paint of 0.5 seconds, Largest Contentful Paint of 1.0 seconds, and a Cumulative Layout Shift of 0.089. For detailed results, view the [Full Analysis Report](https://pagespeed.web.dev/analysis/https-umpsa-connect-vercel-app/6nf9vd6amo?form_factor=desktop).
