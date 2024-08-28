@@ -2,7 +2,7 @@
 export default defineNuxtConfig({
 	devtools: { enabled: true },
 	compatibilityDate: "2024-08-06",
-	modules: ["vuetify-nuxt-module", "@nuxtjs/supabase", "nuxt-security"],
+	modules: ["vuetify-nuxt-module", "@nuxtjs/supabase", "nuxt-security", "@nuxtjs/robots"],
 	vuetify: {
 		vuetifyOptions: {
 			icons: {
