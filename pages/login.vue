@@ -31,7 +31,7 @@ definePageMeta({
 							Welcome back!
 						</p>
 
-						<p class="text-lg-subtitle-1 text-subtitle-2">
+						<p class="text-subtitle-1">
 							Stay connected with your campus faster and smarter
 						</p>
 					</v-col>
