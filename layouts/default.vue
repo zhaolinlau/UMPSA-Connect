@@ -75,7 +75,13 @@ const logout = async () => {
 			</v-list>
 			<template #append>
 				<v-footer class="text-center">
-					UMPSA Connect © {{ new Date().getFullYear() }} All Rights Reserved.
+					<v-row>
+						<v-col cols="12">
+							Copyright &copy; {{ new Date().getFullYear() }} UMPSA Connect - <NuxtLink
+								to="https://github.com/zhaolinlau/UMPSA-Connect/blob/master/LICENSE" target="_blank">MIT License
+							</NuxtLink>
+						</v-col>
+					</v-row>
 				</v-footer>
 				<div class="pa-2">
 					<VBtn @click="logout" prepend-icon="mdi-logout" color="error" block text="Logout" />
