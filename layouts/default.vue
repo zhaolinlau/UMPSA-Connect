@@ -41,7 +41,7 @@ const logout = async () => {
 	if (error) {
 		console.error(error.message)
 	} else {
-		return navigateTo('/login')
+		return reloadNuxtApp()
 	}
 }
 </script>
