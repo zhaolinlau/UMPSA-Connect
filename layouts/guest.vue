@@ -1,7 +1,9 @@
 <template>
-	<v-layout>
+	<v-app>
 		<v-main>
-			<slot />
+			<v-container class="fill-height">
+				<slot />
+			</v-container>
 		</v-main>
-	</v-layout>
+	</v-app>
 </template>

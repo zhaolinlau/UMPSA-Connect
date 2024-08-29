@@ -41,13 +41,13 @@ const logout = async () => {
 	if (error) {
 		console.error(error.message)
 	} else {
-		await navigateTo('/login')
+		return navigateTo('/login')
 	}
 }
 </script>
 
 <template>
-	<v-layout>
+	<v-app>
 		<v-app-bar title="UMPSA Connect" scroll-behavior="hide">
 			<template #prepend>
 				<VAppBarNavIcon @click.stop="drawer = !drawer" class="hidden-lg-and-up" />
@@ -59,7 +59,7 @@ const logout = async () => {
 			</template>
 		</v-app-bar>
 
-		<v-navigation-drawer v-model="drawer" :scrim="false">
+		<v-navigation-drawer v-model="drawer">
 			<v-list>
 				<v-list>
 					<v-list-item :subtitle="user.email" :title="user.email.split('@')[0].toLocaleUpperCase()"></v-list-item>
@@ -84,7 +84,9 @@ const logout = async () => {
 		</v-navigation-drawer>
 
 		<v-main>
-			<slot />
+			<v-container>
+				<slot />
+			</v-container>
 		</v-main>
-	</v-layout>
+	</v-app>
 </template>
