@@ -1,8 +1,8 @@
 export default defineNuxtRouteMiddleware((to, from) => {
-	const user = useSupabaseUser()
+	const session = useSupabaseSession()
 
-	watch(user, async () => {
-		if (user.value) {
+	watch(session, async () => {
+		if (session.value) {
 			await navigateTo('/')
 		}
 	}, { immediate: true })
