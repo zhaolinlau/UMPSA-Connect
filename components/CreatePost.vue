@@ -32,35 +32,28 @@ const createPost = async () => {
 		posting.value = true
 		const { valid } = await postFormRef.value.validate()
 		if (valid) {
-			const { data: post, error: postError } = await client.from('posts').insert([
-				{
+			const post = await $fetch('/api/posts', {
+				method: 'post',
+				body: {
 					title: postForm.value.title,
 					category: postForm.value.category,
 					content: postForm.value.content,
 					media: postForm.value.media ? postForm.value.media.name : ''
-				},
-			]).select()
-			if (postError) {
-				console.error(postError)
-			} else {
-				if (postForm.value.media) {
-					const { error: mediaError } = await client.storage.from('images')
-						.upload(`posts/${post[0].id}/${postForm.value.media.name}`, postForm.value.media, {
-							cacheControl: '3600',
-							upsert: false
-						})
-					if (mediaError) {
-						console.error(mediaError)
-					} else {
-						resetPostForm()
-					}
-				} else {
-					resetPostForm()
 				}
+			})
+
+			if (postForm.value.media) {
+				await client.storage.from('images')
+					.upload(`posts/${post[0].id}/${postForm.value.media.name}`, postForm.value.media, {
+						cacheControl: '3600',
+						upsert: false
+					})
 			}
+
+			await resetPostForm()
 		}
 	} catch (error) {
-		console.error(error.message)
+		console.error(error)
 	} finally {
 		posting.value = false
 	}
