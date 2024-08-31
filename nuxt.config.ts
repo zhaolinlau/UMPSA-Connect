@@ -2,7 +2,7 @@
 export default defineNuxtConfig({
 	devtools: { enabled: true },
 	compatibilityDate: "2024-08-06",
-	modules: ["vuetify-nuxt-module", "@nuxtjs/supabase", "nuxt-security", "@nuxtjs/robots"],
+	modules: ['vuetify-nuxt-module', '@nuxtjs/supabase', 'nuxt-security', '@nuxtjs/robots'],
 	vuetify: {
 		vuetifyOptions: {
 			icons: {
@@ -27,20 +27,15 @@ export default defineNuxtConfig({
 			callback: '/confirm',
 			include: undefined,
 			exclude: [],
-			cookieRedirect: false,
+			cookieRedirect: false
 		},
 		clientOptions: {
 			auth: {
 				flowType: 'pkce',
 				autoRefreshToken: true,
 				detectSessionInUrl: true,
-				persistSession: true,
-			},
-		},
-		cookieOptions: {
-			maxAge: 60 * 60 * 8,
-			sameSite: 'lax',
-			secure: true
+				persistSession: true
+			}
 		}
 	},
 	runtimeConfig: {
