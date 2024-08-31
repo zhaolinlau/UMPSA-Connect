@@ -7,7 +7,7 @@ const postForm = ref({
 	media: null
 })
 const posting = ref(false)
-
+const media_id = ref('')
 const postFormRef = ref(null)
 
 const postFormDialog = ref(false)
@@ -26,29 +26,33 @@ const postRules = ref({
 		}
 	]
 })
-
+const randomNumber = async () => {
+	media_id.value = Math.random()
+}
 const createPost = async () => {
 	try {
 		posting.value = true
 		const { valid } = await postFormRef.value.validate()
 		if (valid) {
-			const post = await $fetch('/api/posts', {
+			await randomNumber()
+
+			if (postForm.value.media) {
+				await client.storage.from('images')
+					.upload(`posts/${media_id.value}/${postForm.value.media.name}`, postForm.value.media, {
+						cacheControl: '3600',
+						upsert: false
+					})
+			}
+
+			await $fetch('/api/posts', {
 				method: 'post',
 				body: {
 					title: postForm.value.title,
 					category: postForm.value.category,
 					content: postForm.value.content,
-					media: postForm.value.media ? postForm.value.media.name : ''
+					media: postForm.value.media ? `${media_id.value}/${postForm.value.media.name}` : ''
 				}
 			})
-
-			if (postForm.value.media) {
-				await client.storage.from('images')
-					.upload(`posts/${post[0].id}/${postForm.value.media.name}`, postForm.value.media, {
-						cacheControl: '3600',
-						upsert: false
-					})
-			}
 
 			await resetPostForm()
 		}
@@ -69,7 +73,6 @@ const resetPostForm = async () => {
 	<v-overlay class="align-center justify-center" :model-value="posting ? true : false">
 		<v-progress-circular color="primary" size="64" indeterminate></v-progress-circular>
 	</v-overlay>
-
 	<VBtn icon="mdi-plus" @click="postFormDialog = true" />
 	<v-dialog max-width="500" v-model:model-value="postFormDialog">
 		<v-card title="Create Post">
