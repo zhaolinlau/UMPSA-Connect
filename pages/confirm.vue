@@ -22,7 +22,7 @@ watch(user, async () => {
 			</p>
 		</v-col>
 		<v-col cols="12" lg="6">
-			<v-progress-linear color="primary" indeterminate height="10"></v-progress-linear>
+			<v-progress-linear rounded color="primary" indeterminate height="10"></v-progress-linear>
 		</v-col>
 	</v-row>
 </template>
