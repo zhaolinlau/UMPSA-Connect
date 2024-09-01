@@ -56,7 +56,7 @@ export default defineNuxtConfig({
 			name: 'UMPSA Connect',
 			short_name: 'UMPSA Connect',
 			description: 'UMPSA Connect serves as a comprehensive solution to enhance communication, streamline information dissemination, foster engagement, and improve data security across the entire UMPSA community.',
-			theme_color: '#00DC82',
+			theme_color: '#020420',
 			icons: [
 				{
 					src: 'img/logo_144x144.webp',
