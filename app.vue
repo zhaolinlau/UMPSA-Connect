@@ -23,6 +23,7 @@ useSeoMeta({
 </script>
 
 <template>
+	<NuxtPwaManifest />
 	<NuxtRouteAnnouncer />
 	<NuxtLoadingIndicator />
 	<NuxtLayout>
