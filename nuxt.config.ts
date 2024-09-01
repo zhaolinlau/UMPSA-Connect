@@ -52,6 +52,7 @@ export default defineNuxtConfig({
 		}
 	},
 	pwa: {
+		registerType: 'autoUpdate',
 		manifest: {
 			name: 'UMPSA Connect',
 			short_name: 'UMPSA Connect',
@@ -95,6 +96,15 @@ export default defineNuxtConfig({
 					label: 'UMPSA Connect'
 				}
 			]
+		},
+		workbox: {
+			globPatterns: ['**/*.{js,css,html,png,webp,ico}']
+		},
+		injectManifest: {
+			globPatterns: ['**/*.{js,css,html,png,webp,ico}']
+		},
+		client: {
+			installPrompt: true
 		},
 		devOptions: {
 			enabled: true,
