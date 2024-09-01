@@ -19,3 +19,17 @@ UMPSA Connect has successfully passed all web security tests on the [Mozilla Dev
 ![performance_test.png](public/img/performance_test.png)
 
 UMPSA Connect scored 98 on [Google PageSpeed Insights](https://pagespeed.web.dev/), with key metrics like a First Contentful Paint of 0.4 seconds, Largest Contentful Paint of 0.8 seconds, and a Cumulative Layout Shift of 0.083. For detailed results, view the [Full Analysis Report](https://pagespeed.web.dev/analysis/https-umpsa-connect-vercel-app/33s041z42e?form_factor=desktop).
+
+## Progressive Web Application Support
+
+UMPSA Connect is enhanced with Progressive Web App (PWA) capabilities, providing a more reliable and engaging user experience. With PWA support, users benefit from features like offline access, faster load times, and the ability to install the app directly on their devices.
+
+### How to Install
+
+**Desktop**: 
+
+Visit [UMPSA Connect](https://umpsa-connect.vercel.app/) using a modern browser like Chrome or Edge. Click the "Install" button in the address bar to add the app to your desktop.
+
+**Mobile**: 
+
+Open [UMPSA Connect](https://umpsa-connect.vercel.app/) in your mobile browser. Tap the browser menu and select "Add to Home Screen" to install the app.
