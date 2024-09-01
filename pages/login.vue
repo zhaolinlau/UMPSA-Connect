@@ -25,7 +25,7 @@ watch(session, async () => {
 							UMPSA Connect
 						</p>
 					</v-col>
-					<v-col cols="12" class="hidden-sm-and-down">
+					<v-col cols="12" class="hidden-md-and-down">
 						<VImg src="/img/online_connection.webp" alt="online_connection.webp" :draggable="false" />
 					</v-col>
 				</v-row>
