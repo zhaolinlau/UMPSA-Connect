@@ -5,6 +5,55 @@ defineProps({
 
 const client = useSupabaseClient()
 const user = useSupabaseUser()
+const editPostDialog = ref(false)
+const editPostRef = ref(null)
+const postForm = ref({
+	title: '',
+	content: '',
+	category: '',
+	media: null
+})
+
+const postRules = ref({
+	title: [
+		value => {
+			if (value) return true
+			return 'Title is required.'
+		}
+	],
+	category: [
+		value => {
+			if (value?.length > 3) return true
+			return 'Please select a category.'
+		}
+	]
+})
+
+const toggleEditPost = async (post) => {
+	editPostDialog.value = true
+	postForm.value.title = post.title
+	postForm.value.content = post.content
+	postForm.value.category = post.category
+	postForm.value.media = post.media
+}
+
+const editPost = async (post_id) => {
+	const { valid } = await editPostRef.value.validate()
+	if (valid) {
+		await $fetch('/api/posts', {
+			method: 'put',
+			body: {
+				id: post_id,
+				title: postForm.value.title,
+				category: postForm.value.category,
+				content: postForm.value.content,
+				media: postForm.value.media
+			}
+		})
+	}
+
+	editPostDialog.value = false
+}
 
 const deletePost = async (post_id, post_media) => {
 	try {
@@ -81,7 +130,8 @@ const deleteVote = async (vote_id) => {
 				</template>
 
 				<v-list>
-					<v-list-item title="Edit" prepend-icon="mdi-pencil" v-if="post.user_id == user.id"></v-list-item>
+					<v-list-item title="Edit" prepend-icon="mdi-pencil" v-if="post.user_id == user.id"
+						@click="toggleEditPost(post)"></v-list-item>
 					<v-list-item title="Bookmark" prepend-icon="mdi-bookmark"></v-list-item>
 					<v-list-item @click="deletePost(post.id, post.media)" title="Delete" prepend-icon="mdi-delete"
 						v-if="post.user_id == user.id"></v-list-item>
@@ -90,4 +140,25 @@ const deleteVote = async (vote_id) => {
 			</v-menu>
 		</v-card-actions>
 	</v-card>
+
+	<v-dialog max-width="500" v-model:model-value="editPostDialog">
+		<v-card title="Create Post">
+			<v-form @submit.prevent="editPost(post.id)" ref="editPostRef">
+				<v-container>
+					<VTextField prepend-icon="mdi-format-title" v-model="postForm.title" label="Title"
+						placeholder="What do you want to ask or share?" :rules="postRules.title" />
+					<VSelect prepend-icon="mdi-shape" v-model="postForm.category" label="Category"
+						:items="['General', 'Question', 'Event']" :rules="postRules.category" />
+					<VFileInput accept="image/*" v-model:model-value="postForm.media" label="Media" v-if="!post.media" />
+					<VTextarea prepend-icon="mdi-text" v-model="postForm.content" label="Body" placeholder="Say something...."
+						clearable />
+				</v-container>
+				<v-card-actions>
+					<v-spacer></v-spacer>
+					<VBtn color="error" type="button" text="Cancel" @click="editPostDialog = false" />
+					<VBtn color="primary" text="Save" type="submit" />
+				</v-card-actions>
+			</v-form>
+		</v-card>
+	</v-dialog>
 </template>
