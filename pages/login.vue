@@ -1,15 +1,8 @@
 <script setup>
 definePageMeta({
 	layout: 'guest',
+	middleware: 'auth'
 })
-
-const session = useSupabaseSession()
-
-watch(session, async () => {
-	if (session.value) {
-		await navigateTo('/')
-	}
-}, { immediate: true })
 </script>
 
 <template>
