@@ -89,7 +89,7 @@ const resetPostForm = async () => {
 				<v-card-actions>
 					<v-spacer></v-spacer>
 					<VBtn color="error" type="button" text="Cancel" @click="postFormDialog = false" />
-					<VBtn color="primary" text="Save" type="submit" />
+					<VBtn color="primary" text="Post" type="submit" />
 				</v-card-actions>
 			</v-form>
 		</v-card>
