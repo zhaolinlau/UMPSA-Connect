@@ -37,7 +37,7 @@ onUnmounted(() => {
 				<v-skeleton-loader type="chip, heading, subtitle, image, text, actions"></v-skeleton-loader>
 			</v-col>
 		</template>
-		<v-col lg="7" v-for="post in posts">
+		<v-col cols="12" lg="7" v-for="post in posts">
 			<PostCard :post="post" />
 		</v-col>
 	</v-row>
