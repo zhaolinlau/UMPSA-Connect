@@ -130,7 +130,7 @@ const deleteVote = async (vote_id) => {
 			</v-card-subtitle>
 		</v-card-item>
 
-		<VImg max-height="500" :src="client.storage.from('images').getPublicUrl(`posts/${post.media}`).data.publicUrl"
+		<VImg cover max-height="500" :src="client.storage.from('images').getPublicUrl(`posts/${post.media}`).data.publicUrl"
 			:alt="post.media" v-if="post.media" :draggable="false" />
 
 		<v-card-text v-if="post.content">
