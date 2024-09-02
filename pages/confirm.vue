@@ -3,10 +3,10 @@ definePageMeta({
 	layout: 'guest'
 })
 
-const session = useSupabaseSession()
+const user = useSupabaseUser()
 
-watch(session, async () => {
-	if (session.value) {
+watch(user, async () => {
+	if (user.value) {
 		await navigateTo('/')
 	} else {
 		await navigateTo('/login')
