@@ -2,7 +2,7 @@
 defineProps({
 	post: Object
 })
-
+const media_id = ref('')
 const client = useSupabaseClient()
 const user = useSupabaseUser()
 const editPostDialog = ref(false)
@@ -13,6 +13,10 @@ const postForm = ref({
 	category: '',
 	media: null
 })
+
+const randomNumber = async () => {
+	media_id.value = Math.random()
+}
 
 const postRules = ref({
 	title: [
@@ -37,9 +41,18 @@ const toggleEditPost = async (post) => {
 	postForm.value.media = post.media
 }
 
-const editPost = async (post_id) => {
+const editPost = async (post_id, post_media) => {
 	const { valid } = await editPostRef.value.validate()
 	if (valid) {
+		await randomNumber()
+		if (postForm.value.media) {
+			await client.storage.from('images')
+				.upload(`posts/${media_id.value}/${postForm.value.media.name}`, postForm.value.media, {
+					cacheControl: '3600',
+					upsert: false
+				})
+		}
+
 		await $fetch('/api/posts', {
 			method: 'put',
 			body: {
@@ -47,12 +60,21 @@ const editPost = async (post_id) => {
 				title: postForm.value.title,
 				category: postForm.value.category,
 				content: postForm.value.content,
-				media: postForm.value.media
+				media: postForm.value.media ? `${media_id.value}/${postForm.value.media.name}` : ''
 			}
 		})
 	}
 
 	editPostDialog.value = false
+}
+
+const deleteMedia = async (post_id, post_media) => {
+	await client.storage.from('images').remove([`posts/${post_media}`])
+	await client.from('posts').update({
+		media: null
+	}).eq('id', post_id).select()
+
+	postForm.value.media = null
 }
 
 const deletePost = async (post_id, post_media) => {
@@ -143,12 +165,25 @@ const deleteVote = async (vote_id) => {
 
 	<v-dialog max-width="500" v-model:model-value="editPostDialog">
 		<v-card title="Create Post">
-			<v-form @submit.prevent="editPost(post.id)" ref="editPostRef">
+			<v-form @submit.prevent="editPost(post.id, post.media)" ref="editPostRef">
 				<v-container>
+					{{ postForm.media }}
 					<VTextField prepend-icon="mdi-format-title" v-model="postForm.title" label="Title"
 						placeholder="What do you want to ask or share?" :rules="postRules.title" />
 					<VSelect prepend-icon="mdi-shape" v-model="postForm.category" label="Category"
 						:items="['General', 'Question', 'Event']" :rules="postRules.category" />
+
+					<v-row align="center" justify="center" class="mb-3" v-if="post.media">
+						<v-col cols="3">
+							<VImg max-height="250"
+								:src="client.storage.from('images').getPublicUrl(`posts/${post.media}`).data.publicUrl"
+								:alt="post.media" v-if="post.media" :draggable="false" />
+						</v-col>
+						<v-col cols="4">
+							<VBtn text="Delete media" @click="deleteMedia(post.id, post.media)" />
+						</v-col>
+					</v-row>
+
 					<VFileInput accept="image/*" v-model:model-value="postForm.media" label="Media" v-if="!post.media" />
 					<VTextarea prepend-icon="mdi-text" v-model="postForm.content" label="Body" placeholder="Say something...."
 						clearable />
