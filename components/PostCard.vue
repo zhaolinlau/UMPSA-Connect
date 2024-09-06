@@ -60,7 +60,7 @@ const editPost = async (post_id, post_media) => {
 				title: postForm.value.title,
 				category: postForm.value.category,
 				content: postForm.value.content,
-				media: postForm.value.media ? `${media_id.value}/${postForm.value.media.name}` : post_media
+				media: postForm.value.media != post_media ? `${media_id.value}/${postForm.value.media.name}` : post_media
 			}
 		})
 	}
