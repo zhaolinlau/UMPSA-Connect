@@ -52,7 +52,6 @@ export default defineNuxtConfig({
 		}
 	},
 	pwa: {
-		registerType: 'autoUpdate',
 		includeAssets: ['/favicon.ico'],
 		manifest: {
 			name: 'UMPSA Connect',
@@ -61,39 +60,32 @@ export default defineNuxtConfig({
 			theme_color: '#020420',
 			icons: [
 				{
-					src: 'img/logo_192x192.webp',
+					src: '/img/logo_192x192.webp',
 					sizes: '192x192',
 					type: 'image/webp'
 				},
 				{
-					src: 'img/logo_512x512.webp',
+					src: '/img/logo_512x512.webp',
 					sizes: '512x512',
 					type: 'image/webp'
 				}
 			],
 			screenshots: [
 				{
-					src: 'img/mobile_login.png',
+					src: '/img/mobile_login.png',
 					sizes: '490x1063',
 					type: 'image/png',
 					form_factor: 'narrow',
 					label: 'UMPSA Connect'
 				},
 				{
-					src: 'img/login.png',
+					src: '/img/login.png',
 					sizes: '1920x1080',
 					type: 'image/png',
 					form_factor: 'wide',
 					label: 'UMPSA Connect'
 				}
 			]
-		},
-		client: {
-			installPrompt: true
-		},
-		devOptions: {
-			enabled: true,
-			type: 'module'
 		}
 	},
 	gtag: {
