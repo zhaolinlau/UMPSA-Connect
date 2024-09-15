@@ -53,6 +53,7 @@ export default defineNuxtConfig({
 	},
 	pwa: {
 		registerType: 'autoUpdate',
+		includeAssets: ['/favicon.ico'],
 		manifest: {
 			name: 'UMPSA Connect',
 			short_name: 'UMPSA Connect',
