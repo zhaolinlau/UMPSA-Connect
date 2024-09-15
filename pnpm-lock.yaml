@@ -9,16 +9,16 @@ importers:
   .:
     dependencies:
       '@nuxtjs/robots':
-        specifier: ^4.1.3
+        specifier: ^4.1.7
         version: 4.1.7(magicast@0.3.5)(rollup@4.21.3)(vite@5.4.5(@types/node@22.5.5)(terser@5.32.0))(vue@3.5.5)(webpack-sources@3.2.3)
       '@nuxtjs/supabase':
         specifier: ^1.4.0
         version: 1.4.0
       '@vite-pwa/nuxt':
-        specifier: ^0.10.1
+        specifier: ^0.10.5
         version: 0.10.5(magicast@0.3.5)(rollup@4.21.3)(vite@5.4.5(@types/node@22.5.5)(terser@5.32.0))(webpack-sources@3.2.3)(workbox-build@7.1.1)(workbox-window@7.1.0)
       nuxt:
-        specifier: ^3.13.0
+        specifier: ^3.13.1
         version: 3.13.1(@parcel/watcher@2.4.1)(@types/node@22.5.5)(ioredis@5.4.1)(magicast@0.3.5)(rollup@4.21.3)(terser@5.32.0)(vite@5.4.5(@types/node@22.5.5)(terser@5.32.0))(webpack-sources@3.2.3)
       nuxt-delay-hydration:
         specifier: ^1.3.8
@@ -33,8 +33,8 @@ importers:
         specifier: latest
         version: 3.5.5
       vuetify-nuxt-module:
-        specifier: 0.16.1
-        version: 0.16.1(magicast@0.3.5)(rollup@4.21.3)(vite@5.4.5(@types/node@22.5.5)(terser@5.32.0))(vue@3.5.5)(webpack-sources@3.2.3)
+        specifier: ^0.18.3
+        version: 0.18.3(magicast@0.3.5)(rollup@4.21.3)(vite@5.4.5(@types/node@22.5.5)(terser@5.32.0))(vue@3.5.5)(webpack-sources@3.2.3)
     devDependencies:
       '@iconify-json/mdi':
         specifier: ^1.2.0
@@ -4169,9 +4169,6 @@ packages:
   unbox-primitive@1.0.2:
     resolution: {integrity: sha512-61pPlCD9h51VoreyJ0BReideM3MDKMKnh6+V9L08331ipq6Q8OFXZYiqP6n/tbHx4s5I9uRhcye6BrbkizkBDw==}
 
-  unconfig@0.3.13:
-    resolution: {integrity: sha512-N9Ph5NC4+sqtcOjPfHrRcHekBCadCXWTBzp2VYYbySOHW0PfD9XLCeXshTXjkPYwLrBr9AtSeU0CZmkYECJhng==}
-
   unconfig@0.5.5:
     resolution: {integrity: sha512-VQZ5PT9HDX+qag0XdgQi8tJepPhXiR/yVOkn707gJDKo31lGjRilPREiQJ9Z6zd/Ugpv6ZvO5VxVIcatldYcNQ==}
 
@@ -4494,8 +4491,8 @@ packages:
       typescript:
         optional: true
 
-  vuetify-nuxt-module@0.16.1:
-    resolution: {integrity: sha512-rRyrQQ6+EjHCgeEmW/+gTHbp+YULonNfWAAI6Y0pcl9wLsDzmFtrtd0mQxxZisreGhpp+gl1Yf0yAcJUo9Ph9Q==}
+  vuetify-nuxt-module@0.18.3:
+    resolution: {integrity: sha512-Mv5mcqfqk5dR9oVJiITXn5p4NmDzp57AR2Txf/0iIoAjFlMsDWzTpUvn9ELTzDI3Z0LjiYVqptwxrOlMcju2Wg==}
 
   vuetify@3.7.1:
     resolution: {integrity: sha512-N1XlczbgeGt/O+JUk72QPrqcDaRIXUdptUciJqGyTvZ9cfMoSlEWs6TZO+dOOfXbKvmIMFMycYg4dgSHDpCPhg==}
@@ -9574,12 +9571,6 @@ snapshots:
       has-symbols: 1.0.3
       which-boxed-primitive: 1.0.2
 
-  unconfig@0.3.13:
-    dependencies:
-      '@antfu/utils': 0.7.10
-      defu: 6.1.4
-      jiti: 1.21.6
-
   unconfig@0.5.5:
     dependencies:
       '@antfu/utils': 0.7.10
@@ -9946,7 +9937,7 @@ snapshots:
       '@vue/server-renderer': 3.5.5(vue@3.5.5)
       '@vue/shared': 3.5.5
 
-  vuetify-nuxt-module@0.16.1(magicast@0.3.5)(rollup@4.21.3)(vite@5.4.5(@types/node@22.5.5)(terser@5.32.0))(vue@3.5.5)(webpack-sources@3.2.3):
+  vuetify-nuxt-module@0.18.3(magicast@0.3.5)(rollup@4.21.3)(vite@5.4.5(@types/node@22.5.5)(terser@5.32.0))(vue@3.5.5)(webpack-sources@3.2.3):
     dependencies:
       '@nuxt/kit': 3.13.1(magicast@0.3.5)(rollup@4.21.3)(webpack-sources@3.2.3)
       defu: 6.1.4
@@ -9955,7 +9946,8 @@ snapshots:
       pathe: 1.1.2
       perfect-debounce: 1.0.0
       ufo: 1.5.4
-      unconfig: 0.3.13
+      unconfig: 0.5.5
+      upath: 2.0.1
       vite-plugin-vuetify: 2.0.4(vite@5.4.5(@types/node@22.5.5)(terser@5.32.0))(vue@3.5.5)(vuetify@3.7.1)
       vuetify: 3.7.1(vite-plugin-vuetify@2.0.4)(vue@3.5.5)
     transitivePeerDependencies:
