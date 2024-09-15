@@ -52,13 +52,18 @@ export default defineNuxtConfig({
 		}
 	},
 	pwa: {
-		includeAssets: ['/favicon.ico'],
+		includeAssets: ['/favicon.ico', '/img/apple-touch-icon.jpeg', '/favicon.svg'],
 		manifest: {
 			name: 'UMPSA Connect',
 			short_name: 'UMPSA Connect',
 			description: 'UMPSA Connect serves as a comprehensive solution to enhance communication, streamline information dissemination, foster engagement, and improve data security across the entire UMPSA community.',
 			theme_color: '#020420',
 			icons: [
+				{
+					src: '/img/logo_64x64.webp',
+					sizes: '64x64',
+					type: 'image/webp'
+				},
 				{
 					src: '/img/logo_192x192.webp',
 					sizes: '192x192',
@@ -67,7 +72,15 @@ export default defineNuxtConfig({
 				{
 					src: '/img/logo_512x512.webp',
 					sizes: '512x512',
-					type: 'image/webp'
+					type: 'image/webp',
+					purpose: 'any'
+
+				},
+				{
+					src: '/img/logo_white_512x512.jpeg',
+					sizes: '512x512',
+					type: 'image/jpeg',
+					purpose: 'maskable'
 				}
 			],
 			screenshots: [
