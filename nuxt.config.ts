@@ -2,7 +2,7 @@
 export default defineNuxtConfig({
 	devtools: { enabled: true },
 	compatibilityDate: "2024-08-06",
-	modules: ['vuetify-nuxt-module', '@nuxtjs/supabase', 'nuxt-security', '@nuxtjs/robots', '@vite-pwa/nuxt'],
+	modules: ['vuetify-nuxt-module', '@nuxtjs/supabase', 'nuxt-security', '@nuxtjs/robots', '@vite-pwa/nuxt', 'nuxt-gtag'],
 	vuetify: {
 		vuetifyOptions: {
 			icons: {
@@ -60,11 +60,6 @@ export default defineNuxtConfig({
 			theme_color: '#020420',
 			icons: [
 				{
-					src: 'img/logo_144x144.webp',
-					sizes: '144x144',
-					type: 'image/webp'
-				},
-				{
 					src: 'img/logo_192x192.webp',
 					sizes: '192x192',
 					type: 'image/webp'
@@ -72,11 +67,6 @@ export default defineNuxtConfig({
 				{
 					src: 'img/logo_512x512.webp',
 					sizes: '512x512',
-					type: 'image/webp'
-				},
-				{
-					src: 'img/logo.webp',
-					sizes: '1080x1080',
 					type: 'image/webp'
 				}
 			],
@@ -97,12 +87,6 @@ export default defineNuxtConfig({
 				}
 			]
 		},
-		workbox: {
-			globPatterns: ['**/*.{js,css,html,png,webp,ico}']
-		},
-		injectManifest: {
-			globPatterns: ['**/*.{js,css,html,png,webp,ico}']
-		},
 		client: {
 			installPrompt: true
 		},
@@ -110,6 +94,9 @@ export default defineNuxtConfig({
 			enabled: true,
 			type: 'module'
 		}
+	},
+	gtag: {
+		id: process.env.G_TAG_ID
 	},
 	app: {
 		head: {
