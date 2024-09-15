@@ -52,6 +52,7 @@ export default defineNuxtConfig({
 		}
 	},
 	pwa: {
+		registerType: 'autoUpdate',
 		includeAssets: ['/favicon.ico', '/img/apple-touch-icon.jpeg', '/favicon.svg'],
 		manifest: {
 			name: 'UMPSA Connect',
@@ -99,6 +100,16 @@ export default defineNuxtConfig({
 					label: 'UMPSA Connect'
 				}
 			]
+		},
+		workbox: {
+			globPatterns: ['**\/*.{js,wasm,css,html,png,svg,ico,jpeg,webp}'],
+		},
+		injectManifest: {
+			globPatterns: ['**\/*.{js,wasm,css,html,png,svg,ico,jpeg,webp}'],
+		},
+		devOptions: {
+			enabled: true,
+			type: 'module'
 		}
 	},
 	gtag: {
