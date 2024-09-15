@@ -1,12 +1,6 @@
 <script setup>
 useHead({
-	title: 'UMPSA Connect',
-	meta: [
-		{
-			name: 'google-site-verification',
-			content: 'VtoMnB1qYS9XFl4WG3wUGq17dPOTwoH5vyWofp90A-Y'
-		}
-	],
+	title: 'UMPSA Connect',	
 	htmlAttrs: {
 		lang: 'en'
 	}

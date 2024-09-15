@@ -113,8 +113,12 @@ export default defineNuxtConfig({
 	},
 	app: {
 		head: {
-			charset: 'utf-8',
-			viewport: 'width=device-width, initial-scale=1, maximum-scale=1',
+			meta: [
+				{
+					name: 'google-site-verification',
+					content: process.env.GOOGLE_SITE_VERIFICATION
+				}
+			],
 		}
 	}
 })
