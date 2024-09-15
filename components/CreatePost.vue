@@ -73,17 +73,17 @@ const resetPostForm = async () => {
 	<v-overlay class="align-center justify-center" :model-value="posting ? true : false">
 		<v-progress-circular color="primary" size="64" indeterminate></v-progress-circular>
 	</v-overlay>
-	<VBtn icon="mdi-plus" @click="postFormDialog = true" />
+	<VBtn icon="i-mdi:plus" @click="postFormDialog = true" />
 	<v-dialog max-width="500" v-model:model-value="postFormDialog">
 		<v-card title="Create Post">
 			<v-form @submit.prevent="createPost" ref="postFormRef">
 				<v-container>
-					<VTextField prepend-icon="mdi-format-title" v-model="postForm.title" label="Title"
+					<VTextField prepend-icon="i-mdi:format-title" v-model="postForm.title" label="Title"
 						placeholder="What do you want to ask or share?" :rules="postRules.title" />
-					<VSelect prepend-icon="mdi-shape" v-model="postForm.category" label="Category"
+					<VSelect prepend-icon="i-mdi:shape" v-model="postForm.category" label="Category"
 						:items="['General', 'Question', 'Event']" :rules="postRules.category" />
 					<VFileInput accept="image/*" v-model:model-value="postForm.media" label="Media" />
-					<VTextarea prepend-icon="mdi-text" v-model="postForm.content" label="Body" placeholder="Say something...."
+					<VTextarea prepend-icon="i-mdi:text" v-model="postForm.content" label="Body" placeholder="Say something...."
 						clearable />
 				</v-container>
 				<v-card-actions>

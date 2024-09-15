@@ -139,25 +139,25 @@ const deleteVote = async (vote_id) => {
 
 		<v-card-actions>
 			<v-badge color="primary" :content="post.votes.length">
-				<VBtn color="primary" text="Upvote" prepend-icon="mdi-vote"
+				<VBtn color="primary" text="Upvote" prepend-icon="i-mdi:vote"
 					@click="post.votes.some(vote => vote.user_id == user.id) ? deleteVote(post.votes.find(vote => vote.user_id == user.id).id) : createVote(post.id)"
 					:active="post.votes.some(vote => vote.user_id == user.id) ? true : false" />
 			</v-badge>
 
-			<VBtn text="Comment" prepend-icon="mdi-comment" :to="`/posts/${post.id}`" />
+			<VBtn text="Comment" prepend-icon="i-mdi:comment" :to="`/posts/${post.id}`" />
 			<v-spacer></v-spacer>
 			<v-menu location="top">
 				<template v-slot:activator="{ props }">
-					<v-btn icon="mdi-dots-horizontal" v-bind="props"></v-btn>
+					<v-btn icon="i-mdi:dots-horizontal" v-bind="props"></v-btn>
 				</template>
 
 				<v-list>
-					<v-list-item title="Edit" prepend-icon="mdi-pencil" v-if="post.user_id == user.id"
+					<v-list-item title="Edit" prepend-icon="i-mdi:pencil" v-if="post.user_id == user.id"
 						@click="toggleEditPost(post)"></v-list-item>
-					<v-list-item title="Bookmark" prepend-icon="mdi-bookmark"></v-list-item>
-					<v-list-item @click="deletePost(post.id, post.media)" title="Delete" prepend-icon="mdi-delete"
+					<v-list-item title="Bookmark" prepend-icon="i-mdi:bookmark"></v-list-item>
+					<v-list-item @click="deletePost(post.id, post.media)" title="Delete" prepend-icon="i-mdi:delete"
 						v-if="post.user_id == user.id"></v-list-item>
-					<v-list-item title="Report" prepend-icon="mdi-alert" v-if="post.user_id != user.id"></v-list-item>
+					<v-list-item title="Report" prepend-icon="i-mdi:alert" v-if="post.user_id != user.id"></v-list-item>
 				</v-list>
 			</v-menu>
 		</v-card-actions>
@@ -168,9 +168,9 @@ const deleteVote = async (vote_id) => {
 			<v-form @submit.prevent="editPost(post.id, post.media)" ref="editPostRef">
 				<v-container>
 					{{ postForm.media }}
-					<VTextField prepend-icon="mdi-format-title" v-model="postForm.title" label="Title"
+					<VTextField prepend-icon="i-mdi:format-title" v-model="postForm.title" label="Title"
 						placeholder="What do you want to ask or share?" :rules="postRules.title" />
-					<VSelect prepend-icon="mdi-shape" v-model="postForm.category" label="Category"
+					<VSelect prepend-icon="i-mdi:shape" v-model="postForm.category" label="Category"
 						:items="['General', 'Question', 'Event']" :rules="postRules.category" />
 
 					<v-row align="center" justify="center" class="mb-3" v-if="post.media">
@@ -185,7 +185,7 @@ const deleteVote = async (vote_id) => {
 					</v-row>
 
 					<VFileInput accept="image/*" v-model:model-value="postForm.media" label="Media" v-if="!post.media" />
-					<VTextarea prepend-icon="mdi-text" v-model="postForm.content" label="Body" placeholder="Say something...."
+					<VTextarea prepend-icon="i-mdi:text" v-model="postForm.content" label="Body" placeholder="Say something...."
 						clearable />
 				</v-container>
 				<v-card-actions>

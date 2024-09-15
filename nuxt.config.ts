@@ -2,11 +2,11 @@
 export default defineNuxtConfig({
 	devtools: { enabled: true },
 	compatibilityDate: "2024-08-06",
-	modules: ['vuetify-nuxt-module', '@nuxtjs/supabase', 'nuxt-security', '@nuxtjs/robots', '@vite-pwa/nuxt', 'nuxt-gtag', 'nuxt-delay-hydration'],
+	modules: ['vuetify-nuxt-module', '@nuxtjs/supabase', 'nuxt-security', '@nuxtjs/robots', '@vite-pwa/nuxt', 'nuxt-gtag', 'nuxt-delay-hydration', '@unocss/nuxt'],
 	vuetify: {
 		vuetifyOptions: {
 			icons: {
-				defaultSet: 'mdi'
+				defaultSet: 'unocss-mdi'
 			},
 			theme: {
 				defaultTheme: 'myCustomTheme',

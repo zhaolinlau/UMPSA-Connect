@@ -53,9 +53,9 @@ const logout = async () => {
 				<VAppBarNavIcon @click.stop="drawer = !drawer" class="hidden-lg-and-up" />
 			</template>
 			<template #append>
-				<v-btn icon="mdi-magnify"></v-btn>
+				<v-btn icon="i-mdi:magnify"></v-btn>
 				<CreatePost />
-				<v-btn icon="mdi-bell"></v-btn>
+				<v-btn icon="i-mdi:bell"></v-btn>
 			</template>
 		</v-app-bar>
 
@@ -84,7 +84,7 @@ const logout = async () => {
 					</v-row>
 				</v-footer>
 				<div class="pa-2">
-					<VBtn @click="logout" prepend-icon="mdi-logout" color="error" block text="Logout" />
+					<VBtn @click="logout" prepend-icon="i-mdi:logout" color="error" block text="Logout" />
 				</div>
 			</template>
 		</v-navigation-drawer>
