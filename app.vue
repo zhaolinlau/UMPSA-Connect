@@ -9,7 +9,7 @@ useHead({
 			rel: 'icon', href: '/favicon.svg', sizes: 'any', type: 'image/svg+xml'
 		},
 		{
-			rel: 'apple-touch-icon', href: '/apple-touch-icon.webp'
+			rel: 'apple-touch-icon', href: '/img/apple-touch-icon.jpeg'
 		}
 	],
 	htmlAttrs: {
