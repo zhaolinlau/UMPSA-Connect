@@ -2,7 +2,7 @@
 export default defineNuxtConfig({
 	devtools: { enabled: true },
 	compatibilityDate: "2024-08-06",
-	modules: ['vuetify-nuxt-module', '@nuxtjs/supabase', 'nuxt-security', '@nuxtjs/robots', '@vite-pwa/nuxt', 'nuxt-gtag'],
+	modules: ['vuetify-nuxt-module', '@nuxtjs/supabase', 'nuxt-security', '@nuxtjs/robots', '@vite-pwa/nuxt', 'nuxt-gtag', 'nuxt-delay-hydration'],
 	vuetify: {
 		vuetifyOptions: {
 			icons: {
@@ -97,6 +97,9 @@ export default defineNuxtConfig({
 	},
 	gtag: {
 		id: process.env.G_TAG_ID
+	},
+	delayHydration: {
+		mode: 'mount'
 	},
 	app: {
 		head: {
