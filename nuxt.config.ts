@@ -13,8 +13,8 @@ export default defineNuxtConfig({
 				themes: {
 					myCustomTheme: {
 						colors: {
-							primary: '#15a195',
-							secondary: '#1a478fff'
+							primary: '#009fa0',
+							secondary: '#1a478f'
 						}
 					}
 				}
