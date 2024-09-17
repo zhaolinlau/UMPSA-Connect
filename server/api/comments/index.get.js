@@ -3,7 +3,7 @@ import { serverSupabaseClient } from '#supabase/server'
 export default defineEventHandler(async (event) => {
 	const client = await serverSupabaseClient(event)
 	const query = getQuery(event)
-	const { data, error } = await client.from('posts').select('*, votes(id, post_id, user_id), comments(*)').eq('id', query.post_id).single()
+	const { data, error } = await client.from('comments').select('*').eq('id', query.post_id)
 
 	if (error) {
 		throw createError({
