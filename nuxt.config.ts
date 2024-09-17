@@ -106,10 +106,6 @@ export default defineNuxtConfig({
 		},
 		injectManifest: {
 			globPatterns: ['**\/*.{js,wasm,css,html,png,svg,ico,jpeg,webp}'],
-		},
-		devOptions: {
-			enabled: true,
-			type: 'module'
 		}
 	},
 	gtag: {
