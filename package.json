@@ -10,6 +10,7 @@
     "postinstall": "nuxt prepare"
   },
   "dependencies": {
+    "@formkit/auto-animate": "^0.8.2",
     "@nuxtjs/robots": "^4.1.7",
     "@nuxtjs/supabase": "^1.4.0",
     "@vite-pwa/nuxt": "^0.10.5",

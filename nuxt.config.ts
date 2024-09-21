@@ -2,7 +2,18 @@
 export default defineNuxtConfig({
 	devtools: { enabled: true },
 	compatibilityDate: "2024-08-06",
-	modules: ['vuetify-nuxt-module', '@nuxtjs/supabase', 'nuxt-security', '@nuxtjs/robots', '@vite-pwa/nuxt', 'nuxt-gtag', 'nuxt-delay-hydration', '@unocss/nuxt'],
+	modules: [
+		'vuetify-nuxt-module',
+		'@nuxtjs/supabase',
+		'nuxt-security',
+		'@nuxtjs/robots',
+		'@vite-pwa/nuxt',
+		'nuxt-gtag',
+		'nuxt-delay-hydration',
+		'@unocss/nuxt',
+		'@formkit/auto-animate/nuxt'
+	],
+
 	vuetify: {
 		vuetifyOptions: {
 			icons: {
@@ -21,6 +32,7 @@ export default defineNuxtConfig({
 			}
 		}
 	},
+
 	supabase: {
 		redirectOptions: {
 			login: '/login',
@@ -38,11 +50,13 @@ export default defineNuxtConfig({
 			}
 		}
 	},
+
 	runtimeConfig: {
 		public: {
 			siteUrl: process.env.NUXT_PUBLIC_SITE_URL
 		}
 	},
+
 	security: {
 		headers: {
 			contentSecurityPolicy: {
@@ -51,6 +65,7 @@ export default defineNuxtConfig({
 			crossOriginEmbedderPolicy: process.env.NODE_ENV === 'development' ? 'unsafe-none' : 'credentialless'
 		}
 	},
+
 	pwa: {
 		registerType: 'autoUpdate',
 		includeAssets: ['/favicon.ico', '/img/apple-touch-icon.jpeg', '/favicon.svg'],
@@ -108,12 +123,15 @@ export default defineNuxtConfig({
 			globPatterns: ['**\/*.{js,wasm,css,html,png,svg,ico,jpeg,webp}'],
 		}
 	},
+
 	gtag: {
 		id: process.env.G_TAG_ID
 	},
+
 	delayHydration: {
 		mode: 'mount'
 	},
+
 	app: {
 		head: {
 			meta: [
@@ -124,4 +142,5 @@ export default defineNuxtConfig({
 			],
 		}
 	}
+
 })

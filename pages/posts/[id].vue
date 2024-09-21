@@ -64,7 +64,7 @@ onUnmounted(async () => {
 			<v-col cols="12" lg="7">
 				<CreateComment />
 			</v-col>
-			<v-col cols="12" lg="7" v-for="comment in comments" :key="comment">
+			<v-col cols="12" lg="7" v-for="comment in comments" :key="comment.id" v-auto-animate>
 				<CommentCard :comment="comment" />
 			</v-col>
 		</template>
