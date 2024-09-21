@@ -34,16 +34,16 @@ const votesChannel = client.channel('public:votes').on(
 	() => refreshPost()
 )
 
-onMounted(() => {
+onMounted(async () => {
 	commentsChannel.subscribe()
 	postChannel.subscribe()
 	votesChannel.subscribe()
 })
 
-onUnmounted(() => {
-	client.removeChannel(commentsChannel)
-	client.removeChannel(postChannel)
-	client.removeChannel(votesChannel)
+onUnmounted(async () => {
+	await client.removeChannel(commentsChannel)
+	await client.removeChannel(postChannel)
+	await client.removeChannel(votesChannel)
 })
 </script>
 
@@ -60,6 +60,9 @@ onUnmounted(() => {
 		<template v-else>
 			<v-col cols="12" lg="7">
 				<PostCard :post="post" />
+			</v-col>
+			<v-col cols="12" lg="7">
+				<CreateComment />
 			</v-col>
 			<v-col cols="12" lg="7" v-for="comment in comments" :key="comment">
 				<CommentCard :comment="comment" />
