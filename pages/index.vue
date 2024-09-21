@@ -1,11 +1,9 @@
 <script setup>
 const client = useSupabaseClient()
 
-const { data: posts, refresh: refreshPosts, error: postsError } = useFetch('/api/posts', {
+const { data: posts, refresh: refreshPosts } = useFetch('/api/posts', {
 	method: 'get'
 })
-
-if (postsError.value) console.error(postsError.value.message)
 
 const postsChannel = client.channel('public:posts').on(
 	'postgres_changes',
@@ -13,20 +11,12 @@ const postsChannel = client.channel('public:posts').on(
 	() => refreshPosts()
 )
 
-const votesChannel = client.channel('public:votes').on(
-	'postgres_changes',
-	{ event: '*', schema: 'public', table: 'votes' },
-	() => refreshPosts()
-)
-
 onMounted(() => {
 	postsChannel.subscribe()
-	votesChannel.subscribe()
 })
 
 onUnmounted(() => {
 	client.removeChannel(postsChannel)
-	client.removeChannel(votesChannel)
 })
 </script>
 

@@ -17,7 +17,7 @@ export default defineEventHandler(async (event) => {
 		}
 
 	} else {
-		const { data, error } = await client.from('posts').select('*, votes(id, post_id, user_id)').order('created_at', { ascending: false })
+		const { data, error } = await client.from('posts').select('*').order('created_at', { ascending: false })
 
 		if (error) {
 			throw createError({
@@ -27,6 +27,6 @@ export default defineEventHandler(async (event) => {
 		} else {
 			return data
 		}
-		
+
 	}
 })

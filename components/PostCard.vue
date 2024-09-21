@@ -117,12 +117,41 @@ const deleteVote = async (vote_id) => {
 	}
 }
 
-const { data: comments } = await useFetch('/api/comments', {
+const { data: comments, refresh: refreshComments } = await useFetch('/api/comments', {
 	method: 'get',
 	query: {
 		post_id: props.post.id,
 		count: true
 	}
+})
+
+const { data: votes, refresh: refreshVotes } = await useFetch('/api/votes', {
+	method: 'get',
+	query: {
+		post_id: props.post.id
+	}
+})
+
+const votesChannel = client.channel('public:votes').on(
+	'postgres_changes',
+	{ event: '*', schema: 'public', table: 'votes' },
+	() => refreshVotes()
+)
+
+const commentsChannel = client.channel('public:comments').on(
+	'postgres_changes',
+	{ event: '*', schema: 'public', table: 'comments' },
+	() => refreshComments()
+)
+
+onMounted(() => {
+	commentsChannel.subscribe()
+	votesChannel.subscribe()
+})
+
+onUnmounted(() => {
+	client.removeChannel(commentsChannel)
+	client.removeChannel(votesChannel)
 })
 </script>
 
@@ -144,10 +173,10 @@ const { data: comments } = await useFetch('/api/comments', {
 		</v-card-text>
 
 		<v-card-actions>
-			<v-badge color="primary" :content="post.votes.length > 99 ? '99+' : post.votes.length">
+			<v-badge color="primary" :content="votes.length > 99 ? '99+' : votes.length">
 				<VBtn color="primary" text="Upvote" prepend-icon="i-mdi:vote"
-					@click="post.votes.some(vote => vote.user_id == user.id) ? deleteVote(post.votes.find(vote => vote.user_id == user.id).id) : createVote(post.id)"
-					:active="post.votes.some(vote => vote.user_id == user.id) ? true : false" />
+					@click="votes.some(vote => vote.user_id == user.id) ? deleteVote(votes.find(vote => vote.user_id == user.id).id) : createVote(post.id)"
+					:active="votes.some(vote => vote.user_id == user.id) ? true : false" />
 			</v-badge>
 
 			<VBadge color="secondary" :content="comments > 99 ? '99+' : comments">
