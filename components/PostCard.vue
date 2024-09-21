@@ -1,5 +1,5 @@
 <script setup>
-defineProps({
+const props = defineProps({
 	post: Object
 })
 const media_id = ref('')
@@ -116,6 +116,14 @@ const deleteVote = async (vote_id) => {
 		console.error(error.message)
 	}
 }
+
+const { data: comments } = await useFetch('/api/comments', {
+	method: 'get',
+	query: {
+		post_id: props.post.id,
+		count: true
+	}
+})
 </script>
 
 <template>
@@ -136,14 +144,18 @@ const deleteVote = async (vote_id) => {
 		</v-card-text>
 
 		<v-card-actions>
-			<v-badge color="primary" :content="post.votes.length">
+			<v-badge color="primary" :content="post.votes.length > 99 ? '99+' : post.votes.length">
 				<VBtn color="primary" text="Upvote" prepend-icon="i-mdi:vote"
 					@click="post.votes.some(vote => vote.user_id == user.id) ? deleteVote(post.votes.find(vote => vote.user_id == user.id).id) : createVote(post.id)"
 					:active="post.votes.some(vote => vote.user_id == user.id) ? true : false" />
 			</v-badge>
 
-			<VBtn text="Comment" prepend-icon="i-mdi:comment" :to="`/posts/${post.id}`" />
+			<VBadge color="secondary" :content="comments > 99 ? '99+' : comments">
+				<VBtn color="secondary" text="Comment" prepend-icon="i-mdi:comment" :to="`/posts/${post.id}`" />
+			</VBadge>
+
 			<v-spacer></v-spacer>
+
 			<v-menu location="top">
 				<template v-slot:activator="{ props }">
 					<v-btn icon="i-mdi:dots-horizontal" v-bind="props"></v-btn>
