@@ -4,8 +4,8 @@ export default defineEventHandler(async (event) => {
 	const client = await serverSupabaseClient(event)
 	const query = getQuery(event)
 
-	if (query.id) {
-		const { data, error } = await client.from('posts').select('*, votes(id, post_id, user_id)').eq('id', query.id).single()
+	if (query.single) {
+		const { data, error } = await client.from('posts').select('*').eq('id', query.id).single()
 
 		if (error) {
 			throw createError({
