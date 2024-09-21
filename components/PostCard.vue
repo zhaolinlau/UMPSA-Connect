@@ -124,9 +124,7 @@ const deleteVote = async (vote_id) => {
 			<v-chip>{{ post.category }}</v-chip>
 			<v-card-title>{{ post.title }}</v-card-title>
 			<v-card-subtitle>
-				{{ new Date(post.created_at).getDate() }}/{{ new Date(post.created_at).getMonth() }}/{{ new
-					Date(post.created_at).getFullYear() }} {{ new Date(post.created_at).getHours() }}:{{ new
-					Date(post.created_at).getMinutes() }}:{{ new Date(post.created_at).getSeconds() }}
+				{{ new Date(post.created_at).toLocaleString('en-GB', { timeZone: 'Asia/Kuala_Lumpur', hour12: true }) }}
 			</v-card-subtitle>
 		</v-card-item>
 
