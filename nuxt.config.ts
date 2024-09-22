@@ -58,7 +58,15 @@ export default defineNuxtConfig({
 	},
 
 	security: {
-		rateLimiter: process.env.NODE_ENV == 'development' ? false : undefined,
+		rateLimiter: process.env.NODE_ENV == 'development' ? false : {
+			driver: {
+				name: 'lruCache'
+			},
+			headers: false,
+			interval: 300000,
+			throwError: true,
+			tokensPerInterval: 150
+		},
 		headers: {
 			contentSecurityPolicy: {
 				"img-src": ["'self'", "data:", `${process.env.SUPABASE_URL}`]
