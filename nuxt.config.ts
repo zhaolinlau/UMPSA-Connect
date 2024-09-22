@@ -58,11 +58,12 @@ export default defineNuxtConfig({
 	},
 
 	security: {
+		rateLimiter: process.env.NODE_ENV == 'development' ? false : undefined,
 		headers: {
 			contentSecurityPolicy: {
 				"img-src": ["'self'", "data:", `${process.env.SUPABASE_URL}`]
 			},
-			crossOriginEmbedderPolicy: process.env.NODE_ENV === 'development' ? 'unsafe-none' : 'credentialless'
+			crossOriginEmbedderPolicy: process.env.NODE_ENV == 'development' ? 'unsafe-none' : 'credentialless'
 		}
 	},
 
