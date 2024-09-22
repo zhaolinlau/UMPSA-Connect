@@ -1,6 +1,7 @@
 <script setup>
 const client = useSupabaseClient()
 const route = useRoute()
+const id = useId()
 
 const { data: post, refresh: refreshPost } = useFetch('/api/posts', {
 	method: 'get',
@@ -17,13 +18,13 @@ const { data: comments, refresh: refreshComments } = useFetch('/api/comments', {
 	}
 })
 
-const commentsChannel = client.channel('public:comments').on(
+const commentsChannel = client.channel(`${id}:comments`).on(
 	'postgres_changes',
 	{ event: '*', schema: 'public', table: 'comments' },
 	() => refreshComments()
 )
 
-const postChannel = client.channel('public:posts').on(
+const postChannel = client.channel(`${id}:posts`).on(
 	'postgres_changes',
 	{ event: '*', schema: 'public', table: 'posts' },
 	() => refreshPost()
@@ -38,9 +39,11 @@ onUnmounted(() => {
 	client.removeChannel(commentsChannel)
 	client.removeChannel(postChannel)
 })
+
 </script>
 
 <template>
+	{{ route.hash }}
 	<v-row justify="center">
 		<template v-if="!post || !comments">
 			<v-col cols="12" lg="7">

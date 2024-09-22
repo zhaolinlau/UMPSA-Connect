@@ -13,6 +13,7 @@ const postForm = ref({
 	category: '',
 	media: null
 })
+const id = useId()
 
 const randomNumber = async () => {
 	media_id.value = Math.random()
@@ -132,13 +133,13 @@ const { data: votes, refresh: refreshVotes } = await useFetch('/api/votes', {
 	}
 })
 
-const votesChannel = client.channel('public:votes').on(
+const votesChannel = client.channel(`${id}:votes`).on(
 	'postgres_changes',
 	{ event: '*', schema: 'public', table: 'votes' },
 	() => refreshVotes()
 )
 
-const commentsChannel = client.channel('public:comments').on(
+const commentsChannel = client.channel(`${id}:comments`).on(
 	'postgres_changes',
 	{ event: '*', schema: 'public', table: 'comments' },
 	() => refreshComments()
