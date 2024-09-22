@@ -2,22 +2,22 @@
 const client = useSupabaseClient()
 const id = useId()
 
-const { data: posts, refresh: refreshPosts } = useFetch('/api/posts', {
+const { data: posts, refresh: refreshPosts } = await useFetch('/api/posts', {
 	method: 'get'
 })
 
 const postsChannel = client.channel(`${id}:posts`).on(
 	'postgres_changes',
 	{ event: '*', schema: 'public', table: 'posts' },
-	() => refreshPosts()
+	async () => await refreshPosts()
 )
 
-onMounted(() => {
+onMounted(async () => {
 	postsChannel.subscribe()
 })
 
-onUnmounted(() => {
-	client.removeChannel(postsChannel)
+onUnmounted(async () => {
+	await client.removeChannel(postsChannel)
 })
 </script>
 

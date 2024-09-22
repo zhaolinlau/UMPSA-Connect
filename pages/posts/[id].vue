@@ -3,7 +3,7 @@ const client = useSupabaseClient()
 const route = useRoute()
 const id = useId()
 
-const { data: post, refresh: refreshPost } = useFetch('/api/posts', {
+const { data: post, refresh: refreshPost } = await useFetch('/api/posts', {
 	method: 'get',
 	query: {
 		id: route.params.id,
@@ -11,7 +11,7 @@ const { data: post, refresh: refreshPost } = useFetch('/api/posts', {
 	}
 })
 
-const { data: comments, refresh: refreshComments } = useFetch('/api/comments', {
+const { data: comments, refresh: refreshComments } = await useFetch('/api/comments', {
 	method: 'get',
 	query: {
 		post_id: route.params.id
@@ -21,23 +21,23 @@ const { data: comments, refresh: refreshComments } = useFetch('/api/comments', {
 const commentsChannel = client.channel(`${id}:comments`).on(
 	'postgres_changes',
 	{ event: '*', schema: 'public', table: 'comments' },
-	() => refreshComments()
+	async () => await refreshComments()
 )
 
 const postChannel = client.channel(`${id}:posts`).on(
 	'postgres_changes',
 	{ event: '*', schema: 'public', table: 'posts' },
-	() => refreshPost()
+	async () => await refreshPost()
 )
 
-onMounted(() => {
+onMounted(async () => {
 	commentsChannel.subscribe()
 	postChannel.subscribe()
 })
 
-onUnmounted(() => {
-	client.removeChannel(commentsChannel)
-	client.removeChannel(postChannel)
+onUnmounted(async () => {
+	await client.removeChannel(commentsChannel)
+	await client.removeChannel(postChannel)
 })
 
 </script>
@@ -60,7 +60,7 @@ onUnmounted(() => {
 			<v-col cols="12" lg="7">
 				<CreateComment />
 			</v-col>
-			<v-col cols="12" lg="7" v-for="comment in comments" :key="comment" v-auto-animate>
+			<v-col cols="12" lg="7" v-for="comment in comments" :key="comment.id" v-auto-animate>
 				<CommentCard :comment="comment" />
 			</v-col>
 		</template>

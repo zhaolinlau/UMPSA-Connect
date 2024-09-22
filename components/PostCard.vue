@@ -136,23 +136,23 @@ const { data: votes, refresh: refreshVotes } = await useFetch('/api/votes', {
 const votesChannel = client.channel(`${id}:votes`).on(
 	'postgres_changes',
 	{ event: '*', schema: 'public', table: 'votes' },
-	() => refreshVotes()
+	async () => await refreshVotes()
 )
 
 const commentsChannel = client.channel(`${id}:comments`).on(
 	'postgres_changes',
 	{ event: '*', schema: 'public', table: 'comments' },
-	() => refreshComments()
+	async () => await refreshComments()
 )
 
-onMounted(() => {
+onMounted(async () => {
 	commentsChannel.subscribe()
 	votesChannel.subscribe()
 })
 
-onUnmounted(() => {
-	client.removeChannel(commentsChannel)
-	client.removeChannel(votesChannel)
+onUnmounted(async () => {
+	await client.removeChannel(commentsChannel)
+	await client.removeChannel(votesChannel)
 })
 </script>
 
