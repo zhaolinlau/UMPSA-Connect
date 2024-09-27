@@ -26,41 +26,39 @@ const postRules = ref({
 		}
 	]
 })
+
 const randomNumber = async () => {
 	media_id.value = Math.random()
 }
+
 const createPost = async () => {
-	try {
-		posting.value = true
-		const { valid } = await postFormRef.value.validate()
-		if (valid) {
-			await randomNumber()
+	posting.value = true
+	const { valid } = await postFormRef.value.validate()
+	if (valid) {
+		await randomNumber()
 
-			if (postForm.value.media) {
-				await client.storage.from('images')
-					.upload(`posts/${media_id.value}/${postForm.value.media.name}`, postForm.value.media, {
-						cacheControl: '3600',
-						upsert: false
-					})
-			}
-
-			await $fetch('/api/posts', {
-				method: 'post',
-				body: {
-					title: postForm.value.title,
-					category: postForm.value.category,
-					content: postForm.value.content,
-					media: postForm.value.media ? `${media_id.value}/${postForm.value.media.name}` : ''
-				}
-			})
-
-			await resetPostForm()
+		if (postForm.value.media) {
+			await client.storage.from('images')
+				.upload(`posts/${media_id.value}/${postForm.value.media.name}`, postForm.value.media, {
+					cacheControl: '3600',
+					upsert: false
+				})
 		}
-	} catch (error) {
-		console.error(error)
-	} finally {
-		posting.value = false
+
+		await $fetch('/api/posts', {
+			method: 'post',
+			body: {
+				title: postForm.value.title,
+				category: postForm.value.category,
+				content: postForm.value.content,
+				media: postForm.value.media ? `${media_id.value}/${postForm.value.media.name}` : ''
+			}
+		})
+
+		await resetPostForm()
 	}
+
+	posting.value = false
 }
 
 const resetPostForm = async () => {

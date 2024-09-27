@@ -79,43 +79,31 @@ const deleteMedia = async (post_id, post_media) => {
 }
 
 const deletePost = async (post_id, post_media) => {
-	try {
-		await $fetch('/api/posts', {
-			method: 'delete',
-			body: {
-				post_id,
-				post_media
-			}
-		})
-	} catch (error) {
-		console.error(error.message)
-	}
+	await $fetch('/api/posts', {
+		method: 'delete',
+		body: {
+			post_id,
+			post_media
+		}
+	})
 }
 
 const createVote = async (post_id) => {
-	try {
-		await $fetch('/api/votes', {
-			method: 'post',
-			body: {
-				post_id
-			}
-		})
-	} catch (error) {
-		console.error(error.message)
-	}
+	await $fetch('/api/votes', {
+		method: 'post',
+		body: {
+			post_id
+		}
+	})
 }
 
 const deleteVote = async (vote_id) => {
-	try {
-		await $fetch('/api/votes', {
-			method: 'delete',
-			body: {
-				vote_id
-			}
-		})
-	} catch (error) {
-		console.error(error.message)
-	}
+	await $fetch('/api/votes', {
+		method: 'delete',
+		body: {
+			vote_id
+		}
+	})
 }
 
 const { data: comments, refresh: refreshComments } = await useFetch('/api/comments', {
