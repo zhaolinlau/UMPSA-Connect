@@ -66,14 +66,14 @@ const microsoftLogin = async () => {
 </script>
 
 <template>
-	<v-row>
-		<v-col cols="12">
+	<VRow>
+		<VCol cols="12">
 			<VAlert @click:close="loginAlert = false" v-model="loginAlert" border="start" color="error" variant="tonal"
 				border-color="error" title="Error" icon="$error" :text="loginError" v-if="loginAlert" closable />
-		</v-col>
+		</VCol>
 
-		<v-col cols="12">
-			<v-form @submit.prevent="login">
+		<VCol cols="12">
+			<VForm @submit.prevent="login">
 
 				<VTextField label="Email" placeholder="you@example.com" v-model="email" prepend-inner-icon="i-mdi:email-outline"
 					type="email" />
@@ -83,10 +83,11 @@ const microsoftLogin = async () => {
 					@click:append-inner="visible = !visible" />
 
 				<VBtn class="mb-4" text="Login" prepend-icon="i-mdi:login" type="submit" color="primary" block />
-				<v-divider>OR</v-divider>
+				<VDivider>OR</VDivider>
 				<VBtn text="Continue with" append-icon="i-mdi:google" class="mt-3" type="button" block @click="googleLogin" />
-				<VBtn text="Continue with" append-icon="i-mdi:microsoft" class="mt-3" type="button" block @click="microsoftLogin" />
-			</v-form>
-		</v-col>
-	</v-row>
+				<VBtn text="Continue with" append-icon="i-mdi:microsoft" class="mt-3" type="button" block
+					@click="microsoftLogin" />
+			</VForm>
+		</VCol>
+	</VRow>
 </template>

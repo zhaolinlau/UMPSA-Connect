@@ -145,83 +145,83 @@ onUnmounted(async () => {
 </script>
 
 <template>
-	<v-card hover>
-		<v-card-item>
-			<v-chip>{{ post.category }}</v-chip>
-			<v-card-title>{{ post.title }}</v-card-title>
-			<v-card-subtitle>
+	<VCard hover>
+		<VCardItem>
+			<VChip>{{ post.category }}</VChip>
+			<VCardTitle>{{ post.title }}</VCardTitle>
+			<VCardSubtitle>
 				{{ new Date(post.created_at).toLocaleString('en-GB', { timeZone: 'Asia/Kuala_Lumpur', hour12: true }) }}
-			</v-card-subtitle>
-		</v-card-item>
+			</VCardSubtitle>
+		</VCardItem>
 
 		<VImg cover max-height="500" :src="client.storage.from('images').getPublicUrl(`posts/${post.media}`).data.publicUrl"
 			:alt="post.media" v-if="post.media" :draggable="false" />
 
-		<v-card-text v-if="post.content">
+		<VCardText v-if="post.content">
 			{{ post.content }}
-		</v-card-text>
+		</VCardText>
 
-		<v-card-actions>
-			<v-badge color="primary" :content="votes.length > 99 ? '99+' : votes.length">
+		<VCardActions>
+			<VBadge color="primary" :content="votes.length > 99 ? '99+' : votes.length">
 				<VBtn color="primary" text="Upvote" prepend-icon="i-mdi:vote"
 					@click="votes.some(vote => vote.user_id == user.id) ? deleteVote(votes.find(vote => vote.user_id == user.id).id) : createVote(post.id)"
 					:active="votes.some(vote => vote.user_id == user.id) ? true : false" />
-			</v-badge>
+			</VBadge>
 
 			<VBadge color="secondary" :content="comments > 99 ? '99+' : comments">
 				<VBtn color="secondary" text="Comment" prepend-icon="i-mdi:comment" :to="`/posts/${post.id}`" />
 			</VBadge>
 
-			<v-spacer></v-spacer>
+			<VSpacer />
 
-			<v-menu location="top">
+			<VMenu location="top">
 				<template v-slot:activator="{ props }">
-					<v-btn icon="i-mdi:dots-horizontal" v-bind="props"></v-btn>
+					<VBtn icon="i-mdi:dots-horizontal" v-bind="props" />
 				</template>
 
-				<v-list>
-					<v-list-item title="Edit" prepend-icon="i-mdi:pencil" v-if="post.user_id == user.id"
-						@click="toggleEditPost(post)"></v-list-item>
-					<v-list-item title="Bookmark" prepend-icon="i-mdi:bookmark"></v-list-item>
-					<v-list-item @click="deletePost(post.id, post.media)" title="Delete" prepend-icon="i-mdi:delete"
-						v-if="post.user_id == user.id"></v-list-item>
-					<v-list-item title="Report" prepend-icon="i-mdi:alert" v-if="post.user_id != user.id"></v-list-item>
-				</v-list>
-			</v-menu>
-		</v-card-actions>
-	</v-card>
+				<VList>
+					<VListItem title="Edit" prepend-icon="i-mdi:pencil" v-if="post.user_id == user.id"
+						@click="toggleEditPost(post)" />
+					<VListItem title="Bookmark" prepend-icon="i-mdi:bookmark" />
+					<VListItem @click="deletePost(post.id, post.media)" title="Delete" prepend-icon="i-mdi:delete"
+						v-if="post.user_id == user.id" />
+					<VListItem title="Report" prepend-icon="i-mdi:alert" v-if="post.user_id != user.id" />
+				</VList>
+			</VMenu>
+		</VCardActions>
+	</VCard>
 
-	<v-dialog max-width="500" v-model:model-value="editPostDialog">
-		<v-card title="Create Post">
-			<v-form @submit.prevent="editPost(post.id, post.media)" ref="editPostRef">
-				<v-container>
+	<VDialog max-width="500" v-model:model-value="editPostDialog">
+		<VCard title="Create Post">
+			<VForm @submit.prevent="editPost(post.id, post.media)" ref="editPostRef">
+				<VContainer>
 					{{ postForm.media }}
 					<VTextField prepend-icon="i-mdi:format-title" v-model="postForm.title" label="Title"
 						placeholder="What do you want to ask or share?" :rules="postRules.title" />
 					<VSelect prepend-icon="i-mdi:shape" v-model="postForm.category" label="Category"
 						:items="['General', 'Question', 'Event']" :rules="postRules.category" />
 
-					<v-row align="center" justify="center" class="mb-3" v-if="post.media">
-						<v-col cols="3">
+					<VRow align="center" justify="center" class="mb-3" v-if="post.media">
+						<VCol cols="3">
 							<VImg max-height="250"
 								:src="client.storage.from('images').getPublicUrl(`posts/${post.media}`).data.publicUrl"
 								:alt="post.media" v-if="post.media" :draggable="false" />
-						</v-col>
-						<v-col cols="4">
+						</VCol>
+						<VCol cols="4">
 							<VBtn text="Delete media" @click="deleteMedia(post.id, post.media)" />
-						</v-col>
-					</v-row>
+						</VCol>
+					</VRow>
 
 					<VFileInput accept="image/*" v-model:model-value="postForm.media" label="Media" v-if="!post.media" />
 					<VTextarea prepend-icon="i-mdi:text" v-model="postForm.content" label="Body" placeholder="Say something...."
 						clearable />
-				</v-container>
-				<v-card-actions>
-					<v-spacer></v-spacer>
+				</VContainer>
+				<VCardActions>
+					<VSpacer />
 					<VBtn color="error" type="button" text="Cancel" @click="editPostDialog = false" />
 					<VBtn color="primary" text="Save" type="submit" />
-				</v-card-actions>
-			</v-form>
-		</v-card>
-	</v-dialog>
+				</VCardActions>
+			</VForm>
+		</VCard>
+	</VDialog>
 </template>

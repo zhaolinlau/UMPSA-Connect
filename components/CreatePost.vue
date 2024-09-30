@@ -68,14 +68,14 @@ const resetPostForm = async () => {
 </script>
 
 <template>
-	<v-overlay class="align-center justify-center" :model-value="posting ? true : false">
-		<v-progress-circular color="primary" size="64" indeterminate></v-progress-circular>
-	</v-overlay>
+	<VOverlay class="align-center justify-center" :model-value="posting ? true : false">
+		<VProgressCircular color="primary" size="64" indeterminate />
+	</VOverlay>
 	<VBtn icon="i-mdi:plus" @click="postFormDialog = true" />
-	<v-dialog max-width="500" v-model:model-value="postFormDialog">
-		<v-card title="Create Post">
-			<v-form @submit.prevent="createPost" ref="postFormRef">
-				<v-container>
+	<VDialog max-width="500" v-model:model-value="postFormDialog">
+		<VCard title="Create Post">
+			<VForm @submit.prevent="createPost" ref="postFormRef">
+				<VContainer>
 					<VTextField prepend-icon="i-mdi:format-title" v-model="postForm.title" label="Title"
 						placeholder="What do you want to ask or share?" :rules="postRules.title" />
 					<VSelect prepend-icon="i-mdi:shape" v-model="postForm.category" label="Category"
@@ -83,13 +83,13 @@ const resetPostForm = async () => {
 					<VFileInput accept="image/*" v-model:model-value="postForm.media" label="Media" />
 					<VTextarea prepend-icon="i-mdi:text" v-model="postForm.content" label="Body" placeholder="Say something...."
 						clearable />
-				</v-container>
-				<v-card-actions>
-					<v-spacer></v-spacer>
+				</VContainer>
+				<VCardActions>
+					<VSpacer />
 					<VBtn color="error" type="button" text="Cancel" @click="postFormDialog = false" />
 					<VBtn color="primary" text="Post" type="submit" />
-				</v-card-actions>
-			</v-form>
-		</v-card>
-	</v-dialog>
+				</VCardActions>
+			</VForm>
+		</VCard>
+	</VDialog>
 </template>

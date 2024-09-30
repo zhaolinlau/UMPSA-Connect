@@ -1,7 +1,7 @@
 <template>
-	<v-main>
-		<v-container class="fill-height">
+	<VMain>
+		<VContainer class="fill-height">
 			<slot />
-		</v-container>
-	</v-main>
+		</VContainer>
+	</VMain>
 </template>

@@ -44,25 +44,25 @@ onUnmounted(async () => {
 
 <template>
 	{{ route.hash }}
-	<v-row justify="center">
+	<vRow justify="center">
 		<template v-if="!post || !comments">
-			<v-col cols="12" lg="7">
-				<v-skeleton-loader type="chip, heading, subtitle, image, text, actions"></v-skeleton-loader>
-			</v-col>
-			<v-col cols="12" lg="7" v-for="n in 2">
-				<v-skeleton-loader type="article"></v-skeleton-loader>
-			</v-col>
+			<vCol cols="12" lg="7">
+				<VSkeletonLoader type="chip, heading, subtitle, image, text, actions" />
+			</vCol>
+			<vCol cols="12" lg="7" v-for="n in 2">
+				<VSkeletonLoader type="article" />
+			</vCol>
 		</template>
 		<template v-else>
-			<v-col cols="12" lg="7">
+			<vCol cols="12" lg="7">
 				<PostCard :post="post" />
-			</v-col>
-			<v-col cols="12" lg="7">
+			</vCol>
+			<vCol cols="12" lg="7">
 				<CreateComment />
-			</v-col>
-			<v-col cols="12" lg="7" v-for="comment in comments" :key="comment.id" v-auto-animate>
+			</vCol>
+			<vCol cols="12" lg="7" v-for="comment in comments" :key="comment.id" v-auto-animate>
 				<CommentCard :comment="comment" />
-			</v-col>
+			</vCol>
 		</template>
-	</v-row>
+	</vRow>
 </template>

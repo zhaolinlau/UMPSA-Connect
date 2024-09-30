@@ -22,14 +22,14 @@ onUnmounted(async () => {
 </script>
 
 <template>
-	<v-row justify="center">
+	<VRow justify="center">
 		<template v-if="!posts">
-			<v-col cols="12" lg="7" v-for="n in 2">
+			<VCol cols="12" lg="7" v-for="n in 2">
 				<v-skeleton-loader type="chip, heading, subtitle, image, text, actions"></v-skeleton-loader>
-			</v-col>
+			</VCol>
 		</template>
-		<v-col cols="12" lg="7" v-for="post in posts" :key="post.id" v-auto-animate>
+		<VCol cols="12" lg="7" v-for="post in posts" :key="post.id" v-auto-animate>
 			<PostCard :post="post" />
-		</v-col>
-	</v-row>
+		</VCol>
+	</VRow>
 </template>

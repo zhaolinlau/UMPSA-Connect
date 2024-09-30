@@ -1,9 +1,9 @@
 <template>
 	<NavBar />
 
-	<v-main>
-		<v-container>
+	<VMain>
+		<VContainer>
 			<slot />
-		</v-container>
-	</v-main>
+		</VContainer>
+	</VMain>
 </template>

@@ -47,45 +47,48 @@ const logout = async () => {
 </script>
 
 <template>
-	<v-app-bar scroll-behavior="hide">
+	<VAppBar scroll-behavior="hide">
 		<template #prepend>
 			<VAppBarNavIcon @click.stop="drawer = !drawer" class="hidden-lg-and-up" />
-			<VAppBarTitle class="cursor-pointer ml-3" @click="navigateTo('/')" text="UMPSA Connect"/>
+			<VAppBarTitle class="cursor-pointer ml-3" @click="navigateTo('/')" text="UMPSA Connect" />
 		</template>
 		<template #append>
-			<v-btn icon="i-mdi:magnify"></v-btn>
+			<VBtn icon="i-mdi:magnify" />
 			<CreatePost />
-			<v-btn icon="i-mdi:bell"></v-btn>
+			<VBtn icon="i-mdi:bell" />
 		</template>
-	</v-app-bar>
+	</VAppBar>
 
-	<v-navigation-drawer v-model="drawer">
-		<v-list>
-			<v-list>
-				<v-list-item :subtitle="user.email" :title="user.email.split('@')[0].toLocaleUpperCase()"></v-list-item>
-			</v-list>
+	<VNavigationDrawer v-model="drawer">
+		<VList>
+			<VListItem :subtitle="user.email" :title="user.email.split('@')[0].toLocaleUpperCase()" />
 
-			<v-divider></v-divider>
+			<VDivider />
+
 			<VListSubheader title="GENERAL" />
-			<v-list-item v-for="navItem in generalNavItems.General" :key="navItem" :title="navItem.title" :to="navItem.to"
+
+			<VListItem v-for="navItem in generalNavItems.General" :key="navItem" :title="navItem.title" :to="navItem.to"
 				:active="router.currentRoute.value.path == navItem.to ? true : false" color="primary" />
+
 			<VListSubheader title="ADMINISTRATION" />
-			<v-list-item v-for="navItem in generalNavItems.Administration" :key="navItem" :title="navItem.title"
+
+			<VListItem v-for="navItem in generalNavItems.Administration" :key="navItem" :title="navItem.title"
 				:to="navItem.to" :active="router.currentRoute.value.path == navItem.to ? true : false" color="primary" />
-		</v-list>
+		</VList>
+
 		<template #append>
-			<v-footer class="text-center">
-				<v-row>
-					<v-col cols="12">
+			<VFooter class="text-center">
+				<VRow>
+					<VCol cols="12">
 						Copyright &copy; {{ new Date().getFullYear() }} UMPSA Connect - <NuxtLink
 							to="https://github.com/zhaolinlau/UMPSA-Connect/blob/master/LICENSE" target="_blank">MIT License
 						</NuxtLink>
-					</v-col>
-				</v-row>
-			</v-footer>
+					</VCol>
+				</VRow>
+			</VFooter>
 			<div class="pa-2">
 				<VBtn @click="logout" prepend-icon="i-mdi:logout" color="error" block text="Logout" />
 			</div>
 		</template>
-	</v-navigation-drawer>
+	</VNavigationDrawer>
 </template>

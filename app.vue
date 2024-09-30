@@ -31,9 +31,9 @@ useSeoMeta({
 	<NuxtPwaManifest />
 	<NuxtRouteAnnouncer />
 	<NuxtLoadingIndicator />
-	<v-app>
+	<VApp>
 		<NuxtLayout>
 			<NuxtPage />
 		</NuxtLayout>
-	</v-app>
+	</VApp>
 </template>

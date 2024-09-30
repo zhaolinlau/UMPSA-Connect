@@ -15,14 +15,14 @@ watch(user, async () => {
 </script>
 
 <template>
-	<v-row justify="center">
-		<v-col cols="12">
+	<vRow justify="center">
+		<vCol cols="12">
 			<p class="text-h3 text-center">
 				Redirecting...
 			</p>
-		</v-col>
-		<v-col cols="12" lg="6">
-			<v-progress-linear rounded color="primary" indeterminate height="10"></v-progress-linear>
-		</v-col>
-	</v-row>
+		</vCol>
+		<vCol cols="12" lg="6">
+			<vProgressCircular rounded color="primary" indeterminate height="10" />
+		</vCol>
+	</vRow>
 </template>
