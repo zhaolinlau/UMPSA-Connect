@@ -23,8 +23,8 @@ export default defineEventHandler(async (event) => {
 				statusCode: error.code,
 				statusMessage: error.message
 			})
+		} else {
+			return data
 		}
-
-		return data
 	}
 })
