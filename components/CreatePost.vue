@@ -86,7 +86,7 @@ const resetPostForm = async () => {
 				</VContainer>
 				<VCardActions>
 					<VSpacer />
-					<VBtn color="error" type="button" text="Cancel" @click="postFormDialog = false" />
+					<VBtn color="red" type="button" text="Cancel" @click="postFormDialog = false" />
 					<VBtn color="primary" text="Post" type="submit" />
 				</VCardActions>
 			</VForm>

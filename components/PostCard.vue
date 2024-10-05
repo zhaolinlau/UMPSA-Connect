@@ -218,7 +218,7 @@ onUnmounted(async () => {
 				</VContainer>
 				<VCardActions>
 					<VSpacer />
-					<VBtn color="error" type="button" text="Cancel" @click="editPostDialog = false" />
+					<VBtn color="red" type="button" text="Cancel" @click="editPostDialog = false" />
 					<VBtn color="primary" text="Save" type="submit" />
 				</VCardActions>
 			</VForm>

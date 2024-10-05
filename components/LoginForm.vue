@@ -68,8 +68,8 @@ const microsoftLogin = async () => {
 <template>
 	<VRow>
 		<VCol cols="12">
-			<VAlert @click:close="loginAlert = false" v-model="loginAlert" border="start" color="error" variant="tonal"
-				border-color="error" title="Error" icon="$error" :text="loginError" v-if="loginAlert" closable />
+			<VAlert @click:close="loginAlert = false" v-model="loginAlert" border="start" color="red" variant="tonal"
+				border-color="red" title="Error" icon="$error" :text="loginError" v-if="loginAlert" closable />
 		</VCol>
 
 		<VCol cols="12">

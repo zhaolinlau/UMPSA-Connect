@@ -87,7 +87,7 @@ const logout = async () => {
 				</VRow>
 			</VFooter>
 			<div class="pa-2">
-				<VBtn @click="logout" prepend-icon="i-mdi:logout" color="error" block text="Logout" />
+				<VBtn @click="logout" prepend-icon="i-mdi:logout" color="red" block text="Logout" />
 			</div>
 		</template>
 	</VNavigationDrawer>
