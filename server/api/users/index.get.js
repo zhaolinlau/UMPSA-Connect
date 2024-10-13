@@ -12,8 +12,21 @@ export default defineEventHandler(async (event) => {
 				statusCode: error.code,
 				statusMessage: error.message
 			})
+		} else {
+			return data.user
 		}
+	} else {
+		const { data, error } = await client.auth.admin.listUsers({
+			perPage: 1000
+		})
 
-		return data.user
+		if (error) {
+			throw createError({
+				statusCode: error.code,
+				statusMessage: error.message
+			})
+		} else {
+			return data.users
+		}
 	}
 })
