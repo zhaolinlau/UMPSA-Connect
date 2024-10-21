@@ -11,7 +11,7 @@
   },
   "dependencies": {
     "@formkit/auto-animate": "^0.8.2",
-    "@nuxtjs/robots": "^4.1.8",
+    "@nuxtjs/robots": "^4.1.9",
     "@nuxtjs/supabase": "^1.4.1",
     "@vite-pwa/nuxt": "^0.10.5",
     "nuxt": "^3.13.2",
