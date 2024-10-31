@@ -142,6 +142,40 @@ onUnmounted(async () => {
 	await client.removeChannel(commentsChannel)
 	await client.removeChannel(votesChannel)
 })
+
+const reportFormRef = ref(null)
+
+const reportFormDialog = ref(false)
+
+const reportForm = reactive({
+	category: '',
+	description: ''
+})
+
+const reportRules = ref({
+	category: [
+		value => {
+			if (value) return true
+			return 'Please select a category.'
+		}
+	]
+})
+
+const createReport = async () => {
+	const { valid } = await reportFormRef.value.validate()
+
+	if (valid) {
+		await $fetch('/api/reports', {
+			method: 'POST',
+			body: {
+				category: reportForm.category,
+				description: reportForm.description,
+				post_id: props.post.id
+			}
+		})
+	}
+}
+
 </script>
 
 <template>
@@ -185,13 +219,34 @@ onUnmounted(async () => {
 					<VListItem title="Bookmark" prepend-icon="i-mdi:bookmark" />
 					<VListItem @click="deletePost(post.id, post.media)" title="Delete" prepend-icon="i-mdi:delete"
 						v-if="post.user_id == user.id" />
-					<VListItem title="Report" prepend-icon="i-mdi:alert" v-if="post.user_id != user.id" />
+					<VListItem v-if="post.user_id != user.id" @click="reportFormDialog = true" title="Report"
+						prepend-icon="i-mdi:alert" />
 				</VList>
 			</VMenu>
 		</VCardActions>
 	</VCard>
 
-	<VDialog max-width="500" v-model:model-value="editPostDialog">
+	<VDialog max-width="500" v-model="reportFormDialog">
+		<VCard title="Submit a report"
+			subtitle="Thanks for looking out for yourself by reporting things that break the rules. Let us know what's happening, and we'll look into it.">
+			<VForm @submit.prevent="createReport" ref="reportFormRef">
+				{{ reportForm.category }}
+				<VContainer>
+					<VSelect label="Problem Category" v-model="reportForm.category"
+						:items="['Spam', 'Harassment or Bullying', 'Hate Speech', 'Misinformation', 'Inappropriate Content', 'Privacy Violation', 'Intellectual Property Violation']"
+						:rules="reportRules.category" />
+					<VTextarea v-model="reportForm.description" label="Description" clearable />
+				</VContainer>
+				<VCardActions>
+					<VSpacer />
+					<VBtn @click="reportFormDialog = false" type="button" color="red" text="Cancel" />
+					<VBtn text="Submit" color="green" type="submit" />
+				</VCardActions>
+			</VForm>
+		</VCard>
+	</VDialog>
+
+	<VDialog max-width="500" v-model="editPostDialog">
 		<VCard title="Create Post">
 			<VForm @submit.prevent="editPost(post.id, post.media)" ref="editPostRef">
 				<VContainer>
