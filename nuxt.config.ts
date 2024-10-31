@@ -11,7 +11,8 @@ export default defineNuxtConfig({
 		'nuxt-gtag',
 		'nuxt-delay-hydration',
 		'@unocss/nuxt',
-		'@formkit/auto-animate/nuxt'
+		'@formkit/auto-animate/nuxt',
+		'@vueuse/nuxt'
 	],
 
 	vuetify: {

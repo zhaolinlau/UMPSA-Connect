@@ -14,6 +14,8 @@
     "@nuxtjs/robots": "^4.1.9",
     "@nuxtjs/supabase": "^1.4.1",
     "@vite-pwa/nuxt": "^0.10.5",
+    "@vueuse/core": "^11.1.0",
+    "@vueuse/nuxt": "^11.1.0",
     "nuxt": "^3.13.2",
     "nuxt-delay-hydration": "^1.3.8",
     "nuxt-gtag": "^3.0.1",
