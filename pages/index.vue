@@ -2,7 +2,7 @@
 const client = useSupabaseClient()
 const id = useId()
 
-const { data: posts, refresh: refreshPosts } = await useFetch('/api/posts', {
+const { data: posts, refresh: refreshPosts } = await useLazyFetch('/api/posts', {
 	method: 'get'
 })
 
