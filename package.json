@@ -13,7 +13,7 @@
     "@formkit/auto-animate": "^0.8.2",
     "@nuxtjs/robots": "^4.1.10",
     "@nuxtjs/supabase": "^1.4.1",
-    "@vite-pwa/nuxt": "^0.10.5",
+    "@vite-pwa/nuxt": "^0.10.6",
     "@vueuse/core": "^11.2.0",
     "@vueuse/nuxt": "^11.2.0",
     "nuxt": "^3.13.2",
