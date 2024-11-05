@@ -1,5 +1,5 @@
 <script setup>
-const { data: reports } = await useLazyFetch('/api/reports', {
+const { data: reports } = await useFetch('/api/reports', {
 	method: 'GET',
 	transform: (reports) => {
 		return reports.map(report => (
