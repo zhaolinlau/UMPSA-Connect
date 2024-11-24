@@ -29,6 +29,7 @@ onUnmounted(async () => {
 			</VCol>
 		</template>
 		<VCol cols="12" lg="7" v-for="post in posts" :key="post.id" v-auto-animate>
+		<VBtn color="info" />
 			<PostCard :post="post" />
 		</VCol>
 	</VRow>

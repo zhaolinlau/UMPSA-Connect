@@ -25,12 +25,12 @@ export default defineNuxtConfig({
 				themes: {
 					myCustomTheme: {
 						colors: {
-							primary: '#009FA0',
-							secondary: '#1A478F',
-							error: '#F44336',
-							success: '#4CAF50',
-							info: '#2196F3',
-							warning: '#FFEB3B'
+							primary: '#04c8c5',
+							secondary: '#3499fd',
+							error: '#f44336',
+							info: '#0897ef',
+							success: '#4caf50',
+							warning: '#ff9800',
 						}
 					}
 				}
