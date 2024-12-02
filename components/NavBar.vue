@@ -21,6 +21,10 @@ const generalNavItems = ref(
 		],
 		Administration: [
 			{
+				title: 'Dashboard',
+				to: '/admin/'
+			},
+			{
 				title: 'Staffs',
 				to: '/admin/staffs'
 			},
@@ -31,6 +35,16 @@ const generalNavItems = ref(
 			{
 				title: 'Reports',
 				to: '/admin/reports'
+			}
+		],
+		Preferences: [
+			{
+				title: 'My Profile',
+				to: '/preferences/profile/'
+			},
+			{
+				title: 'Settings',
+				to: '/preferences/settings'
 			}
 		]
 	}
@@ -73,6 +87,11 @@ const logout = async () => {
 			<VListSubheader title="ADMINISTRATION" />
 
 			<VListItem v-for="navItem in generalNavItems.Administration" :key="navItem" :title="navItem.title"
+				:to="navItem.to" :active="router.currentRoute.value.path == navItem.to ? true : false" color="primary" />
+
+			<VListSubheader title="PREFERENCES" />
+
+			<VListItem v-for="navItem in generalNavItems.Preferences" :key="navItem" :title="navItem.title"
 				:to="navItem.to" :active="router.currentRoute.value.path == navItem.to ? true : false" color="primary" />
 		</VList>
 
