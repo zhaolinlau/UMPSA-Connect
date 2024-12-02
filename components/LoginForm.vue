@@ -4,10 +4,12 @@ const client = useSupabaseClient()
 const visible = ref(false)
 const password = ref('')
 const email = ref('')
+const loading = ref(false)
 const loginError = ref('')
 const loginAlert = ref(false)
 
 const login = async () => {
+	loading.value = true
 	const { error } = await client.auth.signInWithPassword({
 		email: email.value,
 		password: password.value
@@ -21,9 +23,12 @@ const login = async () => {
 		loginError.value = ''
 		loginAlert.value = false
 	}
+
+	loading.value = false
 }
 
 const googleLogin = async () => {
+	loading.value = true
 	const { error } = await client.auth.signInWithOAuth({
 		provider: 'google',
 		options: {
@@ -43,9 +48,12 @@ const googleLogin = async () => {
 		loginError.value = ''
 		loginAlert.value = false
 	}
+
+	loading.value = false
 }
 
 const microsoftLogin = async () => {
+	loading.value = true
 	const { error } = await client.auth.signInWithOAuth({
 		provider: 'azure',
 		options: {
@@ -62,6 +70,7 @@ const microsoftLogin = async () => {
 		loginError.value = ''
 		loginAlert.value = false
 	}
+	loading.value = false
 }
 </script>
 
@@ -76,16 +85,18 @@ const microsoftLogin = async () => {
 			<VForm @submit.prevent="login">
 
 				<VTextField label="Email" placeholder="you@example.com" v-model="email" prepend-inner-icon="i-mdi:email-outline"
-					type="email" />
+					type="email" :loading="loading" :disabled="loading" />
 
 				<VTextField label="Password" v-model="password" :append-inner-icon="visible ? 'i-mdi:eye-off' : 'i-mdi:eye'"
 					:type="visible ? 'text' : 'password'" placeholder="example12345" prepend-inner-icon="i-mdi:lock-outline"
-					@click:append-inner="visible = !visible" />
+					@click:append-inner="visible = !visible" :loading="loading" :disabled="loading" />
 
-				<VBtn class="mb-4" text="Login" prepend-icon="i-mdi:login" type="submit" color="primary" block />
+				<VBtn class="mb-4" text="Login" prepend-icon="i-mdi:login" type="submit" color="primary" block
+					:loading="loading" />
 				<VDivider>OR</VDivider>
-				<VBtn text="Continue with" append-icon="i-mdi:google" class="mt-3" type="button" block @click="googleLogin" />
-				<VBtn text="Continue with" append-icon="i-mdi:microsoft" class="mt-3" type="button" block
+				<VBtn text="Continue with" append-icon="i-mdi:google" class="mt-3" type="button" block @click="googleLogin"
+					:loading="loading" />
+				<VBtn text="Continue with" append-icon="i-mdi:microsoft" class="mt-3" type="button" block :loading="loading"
 					@click="microsoftLogin" />
 			</VForm>
 		</VCol>
