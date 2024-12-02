@@ -152,6 +152,8 @@ const reportForm = reactive({
 	description: ''
 })
 
+const reporting = ref(false)
+
 const reportRules = ref({
 	category: [
 		value => {
@@ -161,21 +163,28 @@ const reportRules = ref({
 	]
 })
 
+const reportAlert = ref(false)
+
 const createReport = async () => {
+	reporting.value = true
 	const { valid } = await reportFormRef.value.validate()
 
 	if (valid) {
 		await $fetch('/api/reports', {
-			method: 'POST',
+			method: 'post',
 			body: {
 				category: reportForm.category,
 				description: reportForm.description,
 				post_id: props.post.id
 			}
 		})
-	}
-}
 
+		reportAlert.value = true
+		reportFormRef.value.reset()
+	}
+
+	reporting.value = false
+}
 </script>
 
 <template>
@@ -230,17 +239,20 @@ const createReport = async () => {
 		<VCard title="Submit a report"
 			subtitle="Thanks for looking out for yourself by reporting things that break the rules. Let us know what's happening, and we'll look into it.">
 			<VForm @submit.prevent="createReport" ref="reportFormRef">
-				{{ reportForm.category }}
+				<VAlert @click:close="reportAlert = false" v-model="reportAlert" border="start" color="green" variant="elevated"
+					border-color="green" title="Success" icon="$success" text="Report has been submitted." closable />
 				<VContainer>
 					<VSelect label="Problem Category" v-model="reportForm.category"
 						:items="['Spam', 'Harassment or Bullying', 'Hate Speech', 'Misinformation', 'Inappropriate Content', 'Privacy Violation', 'Intellectual Property Violation']"
-						:rules="reportRules.category" />
-					<VTextarea v-model="reportForm.description" label="Description" clearable />
+						:rules="reportRules.category" :loading="reporting" :disabled="reporting" />
+					<VTextarea v-model="reportForm.description" label="Description" :disabled="reporting" :loading="reporting"
+						clearable />
 				</VContainer>
 				<VCardActions>
 					<VSpacer />
-					<VBtn @click="reportFormDialog = false" type="button" color="red" text="Cancel" />
-					<VBtn text="Submit" color="green" type="submit" />
+					<VBtn @click="reportFormDialog = false" type="button" color="red" variant="elevated" :loading="reporting"
+						text="Cancel" />
+					<VBtn text="Submit" color="primary" type="submit" variant="elevated" :loading="reporting" />
 				</VCardActions>
 			</VForm>
 		</VCard>
