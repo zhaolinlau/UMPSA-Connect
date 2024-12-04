@@ -16,7 +16,16 @@ const search = ref('')
 </script>
 
 <template>
-	<VTextField v-model="search" prepend-inner-icon="i-mdi:magnify" label="Search" flat single-line hide-details
-		variant="solo-filled" />
-	<VDataTable :items="reports" :search="search" />
+	<VCard>
+		<VCardTitle class="d-flex align-center pe-2">
+			Report List
+			<VSpacer />
+			<VTextField v-model="search" prepend-inner-icon="i-mdi:magnify" label="Search" flat single-line hide-details
+				variant="solo-filled" />
+		</VCardTitle>
+
+		<VDivider />
+
+		<VDataTable :items="reports" :search="search" />
+	</VCard>
 </template>
