@@ -61,7 +61,7 @@ const logout = async () => {
 </script>
 
 <template>
-	<VAppBar scroll-behavior="hide">
+	<VAppBar scroll-behavior="hide" :color="user.role == 'admin' ? 'secondary' : 'primary'">
 		<template #prepend>
 			<VAppBarNavIcon @click.stop="drawer = !drawer" class="hidden-lg-and-up" />
 			<VAppBarTitle class="cursor-pointer ml-3" @click="navigateTo('/')" text="UMPSA Connect" />
@@ -75,14 +75,15 @@ const logout = async () => {
 
 	<VNavigationDrawer v-model="drawer">
 		<VList>
-			<VListItem :subtitle="user.email" :title="user.email.split('@')[0].toLocaleUpperCase()" />
-
+			<VListItem :subtitle="user.email"
+				:title="user.user_metadata.full_name || user.email.split('@')[0].toLocaleUpperCase()" />
 			<VDivider />
 
 			<VListSubheader title="GENERAL" />
 
 			<VListItem v-for="navItem in generalNavItems.General" :key="navItem" :title="navItem.title" :to="navItem.to"
-				:active="router.currentRoute.value.path == navItem.to ? true : false" color="primary" />
+				:active="router.currentRoute.value.path == navItem.to ? true : false"
+				:color="user.role == 'admin' ? 'secondary' : 'primary'" />
 
 			<VListSubheader title="ADMINISTRATION" />
 
@@ -91,8 +92,8 @@ const logout = async () => {
 
 			<VListSubheader title="PREFERENCES" />
 
-			<VListItem v-for="navItem in generalNavItems.Preferences" :key="navItem" :title="navItem.title"
-				:to="navItem.to" :active="router.currentRoute.value.path == navItem.to ? true : false" color="primary" />
+			<VListItem v-for="navItem in generalNavItems.Preferences" :key="navItem" :title="navItem.title" :to="navItem.to"
+				:active="router.currentRoute.value.path == navItem.to ? true : false" color="primary" />
 		</VList>
 
 		<template #append>
