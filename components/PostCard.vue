@@ -259,10 +259,9 @@ const createReport = async () => {
 	</VDialog>
 
 	<VDialog max-width="500" v-model="editPostDialog">
-		<VCard title="Create Post">
+		<VCard title="Edit Post">
 			<VForm @submit.prevent="editPost(post.id, post.media)" ref="editPostRef">
 				<VContainer>
-					{{ postForm.media }}
 					<VTextField prepend-icon="i-mdi:format-title" v-model="postForm.title" label="Title"
 						placeholder="What do you want to ask or share?" :rules="postRules.title" />
 					<VSelect prepend-icon="i-mdi:shape" v-model="postForm.category" label="Category"
