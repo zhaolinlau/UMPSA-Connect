@@ -25,13 +25,30 @@ useSeoMeta({
 	ogImage: '/img/login.png',
 	twitterCard: 'summary_large_image',
 })
+
+const { system } = useColorMode()
+const theme = ref('light')
+
+const changeTheme = async () => {
+	if (system.value != theme.value) {
+		theme.value = system.value
+	}
+}
+
+watch(system, async () => {
+	await changeTheme()
+})
+
+onMounted(async () => {
+	await changeTheme()
+})
 </script>
 
 <template>
 	<NuxtPwaManifest />
 	<NuxtRouteAnnouncer />
 	<NuxtLoadingIndicator />
-	<VApp>
+	<VApp :theme="theme">
 		<NuxtLayout>
 			<NuxtPage />
 		</NuxtLayout>

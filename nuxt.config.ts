@@ -21,9 +21,19 @@ export default defineNuxtConfig({
 				defaultSet: 'unocss-mdi'
 			},
 			theme: {
-				defaultTheme: 'myCustomTheme',
 				themes: {
-					myCustomTheme: {
+					light: {
+						colors: {
+							primary: '#04c8c5',
+							secondary: '#3499fd',
+							error: '#f44336',
+							info: '#0897ef',
+							success: '#4caf50',
+							warning: '#ff9800',
+						}
+					},
+					dark: {
+						dark: true,
 						colors: {
 							primary: '#04c8c5',
 							secondary: '#3499fd',
