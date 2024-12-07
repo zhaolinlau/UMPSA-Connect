@@ -42,6 +42,8 @@ const toggleEditPost = async (post) => {
 	postForm.value.media = post.media
 }
 
+const editPostSnackbar = ref(false)
+
 const editPost = async (post_id, post_media) => {
 	const { valid } = await editPostRef.value.validate()
 	if (valid) {
@@ -64,6 +66,8 @@ const editPost = async (post_id, post_media) => {
 				media: postForm.value.media != post_media ? `${media_id.value}/${postForm.value.media.name}` : post_media
 			}
 		})
+
+		editPostSnackbar.value = true
 	}
 
 	editPostDialog.value = false
@@ -133,9 +137,16 @@ const commentsChannel = client.channel(`${id}:comments`).on(
 	async () => await refreshComments()
 )
 
+const bookmarkChannel = client.channel(`${id}:bookmark`).on(
+	'postgres_changes',
+	{ event: '*', schema: 'public', table: 'bookmarks' },
+	async () => await refreshBookmark()
+)
+
 onMounted(async () => {
 	commentsChannel.subscribe()
 	votesChannel.subscribe()
+	bookmarkChannel.subscribe()
 })
 
 onUnmounted(async () => {
@@ -163,7 +174,7 @@ const reportRules = ref({
 	]
 })
 
-const reportAlert = ref(false)
+const reportSnackbar = ref(false)
 
 const createReport = async () => {
 	reporting.value = true
@@ -179,15 +190,79 @@ const createReport = async () => {
 			}
 		})
 
-		reportAlert.value = true
+		reportSnackbar.value = true
 		reportFormRef.value.reset()
 	}
 
 	reporting.value = false
+	reportFormDialog.value = false
+}
+
+const addBookmarkSnackbar = ref(false)
+
+const createBookmark = async (post_id) => {
+	await $fetch('/api/bookmarks', {
+		method: 'post',
+		body: {
+			post_id: post_id
+		}
+	})
+
+	addBookmarkSnackbar.value = true
+}
+
+const { data: bookmark, refresh: refreshBookmark } = await useFetch('/api/bookmarks', {
+	method: 'get',
+	query: {
+		post_id: props.post.id,
+		user_id: user.value.id
+	}
+})
+
+const deleteBookmarkSnackbar = ref(false)
+
+const deleteBookmark = async (id) => {
+	await $fetch('/api/bookmarks', {
+		method: 'delete',
+		body: {
+			id: id
+		}
+	})
+
+	deleteBookmarkSnackbar.value = true
 }
 </script>
 
 <template>
+
+	<VSnackbar variant="elevated" location="bottom right" timer="success" text="Report has been submitted."
+		v-model="reportSnackbar">
+		<template v-slot:actions>
+			<vBtn color="red" icon="i-mdi:close" @click="reportSnackbar = false" />
+		</template>
+	</VSnackbar>
+
+	<VSnackbar position="relative" variant="elevated" location="bottom right" timer="success" text="Added to bookmark."
+		v-model="addBookmarkSnackbar">
+		<template v-slot:actions>
+			<vBtn color="red" icon="i-mdi:close" @click="addBookmarkSnackbar = false" />
+		</template>
+	</VSnackbar>
+
+	<VSnackbar variant="elevated" location="bottom right" timer="success" text="Deleted from bookmark."
+		v-model="deleteBookmarkSnackbar">
+		<template v-slot:actions>
+			<vBtn color="red" icon="i-mdi:close" @click="deleteBookmarkSnackbar = false" />
+		</template>
+	</VSnackbar>
+
+	<VSnackbar variant="elevated" location="bottom right" timer="success" text="Your post has been updated."
+		v-model="editPostSnackbar">
+		<template v-slot:actions>
+			<vBtn color="red" icon="i-mdi:close" @click="editPostSnackbar = false" />
+		</template>
+	</VSnackbar>
+
 	<VCard hover>
 		<VCardItem>
 			<VChip>{{ post.category }}</VChip>
@@ -223,13 +298,19 @@ const createReport = async () => {
 				</template>
 
 				<VList>
+
 					<VListItem title="Edit" prepend-icon="i-mdi:pencil" v-if="post.user_id == user.id"
 						@click="toggleEditPost(post)" />
-					<VListItem title="Bookmark" prepend-icon="i-mdi:bookmark" />
+
+					<VListItem @click="bookmark ? deleteBookmark(bookmark.id) : createBookmark(post.id)" title="Bookmark"
+						prepend-icon="i-mdi:bookmark" :active="bookmark ? true : false" color="primary" />
+
 					<VListItem @click="deletePost(post.id, post.media)" title="Delete" prepend-icon="i-mdi:delete"
 						v-if="post.user_id == user.id" />
+
 					<VListItem v-if="post.user_id != user.id" @click="reportFormDialog = true" title="Report"
 						prepend-icon="i-mdi:alert" />
+
 				</VList>
 			</VMenu>
 		</VCardActions>
@@ -239,8 +320,6 @@ const createReport = async () => {
 		<VCard title="Submit a report"
 			subtitle="Thanks for looking out for yourself by reporting things that break the rules. Let us know what's happening, and we'll look into it.">
 			<VForm @submit.prevent="createReport" ref="reportFormRef">
-				<VAlert @click:close="reportAlert = false" v-model="reportAlert" border="start" color="green" variant="elevated"
-					border-color="green" title="Success" icon="$success" text="Report has been submitted." closable />
 				<VContainer>
 					<VSelect label="Problem Category" v-model="reportForm.category"
 						:items="['Spam', 'Harassment or Bullying', 'Hate Speech', 'Misinformation', 'Inappropriate Content', 'Privacy Violation', 'Intellectual Property Violation']"

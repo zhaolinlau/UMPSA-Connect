@@ -5,7 +5,7 @@ export default defineEventHandler(async (event) => {
 	const query = getQuery(event)
 
 	if (query.post_id) {
-		const { data, error } = await client.from('bookmarks').select('id, post_id, created_at').eq('user_id', query.user_id)
+		const { data, error } = await client.from('bookmarks').select('id, post_id, created_at').eq('user_id', query.user_id).eq('post_id', query.post_id).single()
 
 		if (error) {
 			throw createError({

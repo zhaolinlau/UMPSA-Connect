@@ -6,9 +6,9 @@ export default defineEventHandler(async (event) => {
 
 	const { error } = await client.from('bookmarks').insert([
 		{
-			post_id: body.post_id,
-			event_id: body.event,
-			announcement_id: body.announcement_id
+			post_id: body.post_id || null,
+			event_id: body.event_id || null,
+			announcement_id: body.announcement_id || null
 		}
 	])
 
