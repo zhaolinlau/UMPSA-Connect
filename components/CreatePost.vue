@@ -64,13 +64,24 @@ const createPost = async () => {
 const resetPostForm = async () => {
 	postFormDialog.value = false
 	postFormRef.value.reset()
+	postSnackbar.value = true
 }
+
+const postSnackbar = ref(false)
 </script>
 
 <template>
 	<VOverlay class="align-center justify-center" :model-value="posting ? true : false">
 		<VProgressCircular color="primary" size="64" indeterminate />
 	</VOverlay>
+
+	<VSnackbar variant="elevated" location="bottom right" timer="success" text="Post has been created."
+		v-model="postSnackbar">
+		<template v-slot:actions>
+			<vBtn color="red" icon="i-mdi:close" @click="postSnackbar = false" />
+		</template>
+	</VSnackbar>
+
 	<VBtn icon="i-mdi:plus" @click="postFormDialog = true" />
 	<VDialog max-width="500" v-model:model-value="postFormDialog">
 		<VCard title="Create Post">
