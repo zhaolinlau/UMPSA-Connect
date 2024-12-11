@@ -1,26 +1,43 @@
 <script setup>
-const text = ref('')
+const textForm = reactive({
+	text: ''
+})
 const loading = ref(false)
 const contents = ref([])
-const submitText = async () => {
-	loading.value = true
-	contents.value.push({
-		role: 'user',
-		parts: [{
-			text: text.value
-		}]
-	})
-
-	text.value = ''
-
-	const data = await $fetch('/api/gemini', {
-		method: 'post',
-		body: {
-			contents: contents.value
+const textFormRef = ref(null)
+const textRules = ref({
+	text: [
+		value => {
+			if (value) return true
+			return 'Text is required.'
 		}
-	})
+	]
+})
 
-	contents.value.push(data)
+const sendText = async () => {
+	loading.value = true
+	const { valid } = await textFormRef.value.validate()
+
+	if (valid) {
+		contents.value.push({
+			role: 'user',
+			parts: [{
+				text: textForm.text
+			}]
+		})
+
+		textFormRef.value.reset()
+
+		const data = await $fetch('/api/gemini', {
+			method: 'post',
+			body: {
+				contents: contents.value
+			}
+		})
+
+		contents.value.push(data)
+	}
+
 	loading.value = false
 }
 </script>
@@ -33,6 +50,9 @@ const submitText = async () => {
 		</div>
 	</div>
 
-	<VTextField v-model="text" label="Text" :loading="loading" :disabled="loading" class="mt-5" />
-	<VBtn text="Send" color="primary" variant="elevated" @click="submitText" :loading="loading" />
+	<VForm @submit.prevent="sendText" ref="textFormRef">
+		<VTextField v-model="textForm.text" label="Text" :rules="textRules.text" :loading="loading" :disabled="loading"
+			class="mt-5" />
+		<VBtn text="Send" color="primary" variant="elevated" type="submit" :loading="loading" />
+	</VForm>
 </template>
