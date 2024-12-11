@@ -18,6 +18,10 @@ const generalNavItems = ref(
 				title: 'Events',
 				to: '/events'
 			},
+			{
+				title: 'AI Assistant',
+				to: '/ai_assistant'
+			}
 		],
 		Administration: [
 			{

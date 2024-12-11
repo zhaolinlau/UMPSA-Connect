@@ -67,6 +67,7 @@ export default defineNuxtConfig({
 	},
 
 	runtimeConfig: {
+		geminiKey: process.env.GEMINI_API_KEY,
 		public: {
 			siteUrl: process.env.NUXT_PUBLIC_SITE_URL
 		}
