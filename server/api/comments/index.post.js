@@ -6,7 +6,8 @@ export default defineEventHandler(async (event) => {
 	const { error } = await client.from('comments').insert([
 		{
 			post_id: body.post_id,
-			content: body.content
+			content: body.content,
+			media: body.media
 		}
 	])
 
