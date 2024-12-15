@@ -90,6 +90,8 @@ const deletePost = async (post_id, post_media) => {
 			post_media
 		}
 	})
+
+	await navigateTo('/')
 }
 
 const createVote = async (post_id) => {
