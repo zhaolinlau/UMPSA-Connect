@@ -91,6 +91,50 @@ const deleteMedia = async (id, media) => {
 
 	commentForm.media = null
 }
+
+const reportSnackbar = ref(false)
+
+const reportFormRef = ref(null)
+
+const reportFormDialog = ref(false)
+
+const reportForm = reactive({
+	category: '',
+	description: ''
+})
+
+const reporting = ref(false)
+
+const reportRules = ref({
+	category: [
+		value => {
+			if (value) return true
+			return 'Please select a category.'
+		}
+	]
+})
+
+const createReport = async () => {
+	reporting.value = true
+	const { valid } = await reportFormRef.value.validate()
+
+	if (valid) {
+		await $fetch('/api/reports', {
+			method: 'post',
+			body: {
+				category: reportForm.category,
+				description: reportForm.description,
+				comment_id: props.comment.id
+			}
+		})
+
+		reportSnackbar.value = true
+		reportFormRef.value.reset()
+		reportFormDialog.value = false
+	}
+
+	reporting.value = false	
+}
 </script>
 
 <template>
@@ -98,6 +142,13 @@ const deleteMedia = async (id, media) => {
 		v-model="editCommentSnackbar">
 		<template v-slot:actions>
 			<vBtn color="red" icon="i-mdi:close" @click="editCommentSnackbar = false" />
+		</template>
+	</VSnackbar>
+
+	<VSnackbar variant="elevated" location="bottom right" timer="success" text="Report has been submitted."
+		v-model="reportSnackbar">
+		<template v-slot:actions>
+			<vBtn color="red" icon="i-mdi:close" @click="reportSnackbar = false" />
 		</template>
 	</VSnackbar>
 
@@ -121,12 +172,34 @@ const deleteMedia = async (id, media) => {
 						<VListItem @click="deleteComment(comment.id, comment.media)" title="Delete" prepend-icon="i-mdi:delete"
 							v-if="comment.user_id == user.id" />
 					</template>
-
-					<VListItem v-if="comment.user_id != user.id" @click="" title="Report" prepend-icon="i-mdi:alert" />
+					<VListItem @click="reportFormDialog = true" title="Report" prepend-icon="i-mdi:alert" />
+					<VListItem v-if="comment.user_id != user.id" @click="reportFormDialog = true" title="Report"
+						prepend-icon="i-mdi:alert" />
 				</VList>
 			</VMenu>
 		</VCardActions>
 	</VCard>
+
+	<VDialog max-width="500" v-model="reportFormDialog">
+		<VCard title="Submit a report"
+			subtitle="Thanks for looking out for yourself by reporting things that break the rules. Let us know what's happening, and we'll look into it.">
+			<VForm @submit.prevent="createReport" ref="reportFormRef">
+				<VContainer>
+					<VSelect label="Problem Category" v-model="reportForm.category"
+						:items="['Spam', 'Harassment or Bullying', 'Hate Speech', 'Misinformation', 'Inappropriate Content', 'Privacy Violation', 'Intellectual Property Violation']"
+						:rules="reportRules.category" :loading="reporting" :disabled="reporting" />
+					<VTextarea v-model="reportForm.description" label="Description" :disabled="reporting" :loading="reporting"
+						clearable />
+				</VContainer>
+				<VCardActions>
+					<VSpacer />
+					<VBtn @click="reportFormDialog = false" type="button" color="red" variant="elevated" :loading="reporting"
+						text="Cancel" />
+					<VBtn text="Submit" color="primary" type="submit" variant="elevated" :loading="reporting" />
+				</VCardActions>
+			</VForm>
+		</VCard>
+	</VDialog>
 
 	<VDialog max-width="500" v-model="editCommentDialog">
 		<VCard title="Edit Comment">
