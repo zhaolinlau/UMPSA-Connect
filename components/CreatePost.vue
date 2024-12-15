@@ -55,6 +55,8 @@ const createPost = async () => {
 			}
 		})
 
+		await navigateTo('/')
+
 		await resetPostForm()
 	}
 
