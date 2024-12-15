@@ -62,7 +62,7 @@ const resetCommentForm = async () => {
 	<VForm validate-on="submit" @submit.prevent="createComment" ref="commentFormRef">
 		<VTextarea :disabled="commenting" :loading="commenting" label="Comment" placeholder="Add a comment..."
 			:rules="commentRules.content" v-model="commentForm.content" />
-		<VFileInput v-model="commentForm.media" accept="image/*" label="Media" />
+		<VFileInput v-model="commentForm.media" accept="image/*" label="Media" :loading="commenting" :disabled="commenting" />
 		<VBtn :loading="commenting" color="primary" text="Comment" type="submit" />
 	</VForm>
 </template>
