@@ -133,7 +133,7 @@ const createReport = async () => {
 		reportFormDialog.value = false
 	}
 
-	reporting.value = false	
+	reporting.value = false
 }
 </script>
 
@@ -155,8 +155,10 @@ const createReport = async () => {
 	<VCard hover density border :title="comment_user.email.split('@')[0].toLocaleUpperCase()"
 		:subtitle="new Date(comment.created_at).toLocaleString('en-GB', { timeZone: 'Asia/Kuala_Lumpur', hour12: true })"
 		:text="comment.content">
+
 		<VImg :src="client.storage.from('images').getPublicUrl(`comments/${comment.media}`).data.publicUrl"
-			:alt="comment.media" cover />
+			:alt="comment.media" :draggable="false" cover />
+
 		<VCardActions>
 			<VSpacer />
 			<VMenu location="top">
