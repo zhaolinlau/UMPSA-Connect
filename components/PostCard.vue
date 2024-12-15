@@ -194,10 +194,10 @@ const createReport = async () => {
 
 		reportSnackbar.value = true
 		reportFormRef.value.reset()
+		reportFormDialog.value = false
 	}
 
-	reporting.value = false
-	reportFormDialog.value = false
+	reporting.value = false	
 }
 
 const addBookmarkSnackbar = ref(false)
