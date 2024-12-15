@@ -4,12 +4,22 @@ export default defineEventHandler(async (event) => {
 	const client = await serverSupabaseClient(event)
 	const body = await readBody(event)
 
-	const { error } = await client.from('comments').delete().eq('id', body.id)
+	const { error } = await client.storage.from('images').remove([`comments/${body.media}`])
 
 	if (error) {
 		throw createError({
 			statusCode: error.code,
 			statusMessage: error.message
 		})
+	} else {
+		const { error } = await client.from('comments').delete().eq('id', body.id)
+
+		if (error) {
+			throw createError({
+				statusCode: error.code,
+				statusMessage: error.message
+			})
+		}
 	}
+
 })
