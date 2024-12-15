@@ -6,7 +6,8 @@ export default defineEventHandler(async (event) => {
 
 	const { error } = await client.from('reports').insert([
 		{
-			post_id: body.post_id,
+			post_id: body.post_id || null,
+			comment_id: body.comment_id || null,
 			category: body.category,
 			description: body.description
 		}
