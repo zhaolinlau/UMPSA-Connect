@@ -99,8 +99,8 @@ const postSnackbar = ref(false)
 				</VContainer>
 				<VCardActions>
 					<VSpacer />
-					<VBtn color="red" type="button" text="Cancel" @click="postFormDialog = false" />
-					<VBtn color="primary" text="Post" type="submit" />
+					<VBtn color="red" type="button" variant="elevated" text="Cancel" @click="postFormDialog = false" />
+					<VBtn color="primary" text="Post" variant="elevated" type="submit" />
 				</VCardActions>
 			</VForm>
 		</VCard>
