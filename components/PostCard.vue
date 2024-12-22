@@ -68,9 +68,8 @@ const editPost = async (post_id, post_media) => {
 		})
 
 		editPostSnackbar.value = true
-	}
-
-	editPostDialog.value = false
+		editPostDialog.value = false
+	}	
 }
 
 const deleteMedia = async (post_id, post_media) => {
@@ -365,8 +364,8 @@ const deleteBookmark = async (id) => {
 				</VContainer>
 				<VCardActions>
 					<VSpacer />
-					<VBtn color="red" type="button" text="Cancel" @click="editPostDialog = false" />
-					<VBtn color="primary" text="Save" type="submit" />
+					<VBtn color="red" variant="elevated" type="button" text="Cancel" @click="editPostDialog = false" />
+					<VBtn color="primary" variant="elevated" text="Save" type="submit" />
 				</VCardActions>
 			</VForm>
 		</VCard>
