@@ -10,6 +10,7 @@
     "postinstall": "nuxt prepare"
   },
   "dependencies": {
+    "@crazydos/vue-markdown": "^1.0.2",
     "@formkit/auto-animate": "^0.8.2",
     "@google/generative-ai": "^0.21.0",
     "@nuxtjs/robots": "^5.0.1",

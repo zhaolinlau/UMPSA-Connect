@@ -46,7 +46,7 @@ const sendText = async () => {
 	<div v-for="content in contents" :key="content" class="mt-5">
 		<p>{{ content.role }}:</p>
 		<div v-for="part in content.parts">
-			<p>{{ part.text }}</p>
+			<VueMarkdown :markdown="part.text" />
 		</div>
 	</div>
 
