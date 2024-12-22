@@ -2,14 +2,29 @@ import { serverSupabaseClient } from '#supabase/server'
 
 export default defineEventHandler(async (event) => {
 	const client = await serverSupabaseClient(event)
-	const { data, error } = await client.from('events').select('*').order('created_at', { ascending: false })
+	const query = getQuery(event)
 
-	if (error) {
-		throw createError({
-			statusCode: error.code,
-			statusMessage: error.message
-		})
+	if (query.single) {
+		const { data, error } = await client.from('events').select('*').eq('id', query.id).single()
+
+		if (error) {
+			throw createError({
+				statusCode: error.code,
+				statusMessage: error.message
+			})
+		} else {
+			return data
+		}
 	} else {
-		return data
+		const { data, error } = await client.from('events').select('*').order('created_at', { ascending: false })
+
+		if (error) {
+			throw createError({
+				statusCode: error.code,
+				statusMessage: error.message
+			})
+		} else {
+			return data
+		}
 	}
 })

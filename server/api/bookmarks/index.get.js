@@ -16,7 +16,7 @@ export default defineEventHandler(async (event) => {
 			return data
 		}
 	} else if (query.event_id) {
-		const { data, error } = await client.from('bookmarks').select('id, event_id, created_at').eq('user_id', query.user_id)
+		const { data, error } = await client.from('bookmarks').select('id, event_id, created_at').eq('user_id', query.user_id).eq('event_id', query.event_id).single()
 
 		if (error) {
 			throw createError({
