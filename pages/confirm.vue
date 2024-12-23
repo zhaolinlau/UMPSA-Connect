@@ -5,13 +5,14 @@ definePageMeta({
 
 const user = useSupabaseUser()
 const client = useSupabaseClient()
-
+const profile = useProfile()
 const addProfile = async (email) => {
+
 	const { data: profile, error } = await client.from('profiles').insert([
 		{
 			role: email.split('@')[1].toLocaleLowerCase() == 'adab.umpsa.edu.my' ? 'student' : 'staff'
 		}
-	]).select().single()	
+	]).select().single()
 
 	if (error) {
 		throw createError({
@@ -53,7 +54,9 @@ const addProfile = async (email) => {
 
 watch(user, async () => {
 	if (user.value) {
-		await addProfile(user.value.email)
+		if (!profile.value) {
+			await addProfile(user.value.email)
+		}
 		await navigateTo('/')
 	} else {
 		await navigateTo('/login')

@@ -1,4 +1,5 @@
 <script setup>
+const profile = useProfile()
 const router = useRouter()
 const client = useSupabaseClient()
 const user = useSupabaseUser()
@@ -65,7 +66,7 @@ const logout = async () => {
 </script>
 
 <template>
-	<VAppBar scroll-behavior="hide" :color="user.role == 'admin' ? 'secondary' : 'primary'">
+	<VAppBar scroll-behavior="hide" :color="profile.role == 'admin' ? 'secondary' : 'primary'">
 		<template #prepend>
 			<VAppBarNavIcon @click.stop="drawer = !drawer" class="hidden-lg-and-up" />
 			<VAppBarTitle class="cursor-pointer ml-3" @click="navigateTo('/')" text="UMPSA Connect" />
@@ -89,10 +90,12 @@ const logout = async () => {
 				:active="router.currentRoute.value.path == navItem.to ? true : false"
 				:color="user.role == 'admin' ? 'secondary' : 'primary'" />
 
-			<VListSubheader title="ADMINISTRATION" />
+			<template v-if="profile.role == 'admin'">
+				<VListSubheader title="ADMINISTRATION" />
 
-			<VListItem v-for="navItem in generalNavItems.Administration" :key="navItem" :title="navItem.title"
-				:to="navItem.to" :active="router.currentRoute.value.path == navItem.to ? true : false" color="primary" />
+				<VListItem v-for="navItem in generalNavItems.Administration" :key="navItem" :title="navItem.title"
+					:to="navItem.to" :active="router.currentRoute.value.path == navItem.to ? true : false" color="primary" />
+			</template>
 
 			<VListSubheader title="PREFERENCES" />
 

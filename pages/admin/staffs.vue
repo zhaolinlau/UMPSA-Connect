@@ -1,4 +1,8 @@
 <script setup>
+definePageMeta({
+	middleware: ['admin']
+})
+
 const { data: staffs } = await useFetch('/api/staffs', {
 	method: 'get',
 })
