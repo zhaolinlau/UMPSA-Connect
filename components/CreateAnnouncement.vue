@@ -102,9 +102,8 @@ const faculties = ref([
 		<VCard title="Create Announcement">
 			<VForm @submit.prevent="createAnnouncement" ref="announcementFormRef">
 				<VContainer>
-					<VTextField prepend-icon="i-mdi:format-title" v-model="announcementForm.title" label="Title"
-						placeholder="What do you want to ask or share?" :rules="announcementRules.title" />
-					<VSelect prepend-icon="i-mdi:shape" v-model="announcementForm.target_user" label="target_user" :items="faculties"
+					<VTextField prepend-icon="i-mdi:format-title" v-model="announcementForm.title" label="Title" :rules="announcementRules.title" />
+					<VSelect prepend-icon="i-mdi:shape" v-model="announcementForm.target_user" label="Target User" :items="faculties"
 						:rules="announcementRules.target_user" />
 					<VTextarea prepend-icon="i-mdi:text" v-model="announcementForm.content" :rules="announcementRules.content" label="Content"
 						clearable />
