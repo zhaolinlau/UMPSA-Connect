@@ -149,6 +149,17 @@ const deleteBookmark = async (id) => {
 
 	deleteBookmarkSnackbar.value = true
 }
+
+const faculties = ref([
+	'Faculty of Computing',
+	'Faculty of Chemical and Process Engineering Technology',
+	'Faculty of Civil Engineering Technology',
+	'Faculty of Electrical and Electronics Engineering Technology',
+	'Faculty of Manufacturing and Mechatronic Engineering Technology',
+	'Faculty of Mechanical and Automotive Engineering Technology',
+	'Faculty of Industrial Sciences and Technology',
+	'Faculty of Industrial Management'
+])
 </script>
 
 <template>
@@ -199,4 +210,41 @@ const deleteBookmark = async (id) => {
 			</VMenu>
 		</VCardActions>
 	</VCard>
+
+	<VDialog max-width="500" v-model="editAnnouncementDialog">
+		<VCard title="Edit Announcement">
+			<VForm @submit.prevent="editAnnouncement(announcement.id, announcement.media)" ref="editAnnouncementRef">
+				<VContainer>
+					<VTextField prepend-icon="i-mdi:format-title" v-model="announcementForm.title" label="Title"
+						:rules="announcementRules.title" />
+
+					<VTextarea prepend-icon="i-mdi:text" v-model="announcementForm.content" :rules="announcementRules.content"
+						label="Content" clearable />
+
+					<VSelect prepend-icon="i-mdi:shape" v-model="announcementForm.target_user" label="Target User"
+						:items="faculties" :rules="announcementRules.target_user" />
+
+					<VRow align="center" justify="center" class="mb-3" v-if="announcement.media">
+						<VCol cols="3">
+							<VImg max-height="250"
+								:src="client.storage.from('images').getPublicUrl(`announcements/${announcement.media}`).data.publicUrl"
+								:alt="announcement.media" v-if="announcement.media" :draggable="false" />
+						</VCol>
+						<VCol cols="4">
+							<VBtn text="Delete media" @click="deleteMedia(announcement.id, announcement.media)" />
+						</VCol>
+					</VRow>
+
+					<VFileInput accept="image/*" v-model:model-value="announcementForm.media" label="Media"
+						v-if="!announcement.media" />
+
+				</VContainer>
+				<VCardActions>
+					<VSpacer />
+					<VBtn color="red" variant="elevated" type="button" text="Cancel" @click="editAnnouncementDialog = false" />
+					<VBtn color="primary" variant="elevated" text="Save" type="submit" />
+				</VCardActions>
+			</VForm>
+		</VCard>
+	</VDialog>
 </template>
