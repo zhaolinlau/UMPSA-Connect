@@ -5,12 +5,25 @@ definePageMeta({
 
 const user = useSupabaseUser()
 const client = useSupabaseClient()
-const profile = useProfile()
-const addProfile = async (email) => {
+const profile = ref({})
 
-	const { data: profile, error } = await client.from('profiles').insert([
+const fetchProfile = async () => {
+	const { data, error } = await client.from('profiles').select().eq('user_id', user.value.id).single()
+
+	if (error) {
+		throw createError({
+			statusCode: error.code,
+			statusMessage: error.message
+		})
+	} else {
+		profile.value = data
+	}
+}
+
+const addProfile = async () => {
+	const { data: profileData, error } = await client.from('profiles').insert([
 		{
-			role: email.split('@')[1].toLocaleLowerCase() == 'adab.umpsa.edu.my' ? 'student' : 'staff'
+			role: user.value.email.split('@')[1].toLocaleLowerCase() == 'adab.umpsa.edu.my' ? 'student' : 'staff'
 		}
 	]).select().single()
 
@@ -20,12 +33,11 @@ const addProfile = async (email) => {
 			statusMessage: error.message
 		})
 	} else {
-		if (profile.role == 'student') {
-			console.log(email.split('@')[0].toLocaleUpperCase())
+		if (profileData.role == 'student') {
 			const { error } = await client.from('students').insert([
 				{
-					matric_id: email.split('@')[0].toLocaleUpperCase(),
-					profile_id: profile.id
+					matric_id: user.value.email.split('@')[0].toLocaleUpperCase(),
+					profile_id: profileData.id
 				}
 			])
 
@@ -35,10 +47,10 @@ const addProfile = async (email) => {
 					statusMessage: error.message
 				})
 			}
-		} else if (profile.role == 'staff') {
+		} else if (profileData.role == 'staff') {
 			const { error } = await client.from('staffs').insert([
 				{
-					profile_id: profile.id
+					profile_id: profileData.id
 				}
 			])
 
@@ -54,8 +66,9 @@ const addProfile = async (email) => {
 
 watch(user, async () => {
 	if (user.value) {
+		await fetchProfile()
 		if (!profile.value) {
-			await addProfile(user.value.email)
+			await addProfile()
 		}
 		await navigateTo('/')
 	} else {
