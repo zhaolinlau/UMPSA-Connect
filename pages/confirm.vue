@@ -5,71 +5,34 @@ definePageMeta({
 
 const user = useSupabaseUser()
 const client = useSupabaseClient()
-const profile = ref({})
-
-const fetchProfile = async () => {
-	const { data, error } = await client.from('profiles').select().eq('user_id', user.value.id).single()
-
-	if (error) {
-		throw createError({
-			statusCode: error.code,
-			statusMessage: error.message
-		})
-	} else {
-		profile.value = data
-	}
-}
-
-const addProfile = async () => {
-	const { data: profileData, error } = await client.from('profiles').insert([
-		{
-			role: user.value.email.split('@')[1].toLocaleLowerCase() == 'adab.umpsa.edu.my' ? 'student' : 'staff'
-		}
-	]).select().single()
-
-	if (error) {
-		throw createError({
-			statusCode: error.code,
-			statusMessage: error.message
-		})
-	} else {
-		if (profileData.role == 'student') {
-			const { error } = await client.from('students').insert([
-				{
-					matric_id: user.value.email.split('@')[0].toLocaleUpperCase(),
-					profile_id: profileData.id
-				}
-			])
-
-			if (error) {
-				throw createError({
-					statusCode: error.code,
-					statusMessage: error.message
-				})
-			}
-		} else if (profileData.role == 'staff') {
-			const { error } = await client.from('staffs').insert([
-				{
-					profile_id: profileData.id
-				}
-			])
-
-			if (error) {
-				throw createError({
-					statusCode: error.code,
-					statusMessage: error.message
-				})
-			}
-		}
-	}
-}
 
 watch(user, async () => {
 	if (user.value) {
-		await fetchProfile()
-		if (!profile.value) {
-			await addProfile()
+		const { data: profile } = await client.from('profiles').select('*').eq('user_id', user.value.id).single()
+
+		if (!profile) {
+			const { data: addedProfile } = await client.from('profiles').insert([
+				{
+					role: user.value.email.split('@')[1].toLocaleLowerCase() == 'adab.umpsa.edu.my' ? 'student' : 'staff'
+				}
+			]).select().single()
+
+			if (addedProfile.role == 'student') {
+				await client.from('students').insert([
+					{
+						matric_id: user.value.email.split('@')[0].toLocaleUpperCase(),
+						profile_id: addedProfile.id
+					}
+				])
+			} else if (addedProfile.role == 'staff') {
+				await client.from('staffs').insert([
+					{
+						profile_id: addedProfile.id
+					}
+				])
+			}
 		}
+
 		await navigateTo('/')
 	} else {
 		await navigateTo('/login')
