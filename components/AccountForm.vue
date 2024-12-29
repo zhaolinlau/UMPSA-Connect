@@ -31,7 +31,7 @@ const updatePassword = async () => {
 		} else {
 			PasswordSuccessAlert.value = true
 			PasswordErrorAlert.value = false
-			editPassword.value = false			
+			editPassword.value = false
 		}
 	}
 
@@ -42,18 +42,18 @@ const updatePassword = async () => {
 </script>
 
 <template>
-	<VRow justify="center">
+	<VRow>
+		<VCol cols="12" v-if="editPassword && (PasswordErrorAlert || PasswordSuccessAlert)">
+			<VAlert @click:close="PasswordErrorAlert = false" v-model="PasswordErrorAlert" border="start" color="red"
+				variant="elevated" border-color="red" title="Error" icon="$error" :text="passwordError"
+				v-if="PasswordErrorAlert" closable />
+
+			<VAlert @click:close="PasswordSuccessAlert = false" v-model="PasswordSuccessAlert" border="start" color="success"
+				variant="elevated" border-color="success" title="Success" icon="$success" text="Your password has been updated"
+				v-if="PasswordSuccessAlert" closable />
+		</VCol>
+
 		<VCol sm="12" lg="6">
-			<div class="mb-4">
-				<VAlert @click:close="PasswordErrorAlert = false" v-model="PasswordErrorAlert" border="start" color="red"
-					variant="elevated" border-color="red" title="Error" icon="$error" :text="passwordError"
-					v-if="PasswordErrorAlert" closable />
-
-				<VAlert @click:close="PasswordSuccessAlert = false" v-model="PasswordSuccessAlert" border="start"
-					color="success" variant="elevated" border-color="success" title="Success" icon="$success"
-					text="Your password has been updated." v-if="PasswordSuccessAlert" closable />
-			</div>
-
 			<VTextField v-model="email" label="Email" readonly disabled />
 
 			<VForm @submit.prevent="updatePassword">
