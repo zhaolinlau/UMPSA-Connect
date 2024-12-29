@@ -7,6 +7,7 @@ const email = ref('')
 const loading = ref(false)
 const loginError = ref('')
 const loginAlert = ref(false)
+const loginFormRef = ref(null)
 
 const login = async () => {
 	loading.value = true
@@ -18,6 +19,7 @@ const login = async () => {
 	if (error) {
 		loginError.value = error.message
 		loginAlert.value = true
+		loginFormRef.value.reset()
 	} else {
 		await navigateTo('/confirm')
 		loginError.value = ''
@@ -82,7 +84,7 @@ const microsoftLogin = async () => {
 		</VCol>
 
 		<VCol cols="12">
-			<VForm @submit.prevent="login">
+			<VForm @submit.prevent="login" ref="loginFormRef">
 
 				<VTextField label="Email" placeholder="you@example.com" v-model="email" prepend-inner-icon="i-mdi:email-outline"
 					type="email" :loading="loading" :disabled="loading" />
@@ -91,7 +93,12 @@ const microsoftLogin = async () => {
 					:type="visible ? 'text' : 'password'" placeholder="example12345" prepend-inner-icon="i-mdi:lock-outline"
 					@click:append-inner="visible = !visible" :loading="loading" :disabled="loading" />
 
-				<VBtn class="mb-4" text="Login" prepend-icon="i-mdi:login" type="submit" color="primary" block
+				<div class="d-flex justify-end">
+					<VBtn class="text-decoration-underline" color="primary" to="/forgot_password" text="Forgot password?"
+						variant="text" />
+				</div>
+
+				<VBtn class="my-4" text="Login" prepend-icon="i-mdi:login" type="submit" color="primary" block
 					:loading="loading" />
 				<VDivider>OR</VDivider>
 				<VBtn text="Continue with" append-icon="i-mdi:google" class="mt-3" type="button" block @click="googleLogin"
