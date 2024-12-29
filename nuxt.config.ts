@@ -53,7 +53,7 @@ export default defineNuxtConfig({
 			login: '/login',
 			callback: '/confirm',
 			include: undefined,
-			exclude: [],
+			exclude: ['/forgot_password'],
 			cookieRedirect: false
 		},
 		clientOptions: {
