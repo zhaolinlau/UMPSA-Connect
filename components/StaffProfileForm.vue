@@ -147,7 +147,7 @@ const deleteMedia = async () => {
 
 				<vCol cols="5">
 					<VForm @submit.prevent="uploadAvatarFile" class="ml-3" v-if="uploadAvatar">
-						<VFileInput v-model="avatarFile" :loading="loading" :disabled="loading" />
+						<VFileInput label="Avatar File" v-model="avatarFile" :loading="loading" :disabled="loading" />
 						<VBtn block type="submit" color="primary" text="Save" :loading="loading" />
 						<VBtn type="button" block class="mt-3" color="error" text="Cancel" :loading="loading"
 							@click="uploadAvatar = false" />
