@@ -1,11 +1,11 @@
 <script setup>
 const props = defineProps({
-	profile: Object
+	profile: Object,
+	user: Object
 })
 
 const router = useRouter()
 const client = useSupabaseClient()
-const user = useSupabaseUser()
 const drawer = ref(null)
 const generalNavItems = ref(
 	{
@@ -60,11 +60,15 @@ const generalNavItems = ref(
 
 const logout = async () => {
 	const { error } = await client.auth.signOut()
+
 	if (error) {
-		console.error(error.message)
-	} else {
-		return reloadNuxtApp()
+		throw createError({
+			statusCode: error.code,
+			statusMessage: error.message
+		})
 	}
+
+	return reloadNuxtApp()
 }
 </script>
 
