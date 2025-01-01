@@ -87,6 +87,7 @@ export default defineNuxtConfig({
 			contentSecurityPolicy: {
 				"img-src": ["'self'", "data:", `${process.env.SUPABASE_URL}`],
 				"script-src": ["'self'", "https:", "'unsafe-inline'", "'strict-dynamic'", "'nonce-{{nonce}}'", "https://www.googletagmanager.com"],
+				"connect-src": ["'self'", "https:", "https://www.googletagmanager.com"]
 			},
 			crossOriginEmbedderPolicy: process.env.NODE_ENV == 'development' ? 'unsafe-none' : 'credentialless'
 		}
