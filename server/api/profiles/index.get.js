@@ -5,7 +5,7 @@ export default defineEventHandler(async (event) => {
 	const query = getQuery(event)
 
 	if (query.single) {
-		const { data, error } = await client.from('students').select('*').eq('user_id', query.user_id).single()
+		const { data, error } = await client.from('profiles').select('*').eq('user_id', query.user_id).single()
 
 		if (error) {
 			throw createError({
@@ -16,7 +16,7 @@ export default defineEventHandler(async (event) => {
 
 		return data
 	} else {
-		const { data, error } = await client.from('students').select('*').order('created_at', { ascending: false })
+		const { data } = await client.from('profiles').select('*').order('created_at', { ascending: false })
 
 		if (error) {
 			throw createError({

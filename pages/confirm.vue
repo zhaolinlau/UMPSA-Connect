@@ -6,13 +6,14 @@ definePageMeta({
 const user = useSupabaseUser()
 const client = useSupabaseClient()
 
-watch(user, async () => {
+watchEffect(async () => {
 	if (user.value) {
 		const { data: profile } = await client.from('profiles').select('*').eq('user_id', user.value.id).single()
 
 		if (!profile) {
 			const { data: addedProfile } = await client.from('profiles').insert([
 				{
+					name: user.value.email.split('@')[0].toLocaleUpperCase(),
 					role: user.value.email.split('@')[1].toLocaleLowerCase() == 'adab.umpsa.edu.my' ? 'student' : 'staff'
 				}
 			]).select().single()
@@ -27,6 +28,7 @@ watch(user, async () => {
 			} else if (addedProfile.role == 'staff') {
 				await client.from('staffs').insert([
 					{
+						employee_id: user.value.email.split('@')[0].toLocaleUpperCase(),
 						profile_id: addedProfile.id
 					}
 				])
@@ -37,7 +39,7 @@ watch(user, async () => {
 	} else {
 		await navigateTo('/login')
 	}
-}, { immediate: true })
+})
 </script>
 
 <template>
