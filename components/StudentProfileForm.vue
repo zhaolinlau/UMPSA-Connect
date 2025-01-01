@@ -69,9 +69,21 @@ const courses = ref([
 	'Diploma in Occupational Safety And Health'
 ])
 
+const client = useSupabaseClient()
+
 const editProfile = ref(false)
 
 const loading = ref(false)
+
+const uploadAvatar = ref(false)
+
+const media_id = ref('')
+
+const randomNumber = async () => {
+	media_id.value = Math.random()
+}
+
+const avatarFile = ref('')
 
 const studentProfileForm = reactive({
 	name: props.profile.name,
@@ -110,6 +122,31 @@ const updateStudentProfile = async () => {
 
 	loading.value = false
 }
+
+const uploadAvatarFile = async () => {
+	loading.value = true
+
+	if (props.profile.avatar) {
+		await deleteMedia()
+	}
+
+	await randomNumber()
+	await client.storage.from('images').upload(`profiles/${media_id.value}/${avatarFile.value.name}`, avatarFile.value, {
+		cacheControl: '3600',
+		upsert: false
+	})
+
+	studentProfileForm.avatar = `${media_id.value}/${avatarFile.value.name}`
+	await updateStudentProfile()
+	avatarFile.value = ''
+	uploadAvatar.value = false
+	loading.value = false
+}
+
+const deleteMedia = async () => {
+	await client.storage.from('images').remove([`profiles/${props.profile.avatar}`])
+	await client.from('profiles').update({ avatar: null }).eq('id', props.profile.id)
+}
 </script>
 
 <template>
@@ -117,6 +154,28 @@ const updateStudentProfile = async () => {
 		<vCol cols="12">
 			<p>PROFILE INFORMATION</p>
 			<VDivider class="mb-3" />
+		</vCol>
+
+		<vCol cols="12">
+			<VRow align="center">
+				<vCol cols="1">
+					<VAvatar
+						:image="profile.avatar ? client.storage.from('images').getPublicUrl(`profiles/${profile.avatar}`).data.publicUrl : '/img/blank-profile-picture-973460_1280.png'"
+						size="100" rounded="circle" accept="image/*" />
+				</vCol>
+
+				<vCol cols="5">
+					<VForm @submit.prevent="uploadAvatarFile" class="ml-3" v-if="uploadAvatar">
+						<VFileInput label="Avatar File" v-model="avatarFile" :loading="loading" :disabled="loading" />
+						<VBtn block type="submit" color="primary" text="Save" :loading="loading" />
+						<VBtn type="button" block class="mt-3" color="error" text="Cancel" :loading="loading"
+							@click="uploadAvatar = false" />
+					</VForm>
+
+					<VBtn type="button" color="secondary" text="Upload" class="ml-3" :loading="loading"
+						@click="uploadAvatar = true" v-else />
+				</vCol>
+			</VRow>
 		</vCol>
 
 		<vCol cols="12">
