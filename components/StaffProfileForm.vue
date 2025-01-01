@@ -50,9 +50,21 @@ const positions = ref([
 	'Disability Services Coordinator'
 ])
 
+const client = useSupabaseClient()
+
 const editProfile = ref(false)
 
 const loading = ref(false)
+
+const uploadAvatar = ref(false)
+
+const media_id = ref('')
+
+const randomNumber = async () => {
+	media_id.value = Math.random()
+}
+
+const avatarFile = ref('')
 
 const staffProfileForm = reactive({
 	name: props.profile.name,
@@ -91,6 +103,31 @@ const updateStaffProfile = async () => {
 
 	loading.value = false
 }
+
+const uploadAvatarFile = async () => {
+	loading.value = true
+
+	if (props.profile.avatar) {
+		await deleteMedia()
+	}
+
+	await randomNumber()
+	await client.storage.from('images').upload(`profiles/${media_id.value}/${avatarFile.value.name}`, avatarFile.value, {
+		cacheControl: '3600',
+		upsert: false
+	})
+
+	staffProfileForm.avatar = `${media_id.value}/${avatarFile.value.name}`
+	await updateStaffProfile()
+	avatarFile.value = ''
+	uploadAvatar.value = false
+	loading.value = false
+}
+
+const deleteMedia = async () => {
+	await client.storage.from('images').remove([`profiles/${props.profile.avatar}`])
+	await client.from('profiles').update({ avatar: null }).eq('id', props.profile.id)
+}
 </script>
 
 <template>
@@ -101,10 +138,32 @@ const updateStaffProfile = async () => {
 		</vCol>
 
 		<vCol cols="12">
+			<VRow align="center">
+				<vCol cols="1">
+					<VAvatar
+						:image="profile.avatar ? client.storage.from('images').getPublicUrl(`profiles/${profile.avatar}`).data.publicUrl : '/img/blank-profile-picture-973460_1280.png'"
+						size="100" rounded="circle" accept="image/*" />
+				</vCol>
+
+				<vCol cols="5">
+					<VForm @submit.prevent="uploadAvatarFile" class="ml-3" v-if="uploadAvatar">
+						<VFileInput v-model="avatarFile" :loading="loading" :disabled="loading" />
+						<VBtn block type="submit" color="primary" text="Save" :loading="loading" />
+						<VBtn type="button" block class="mt-3" color="error" text="Cancel" :loading="loading"
+							@click="uploadAvatar = false" />
+					</VForm>
+
+					<VBtn type="button" color="secondary" text="Upload" class="ml-3" :loading="loading"
+						@click="uploadAvatar = true" v-else />
+				</vCol>
+			</VRow>
+		</vCol>
+
+		<vCol cols="12">
 			<vForm @submit.prevent="updateStaffProfile">
 				<VRow>
 					<vCol cols="12" lg="6">
-						<vTextField label="Name" v-model="staffProfileForm.name" :disabled="!editProfile || loading"
+						<vTextField label="Name" clearable v-model="staffProfileForm.name" :disabled="!editProfile || loading"
 							:loading="loading" />
 					</vCol>
 
@@ -144,7 +203,7 @@ const updateStaffProfile = async () => {
 					</template>
 
 					<vCol cols="12" lg="6" v-else>
-						<VBtn text="Edit" block type="button" color="secondary" @click="editProfile = true" />
+						<VBtn text="Edit" block type="button" color="secondary" @click="editProfile = true" :loading="loading" />
 					</vCol>
 				</VRow>
 			</vForm>
