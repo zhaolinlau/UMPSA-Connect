@@ -1,5 +1,8 @@
 <script setup>
-const profile = useProfile()
+const props = defineProps({
+	profile: Object
+})
+
 const router = useRouter()
 const client = useSupabaseClient()
 const user = useSupabaseUser()

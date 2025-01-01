@@ -1,5 +1,9 @@
+<script setup>
+const profile = useProfile()
+</script>
+
 <template>
-	<NavBar />
+	<NavBar :profile="profile" />
 
 	<VMain>
 		<VContainer>
