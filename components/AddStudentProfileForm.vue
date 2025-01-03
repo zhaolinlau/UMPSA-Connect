@@ -44,6 +44,7 @@ const addStudent = async () => {
 			})
 
 			if (user) {
+				await randomNumber()
 				const profile = await $fetch('/api/profiles', {
 					method: 'POST',
 					body: {
@@ -141,7 +142,6 @@ const studentProfileRules = ref({
 
 const uploadAvatarFile = async () => {
 	if (addStudentForm.avatar) {
-		await randomNumber()
 		const { error } = await client.storage.from('images').upload(`profiles/${media_id.value}/${addStudentForm.avatar.name}`, addStudentForm.avatar, {
 			cacheControl: '3600',
 			upsert: false

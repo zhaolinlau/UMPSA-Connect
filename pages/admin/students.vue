@@ -51,6 +51,16 @@ onUnmounted(async () => {
 	await client.removeChannel(profilesChannel)
 	await client.removeChannel(studentsChannel)
 })
+
+const deleteStudent = async (user_id, avatar) => {
+	await $fetch('/api/users', {
+		method: 'DELETE',
+		body: {
+			user_id: user_id,
+			avatar: avatar
+		}
+	})
+}
 </script>
 
 <template>
@@ -90,7 +100,8 @@ onUnmounted(async () => {
 					<td>{{ item.course }}</td>
 					<td class="d-inline-flex align-center">
 						<vBtn icon="i-mdi:pencil" color="secondary" />
-						<vBtn class="ml-3" icon="i-mdi:delete" color="error" />
+						<vBtn class="ml-3" icon="i-mdi:delete" color="error" @click="deleteStudent(item.user_id, item.avatar)" />
+						{{ item.avatar }}
 					</td>
 				</tr>
 			</template>
