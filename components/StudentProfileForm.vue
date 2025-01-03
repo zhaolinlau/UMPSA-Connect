@@ -22,7 +22,70 @@ const randomNumber = async () => {
 	media_id.value = Math.random()
 }
 
-const avatarFile = ref('')
+const studentFormRef = ref()
+const avatarFormRef = ref()
+
+const avatarRule = ref({
+	avatar: [
+		value => {
+			if (value.length > 0) return true
+			return 'Avatar is required.'
+		}
+	],
+})
+
+const studentProfileRules = ref({
+	password: [
+		value => {
+			if (value) return true
+			return 'Password is required.'
+		}
+	],
+	confirm_password: [
+		value => {
+			if (value) return true
+			return 'Confirm Password is required.'
+		}
+	],
+	matric_id: [
+		value => {
+			if (value) return true
+			return 'Matric ID is required.'
+		}
+	],
+	name: [
+		value => {
+			if (value) return true
+			return 'Name is required.'
+		}
+	],
+	gender: [
+		value => {
+			if (value) return true
+			return 'Gender is required.'
+		}
+	],
+	nationality: [
+		value => {
+			if (value) return true
+			return 'Nationality is required.'
+		}
+	],
+	faculty: [
+		value => {
+			if (value) return true
+			return 'Faculty is required.'
+		}
+	],
+	course: [
+		value => {
+			if (value) return true
+			return 'Course is required.'
+		}
+	]
+})
+
+const avatarFile = ref(null)
 
 const studentProfileForm = reactive({
 	name: props.profile.name,
@@ -34,9 +97,7 @@ const studentProfileForm = reactive({
 	course: props.student.course,
 })
 
-const updateStudentProfile = async () => {
-	loading.value = true
-
+const updateProfile = async () => {
 	await $fetch('/api/profiles', {
 		method: 'put',
 		body: {
@@ -48,7 +109,9 @@ const updateStudentProfile = async () => {
 			role: props.profile.role
 		}
 	})
+}
 
+const updateStudent = async () => {
 	await $fetch('/api/students', {
 		method: 'put',
 		body: {
@@ -58,28 +121,45 @@ const updateStudentProfile = async () => {
 			course: studentProfileForm.course,
 		}
 	})
+}
+
+const updateStudentProfile = async () => {
+	loading.value = true
+
+	const { valid } = await studentFormRef.value.validate()
+
+	if (valid) {
+		await updateProfile()
+		await updateStudent()
+		editProfile.value = false
+	}
 
 	loading.value = false
-	editProfile.value = false
 }
 
 const uploadAvatarFile = async () => {
 	loading.value = true
 
-	if (props.profile.avatar) {
-		await deleteMedia()
+	const { valid } = await avatarFormRef.value.validate()
+
+	if (valid) {
+		if (props.profile.avatar) {
+			await deleteMedia()
+		}
+
+		await randomNumber()
+		await client.storage.from('images').upload(`profiles/${media_id.value}/${avatarFile.value.name}`, avatarFile.value, {
+			cacheControl: '3600',
+			upsert: false
+		})
+
+		studentProfileForm.avatar = `${media_id.value}/${avatarFile.value.name}`
+		await updateProfile()
+		await updateStudent()
+		avatarFile.value = null
+		uploadAvatar.value = false
 	}
 
-	await randomNumber()
-	await client.storage.from('images').upload(`profiles/${media_id.value}/${avatarFile.value.name}`, avatarFile.value, {
-		cacheControl: '3600',
-		upsert: false
-	})
-
-	studentProfileForm.avatar = `${media_id.value}/${avatarFile.value.name}`
-	await updateStudentProfile()
-	avatarFile.value = ''
-	uploadAvatar.value = false
 	loading.value = false
 }
 
@@ -105,8 +185,9 @@ const deleteMedia = async () => {
 				</vCol>
 
 				<vCol cols="5">
-					<VForm @submit.prevent="uploadAvatarFile" class="ml-3" v-if="uploadAvatar">
-						<VFileInput label="Avatar File" v-model="avatarFile" :loading="loading" :disabled="loading" />
+					<VForm @submit.prevent="uploadAvatarFile" class="ml-3" v-if="uploadAvatar" ref="avatarFormRef">
+						<VFileInput label="Avatar File" v-model="avatarFile" :loading="loading" :rules="avatarRule.avatar"
+							:disabled="loading" />
 						<VBtn block type="submit" color="primary" text="Save" :loading="loading" />
 						<VBtn type="button" block class="mt-3" color="error" text="Cancel" :loading="loading"
 							@click="uploadAvatar = false" />
@@ -119,35 +200,36 @@ const deleteMedia = async () => {
 		</vCol>
 
 		<vCol cols="12">
-			<vForm @submit.prevent="updateStudentProfile">
+			<vForm @submit.prevent="updateStudentProfile" ref="studentFormRef">
 				<VRow>
 					<vCol cols="12" lg="6">
-						<vTextField label="Name" v-model="studentProfileForm.name" :loading="loading"
-							:disabled="!editProfile || loading" />
+						<vTextField label="Name" v-model="studentProfileForm.name" :rules="studentProfileRules.name"
+							:loading="loading" :disabled="!editProfile || loading" />
 					</vCol>
 
 					<vCol cols="12" lg="6">
-						<VSelect label="Gender" :items="['Male', 'Female']" v-model="studentProfileForm.gender"
-							:disabled="!editProfile || loading" :loading="loading" />
+						<VSelect label="Gender" :items="['Male', 'Female']" :rules="studentProfileRules.gender"
+							v-model="studentProfileForm.gender" :disabled="!editProfile || loading" :loading="loading" />
 					</vCol>
 
 					<vCol cols="12" lg="6">
-						<VSelect label="Nationality" :items="['Local', 'International']" :disabled="!editProfile || loading"
-							:loading="loading" v-model="studentProfileForm.nationality" />
+						<VSelect label="Nationality" :items="['Local', 'International']" :rules="studentProfileRules.nationality"
+							:disabled="!editProfile || loading" :loading="loading" v-model="studentProfileForm.nationality" />
 					</vCol>
 
 					<vCol cols="12" lg="6">
-						<vTextField label="Student ID" v-model="studentProfileForm.matric_id" disabled :loading="loading" />
+						<vTextField label="Matric ID" v-model="studentProfileForm.matric_id" :rules="studentProfileRules.matric_id"
+							disabled :loading="loading" />
 					</vCol>
 
 					<vCol cols="12" lg="6">
-						<VSelect label="Faculty" :items="faculties" :disabled="!editProfile || loading" :loading="loading"
-							v-model="studentProfileForm.faculty" />
+						<VSelect label="Faculty" :items="faculties" :rules="studentProfileRules.faculty"
+							:disabled="!editProfile || loading" :loading="loading" v-model="studentProfileForm.faculty" />
 					</vCol>
 
 					<vCol cols="12" lg="6">
-						<VSelect label="Course" :items="courses" :disabled="!editProfile || loading" :loading="loading"
-							v-model="studentProfileForm.course" />
+						<VSelect label="Course" :items="courses" :rules="studentProfileRules.course"
+							:disabled="!editProfile || loading" :loading="loading" v-model="studentProfileForm.course" />
 					</vCol>
 
 					<template v-if="editProfile">
