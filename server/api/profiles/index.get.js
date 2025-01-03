@@ -15,8 +15,30 @@ export default defineEventHandler(async (event) => {
 		}
 
 		return data
+	} else if (query.students) {
+		const { data, error } = await client.from('profiles').select('*').eq('role', 'student').order('created_at', { ascending: false })
+
+		if (error) {
+			throw createError({
+				statusCode: error.code,
+				statusMessage: error.message
+			})
+		}
+
+		return data
+	} else if (query.staffs) {
+		const { data, error } = await client.from('profiles').select('*').neq('role', 'student').order('created_at', { ascending: false })
+
+		if (error) {
+			throw createError({
+				statusCode: error.code,
+				statusMessage: error.message
+			})
+		}
+
+		return data
 	} else {
-		const { data } = await client.from('profiles').select('*').order('created_at', { ascending: false })
+		const { data, error } = await client.from('profiles').select('*').order('created_at', { ascending: false })
 
 		if (error) {
 			throw createError({

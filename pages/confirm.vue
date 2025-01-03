@@ -8,30 +8,40 @@ const client = useSupabaseClient()
 
 watchEffect(async () => {
 	if (user.value) {
-		const { data: profile } = await client.from('profiles').select('*').eq('user_id', user.value.id).single()
+		const profile = await $fetch('/api/profiles', {
+			method: 'GET',
+			query: {
+				single: true,
+				user_id: user.value.id
+			}
+		})
 
 		if (!profile) {
-			const { data: addedProfile } = await client.from('profiles').insert([
-				{
-					name: user.value.email.split('@')[0].toLocaleUpperCase(),
-					role: user.value.email.split('@')[1].toLocaleLowerCase() == 'adab.umpsa.edu.my' ? 'student' : 'staff'
+			const addedProfile = await $fetch('/api/profiles', {
+				method: 'POST',
+				body: {
+					name: user.value.email.split('@')[0].toUpperCase(),
+					role: user.value.email.split('@')[1].toLowerCase() == 'adab.umpsa.edu.my' ? 'student' : 'staff',
+					user_id: user.value.id
 				}
-			]).select().single()
+			})
 
 			if (addedProfile.role == 'student') {
-				await client.from('students').insert([
-					{
-						matric_id: user.value.email.split('@')[0].toLocaleUpperCase(),
-						profile_id: addedProfile.id
+				await $fetch('/api/students', {
+					method: 'POST',
+					body: {
+						matric_id: user.value.email.split('@')[0].toUpperCase(),
+						user_id: user.value.id
 					}
-				])
+				})
 			} else if (addedProfile.role == 'staff') {
-				await client.from('staffs').insert([
-					{
-						employee_id: user.value.email.split('@')[0].toLocaleUpperCase(),
-						profile_id: addedProfile.id
+				await $fetch('/api/staffs', {
+					method: 'POST',
+					body: {
+						employee_id: user.value.email.split('@')[0].toUpperCase(),
+						user_id: user.value.id
 					}
-				])
+				})
 			}
 		}
 
