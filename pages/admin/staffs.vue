@@ -18,9 +18,9 @@ const { data: staffs, refresh: refreshStaffs } = await useFetch('/api/staffs', {
 
 const staffProfiles = useArrayMap(profiles, profile => {
 	const staff = useArrayFind(staffs, staff => staff.user_id == profile.user_id)
+
 	return {
 		...profile,
-		staff_id: staff.value.id,
 		matric_id: staff.value.matric_id,
 		faculty: staff.value.faculty,
 		course: staff.value.course
@@ -52,6 +52,16 @@ onUnmounted(async () => {
 	await client.removeChannel(staffsChannel)
 })
 
+
+const deleteStaff = async (user_id, avatar) => {
+	await $fetch('/api/users', {
+		method: 'DELETE',
+		body: {
+			user_id: user_id,
+			avatar: avatar
+		}
+	})
+}
 </script>
 
 <template>
@@ -91,7 +101,7 @@ onUnmounted(async () => {
 					<td>{{ item.position }}</td>
 					<td class="d-inline-flex align-center">
 						<vBtn icon="i-mdi:pencil" color="secondary" />
-						<vBtn class="ml-3" icon="i-mdi:delete" color="error" />
+						<vBtn class="ml-3" icon="i-mdi:delete" color="error" @click="deleteStaff(item.user_id, item.avatar)" />
 					</td>
 				</tr>
 			</template>

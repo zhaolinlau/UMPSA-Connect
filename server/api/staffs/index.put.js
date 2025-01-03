@@ -5,9 +5,9 @@ export default defineEventHandler(async (event) => {
 	const body = await readBody(event)
 
 	const { error } = await client.from('staffs').update({
-		employee_id: body.employee_id,
-		department: body.department,
-		position: body.position
+		employee_id: body.employee_id || '',
+		department: body.department || '',
+		position: body.position || ''
 	}).eq('id', body.id)
 
 	if (error) {

@@ -101,7 +101,6 @@ const deleteStudent = async (user_id, avatar) => {
 					<td class="d-inline-flex align-center">
 						<vBtn icon="i-mdi:pencil" color="secondary" />
 						<vBtn class="ml-3" icon="i-mdi:delete" color="error" @click="deleteStudent(item.user_id, item.avatar)" />
-						{{ item.avatar }}
 					</td>
 				</tr>
 			</template>

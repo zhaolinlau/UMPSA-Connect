@@ -19,6 +19,7 @@ watchEffect(async () => {
 			const addedProfile = await $fetch('/api/profiles', {
 				method: 'POST',
 				body: {
+					name: user.value.email.split('@')[1].toUpperCase() != 'adab.umpsa.edu.my' ? user.value.email.split('@')[0] : '',
 					role: user.value.email.split('@')[1].toLowerCase() == 'adab.umpsa.edu.my' ? 'student' : 'staff',
 					user_id: user.value.id
 				}
@@ -36,7 +37,6 @@ watchEffect(async () => {
 				await $fetch('/api/staffs', {
 					method: 'POST',
 					body: {
-						employee_id: user.value.email.split('@')[0].toUpperCase(),
 						user_id: user.value.id
 					}
 				})

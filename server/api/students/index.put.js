@@ -5,9 +5,9 @@ export default defineEventHandler(async (event) => {
 	const body = await readBody(event)
 
 	const { error } = await client.from('students').update({
-		matric_id: body.matric_id,
-		faculty: body.faculty,
-		course: body.course,
+		matric_id: body.matric_id || '',
+		faculty: body.faculty || '',
+		course: body.course || '',
 	}).eq('id', body.id)
 
 	if (error) {

@@ -5,11 +5,11 @@ export default defineEventHandler(async (event) => {
 	const body = await readBody(event)
 
 	const { error } = await client.from('profiles').update({
-		name: body.name,
-		gender: body.gender,
-		nationality: body.nationality,
-		avatar: body.avatar,
-		role: body.role
+		name: body.name || '',
+		gender: body.gender || '',
+		nationality: body.nationality || '',
+		avatar: body.avatar || '',
+		role: body.role || ''
 	}).eq('id', body.id)
 
 	if (error) {
