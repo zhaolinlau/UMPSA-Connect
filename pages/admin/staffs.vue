@@ -101,7 +101,7 @@ const deleteStaff = async (user_id, avatar) => {
 					<td>{{ item.position }}</td>
 					<td class="d-inline-flex align-center">
 						<vBtn icon="i-mdi:pencil" color="secondary" />
-						<vBtn class="ml-3" icon="i-mdi:delete" color="error" @click="deleteStaff(item.user_id, item.avatar)" />
+						<DeleteStaffAccount :staff="item" />
 					</td>
 				</tr>
 			</template>

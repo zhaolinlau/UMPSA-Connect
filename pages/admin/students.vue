@@ -51,21 +51,9 @@ onUnmounted(async () => {
 	await client.removeChannel(profilesChannel)
 	await client.removeChannel(studentsChannel)
 })
-
-const deleteStudent = async (user_id, avatar) => {
-	await $fetch('/api/users', {
-		method: 'DELETE',
-		body: {
-			user_id: user_id,
-			avatar: avatar
-		}
-	})
-}
 </script>
 
 <template>
-
-
 	<VCard title="Student List">
 		<VCardActions>
 			<VTextField v-model="search" label="Search" prepend-inner-icon="i-mdi:magnify" variant="outlined"
@@ -99,8 +87,8 @@ const deleteStudent = async (user_id, avatar) => {
 					<td>{{ item.faculty }}</td>
 					<td>{{ item.course }}</td>
 					<td class="d-inline-flex align-center">
-						<vBtn icon="i-mdi:pencil" color="secondary" />
-						<vBtn class="ml-3" icon="i-mdi:delete" color="error" @click="deleteStudent(item.user_id, item.avatar)" />
+						<EditStudentProfileForm :student="item" />
+						<DeleteStudentAccount :student="item" />
 					</td>
 				</tr>
 			</template>
