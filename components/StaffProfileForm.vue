@@ -84,7 +84,7 @@ const uploadAvatarFile = async () => {
 
 const deleteMedia = async () => {
 	await client.storage.from('images').remove([`profiles/${props.profile.avatar}`])
-	await client.from('profiles').update({ avatar: null }).eq('id', props.profile.id)
+	await client.from('profiles').update({ avatar: '' }).eq('id', props.profile.id)
 }
 </script>
 
