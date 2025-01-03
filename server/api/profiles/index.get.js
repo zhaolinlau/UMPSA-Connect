@@ -5,47 +5,19 @@ export default defineEventHandler(async (event) => {
 	const query = getQuery(event)
 
 	if (query.single) {
-		const { data, error } = await client.from('profiles').select('*').eq('user_id', query.user_id).single()
-
-		if (error) {
-			throw createError({
-				statusCode: error.code,
-				statusMessage: error.message
-			})
-		}
+		const { data } = await client.from('profiles').select('*').eq('user_id', query.user_id).single()
 
 		return data
 	} else if (query.students) {
-		const { data, error } = await client.from('profiles').select('*').eq('role', 'student').order('created_at', { ascending: false })
-
-		if (error) {
-			throw createError({
-				statusCode: error.code,
-				statusMessage: error.message
-			})
-		}
+		const { data } = await client.from('profiles').select('*').eq('role', 'student').order('created_at', { ascending: false })
 
 		return data
 	} else if (query.staffs) {
-		const { data, error } = await client.from('profiles').select('*').neq('role', 'student').order('created_at', { ascending: false })
-
-		if (error) {
-			throw createError({
-				statusCode: error.code,
-				statusMessage: error.message
-			})
-		}
+		const { data } = await client.from('profiles').select('*').neq('role', 'student').order('created_at', { ascending: false })
 
 		return data
 	} else {
-		const { data, error } = await client.from('profiles').select('*').order('created_at', { ascending: false })
-
-		if (error) {
-			throw createError({
-				statusCode: error.code,
-				statusMessage: error.message
-			})
-		}
+		const { data } = await client.from('profiles').select('*').order('created_at', { ascending: false })
 
 		return data
 	}

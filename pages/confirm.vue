@@ -4,7 +4,6 @@ definePageMeta({
 })
 
 const user = useSupabaseUser()
-const client = useSupabaseClient()
 
 watchEffect(async () => {
 	if (user.value) {
@@ -20,7 +19,6 @@ watchEffect(async () => {
 			const addedProfile = await $fetch('/api/profiles', {
 				method: 'POST',
 				body: {
-					name: user.value.email.split('@')[0].toUpperCase(),
 					role: user.value.email.split('@')[1].toLowerCase() == 'adab.umpsa.edu.my' ? 'student' : 'staff',
 					user_id: user.value.id
 				}
