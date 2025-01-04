@@ -1,6 +1,7 @@
 <script setup>
 const props = defineProps({
-	comment: Object
+	comment: Object,
+	profile: Object
 })
 
 const { data: comment_user } = await useFetch('/api/users', {
@@ -167,14 +168,12 @@ const createReport = async () => {
 				</template>
 
 				<VList>
-					<template v-if="comment.user_id == user.id">
-						<VListItem title="Edit" prepend-icon="i-mdi:pencil" v-if="comment.user_id == user.id"
-							@click="toggleEditComment(comment)" />
+					<template v-if="comment.user_id == user.id || profile.role == 'admin'">
+						<VListItem title="Edit" prepend-icon="i-mdi:pencil" @click="toggleEditComment(comment)" />
 
-						<VListItem @click="deleteComment(comment.id, comment.media)" title="Delete" prepend-icon="i-mdi:delete"
-							v-if="comment.user_id == user.id" />
+						<VListItem @click="deleteComment(comment.id, comment.media)" title="Delete" prepend-icon="i-mdi:delete" />
 					</template>
-					<VListItem @click="reportFormDialog = true" title="Report" prepend-icon="i-mdi:alert" />
+
 					<VListItem v-if="comment.user_id != user.id" @click="reportFormDialog = true" title="Report"
 						prepend-icon="i-mdi:alert" />
 				</VList>

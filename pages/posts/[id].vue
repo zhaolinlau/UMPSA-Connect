@@ -2,6 +2,15 @@
 const client = useSupabaseClient()
 const route = useRoute()
 const id = useId()
+const user = useSupabaseUser()
+
+const { data: profile } = await useFetch('/api/profiles', {
+	method: 'GET',
+	query: {
+		single: true,
+		user_id: user.value.id
+	}
+})
 
 const { data: post, refresh: refreshPost } = await useFetch('/api/posts', {
 	method: 'get',
@@ -61,7 +70,7 @@ onUnmounted(async () => {
 				<CreateComment />
 			</vCol>
 			<vCol cols="12" lg="7" v-for="comment in comments" :key="comment.id" v-auto-animate>
-				<CommentCard :comment="comment" />
+				<CommentCard :comment="comment" :profile="profile" />
 			</vCol>
 		</template>
 	</vRow>

@@ -1,9 +1,9 @@
-import { serverSupabaseClient } from '#supabase/server'
+import { serverSupabaseServiceRole } from '#supabase/server'
 
 export default defineEventHandler(async (event) => {
-	const client = await serverSupabaseClient(event)
+	const service_role = serverSupabaseServiceRole(event)
 	const body = await readBody(event)
-	const { error } = await client.storage.from('images').remove([`posts/${body.post_media}`])
+	const { error } = await service_role.storage.from('images').remove([`posts/${body.post_media}`])
 
 	if (error) {
 		throw createError({
@@ -11,7 +11,7 @@ export default defineEventHandler(async (event) => {
 			message: error.message
 		})
 	} else {
-		const { error } = await client.from('posts').delete().eq('id', body.post_id)
+		const { error } = await service_role.from('posts').delete().eq('id', body.post_id)
 
 		if (error) {
 			throw createError({

@@ -1,6 +1,7 @@
 <script setup>
 const props = defineProps({
-	post: Object
+	post: Object,
+	profile: Object
 })
 const media_id = ref('')
 const client = useSupabaseClient()
@@ -69,7 +70,7 @@ const editPost = async (post_id, post_media) => {
 
 		editPostSnackbar.value = true
 		editPostDialog.value = false
-	}	
+	}
 }
 
 const deleteMedia = async (post_id, post_media) => {
@@ -196,7 +197,7 @@ const createReport = async () => {
 		reportFormDialog.value = false
 	}
 
-	reporting.value = false	
+	reporting.value = false
 }
 
 const addBookmarkSnackbar = ref(false)
@@ -300,14 +301,14 @@ const deleteBookmark = async (id) => {
 
 				<VList>
 
-					<VListItem title="Edit" prepend-icon="i-mdi:pencil" v-if="post.user_id == user.id"
+					<VListItem title="Edit" prepend-icon="i-mdi:pencil" v-if="post.user_id == user.id || profile.role == 'admin'"
 						@click="toggleEditPost(post)" />
 
 					<VListItem @click="bookmark ? deleteBookmark(bookmark.id) : createBookmark(post.id)" title="Bookmark"
 						prepend-icon="i-mdi:bookmark" :active="bookmark ? true : false" color="primary" />
 
 					<VListItem @click="deletePost(post.id, post.media)" title="Delete" prepend-icon="i-mdi:delete"
-						v-if="post.user_id == user.id" />
+						v-if="post.user_id == user.id || profile.role == 'admin'" />
 
 					<VListItem v-if="post.user_id != user.id" @click="reportFormDialog = true" title="Report"
 						prepend-icon="i-mdi:alert" />
