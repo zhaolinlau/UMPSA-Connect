@@ -1,14 +1,18 @@
 export default defineNuxtRouteMiddleware(async (to, from) => {
-	const profile = useProfile()
+	const user = useSupabaseUser()
 
-	watchEffect(async () => {
-		if (profile.value && profile.value.role !== 'admin') {
-			return abortNavigation({
-				statusCode: 401,
-				statusMessage: 'Unauthorized'
-			})
-		} else {
-			await until(profile).toBeTruthy()
+	const { data: profile } = await useFetch('/api/profiles', {
+		method: 'get',
+		query: {
+			single: true,
+			user_id: user.value.id
 		}
 	})
+
+	if (profile.value.role != 'admin') {
+		return abortNavigation({
+			statusCode: 401,
+			statusMessage: 'Unauthorized'
+		})
+	}
 })
