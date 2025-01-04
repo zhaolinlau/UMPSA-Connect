@@ -4,6 +4,8 @@ const props = defineProps({
 	student: Object
 })
 
+const route = useRoute()
+
 const faculties = useFaculty()
 
 const courses = useCourse()
@@ -176,15 +178,17 @@ const deleteMedia = async () => {
 		</vCol>
 
 		<vCol cols="12">
-			<VRow align="center">
-				<vCol cols="1">
-					<VAvatar
-						:image="profile.avatar ? client.storage.from('images').getPublicUrl(`profiles/${profile.avatar}`).data.publicUrl : '/img/blank-profile-picture-973460_1280.png'"
-						size="100" rounded="circle" accept="image/*" />
+			<VRow align="center" justify="center" justify-lg="start">
+				<vCol cols="12" lg="1">
+					<div class="d-flex justify-center justify-lg-start">
+						<VAvatar
+							:image="profile.avatar ? client.storage.from('images').getPublicUrl(`profiles/${profile.avatar}`).data.publicUrl : '/img/blank-profile-picture-973460_1280.png'"
+							size="100" rounded="circle" accept="image/*" />
+					</div>
 				</vCol>
 
-				<vCol cols="5">
-					<VForm @submit.prevent="uploadAvatarFile" class="ml-3" v-if="uploadAvatar" ref="avatarFormRef">
+				<vCol cols="12" lg="5">
+					<VForm @submit.prevent="uploadAvatarFile" v-if="uploadAvatar" ref="avatarFormRef">
 						<VFileInput label="Avatar File" v-model="avatarFile" :loading="loading" :rules="avatarRule.avatar"
 							:disabled="loading" />
 						<VBtn block type="submit" color="primary" text="Save" :loading="loading" />
@@ -192,8 +196,9 @@ const deleteMedia = async () => {
 							@click="uploadAvatar = false" />
 					</VForm>
 
-					<VBtn type="button" color="secondary" text="Upload" class="ml-3" :loading="loading"
-						@click="uploadAvatar = true" v-else />
+					<div class="d-flex justify-center justify-lg-start" v-else>
+						<VBtn type="button" color="secondary" text="Upload" :loading="loading" @click="uploadAvatar = true" />
+					</div>
 				</vCol>
 			</VRow>
 		</vCol>
@@ -241,9 +246,15 @@ const deleteMedia = async () => {
 						</vCol>
 					</template>
 
-					<vCol cols="12" lg="6" v-else>
-						<VBtn text="Edit" block type="button" color="secondary" @click="editProfile = true" />
-					</vCol>
+					<template v-else>
+						<vCol cols="12" lg="6">
+							<VBtn text="Edit" block type="button" color="secondary" @click="editProfile = true" />
+						</vCol>
+						<VCol cols="12" lg="6">
+							<VBtn text="Back" block type="button" color="grey" to="/admin/students"
+								v-if="route.params.user_id == props.profile.user_id" />
+						</VCol>
+					</template>
 				</VRow>
 			</vForm>
 		</vCol>
