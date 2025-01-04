@@ -114,43 +114,49 @@ const updateStudent = async () => {
 }
 
 const updateStudentProfile = async () => {
-	loading.value = true
+	try {
+		loading.value = true
+		const { valid } = await studentFormRef.value.validate()
 
-	const { valid } = await studentFormRef.value.validate()
-
-	if (valid) {
-		await updateProfile()
-		await updateStudent()
-		editProfile.value = false
+		if (valid) {
+			await updateProfile()
+			await updateStudent()
+			editProfile.value = false
+		}
+	} catch (error) {
+		console.error(error.message)
+	} finally {
+		loading.value = false
 	}
-
-	loading.value = false
 }
 
 const uploadAvatarFile = async () => {
-	loading.value = true
+	try {
+		loading.value = true
+		const { valid } = await avatarFormRef.value.validate()
 
-	const { valid } = await avatarFormRef.value.validate()
+		if (valid) {
+			if (props.profile.avatar) {
+				await deleteMedia()
+			}
 
-	if (valid) {
-		if (props.profile.avatar) {
-			await deleteMedia()
+			await randomNumber()
+			await client.storage.from('images').upload(`profiles/${media_id.value}/${avatarFile.value.name}`, avatarFile.value, {
+				cacheControl: '3600',
+				upsert: false
+			})
+
+			studentProfileForm.avatar = `${media_id.value}/${avatarFile.value.name}`
+			await updateProfile()
+			await updateStudent()
+			avatarFile.value = null
+			uploadAvatar.value = false
 		}
-
-		await randomNumber()
-		await client.storage.from('images').upload(`profiles/${media_id.value}/${avatarFile.value.name}`, avatarFile.value, {
-			cacheControl: '3600',
-			upsert: false
-		})
-
-		studentProfileForm.avatar = `${media_id.value}/${avatarFile.value.name}`
-		await updateProfile()
-		await updateStudent()
-		avatarFile.value = null
-		uploadAvatar.value = false
+	} catch (error) {
+		console.error(error.message)
+	} finally {
+		loading.value = false
 	}
-
-	loading.value = false
 }
 
 const deleteMedia = async () => {
@@ -171,6 +177,10 @@ const deleteMedia = async () => {
 </script>
 
 <template>
+	<VOverlay class="align-center justify-center" persistent v-model="loading">
+		<VProgressCircular color="primary" size="64" indeterminate />
+	</VOverlay>
+
 	<vRow>
 		<vCol cols="12">
 			<p>PROFILE INFORMATION</p>
@@ -190,15 +200,13 @@ const deleteMedia = async () => {
 				<vCol cols="12" lg="5">
 					<div class="mx-3">
 						<VForm @submit.prevent="uploadAvatarFile" v-if="uploadAvatar" ref="avatarFormRef">
-							<VFileInput label="Avatar File" v-model="avatarFile" :loading="loading" :rules="avatarRule.avatar"
-								:disabled="loading" />
-							<VBtn block type="submit" color="primary" text="Save" :loading="loading" />
-							<VBtn type="button" block class="mt-3" color="error" text="Cancel" :loading="loading"
-								@click="uploadAvatar = false" />
+							<VFileInput label="Avatar File" v-model="avatarFile" :rules="avatarRule.avatar" :disabled="loading" />
+							<VBtn block type="submit" color="primary" text="Save" />
+							<VBtn type="button" block class="mt-3" color="error" text="Cancel" @click="uploadAvatar = false" />
 						</VForm>
 
 						<div class="d-flex justify-center justify-lg-start" v-else>
-							<VBtn type="button" color="secondary" text="Upload" :loading="loading" @click="uploadAvatar = true" />
+							<VBtn type="button" color="secondary" text="Upload" @click="uploadAvatar = true" />
 						</div>
 					</div>
 				</vCol>
@@ -210,43 +218,43 @@ const deleteMedia = async () => {
 				<VRow>
 					<vCol cols="12" lg="6">
 						<vTextField label="Name" v-model="studentProfileForm.name" :rules="studentProfileRules.name"
-							:loading="loading" :disabled="!editProfile || loading" />
+							:disabled="!editProfile" />
 					</vCol>
 
 					<vCol cols="12" lg="6">
 						<VSelect label="Gender" :items="['Male', 'Female']" :rules="studentProfileRules.gender"
-							v-model="studentProfileForm.gender" :disabled="!editProfile || loading" :loading="loading" />
+							v-model="studentProfileForm.gender" :disabled="!editProfile" />
 					</vCol>
 
 					<vCol cols="12" lg="6">
 						<VSelect label="Nationality" :items="['Local', 'International']" :rules="studentProfileRules.nationality"
-							:disabled="!editProfile || loading" :loading="loading" v-model="studentProfileForm.nationality" />
+							:disabled="!editProfile" v-model="studentProfileForm.nationality" />
 					</vCol>
 
 					<vCol cols="12" lg="6">
 						<vTextField label="Matric ID" v-model="studentProfileForm.matric_id" :rules="studentProfileRules.matric_id"
-							:loading="loading" :disabled="!editProfile || loading" v-if="route.params.user_id == profile.user_id" />						
+							:disabled="!editProfile" v-if="route.params.user_id == profile.user_id" />
 						<vTextField label="Matric ID" v-model="studentProfileForm.matric_id" :rules="studentProfileRules.matric_id"
-							:loading="loading" disabled v-else />
+							disabled v-else />
 					</vCol>
 
 					<vCol cols="12" lg="6">
-						<VSelect label="Faculty" :items="faculties" :rules="studentProfileRules.faculty"
-							:disabled="!editProfile || loading" :loading="loading" v-model="studentProfileForm.faculty" />
+						<VSelect label="Faculty" :items="faculties" :rules="studentProfileRules.faculty" :disabled="!editProfile"
+							v-model="studentProfileForm.faculty" />
 					</vCol>
 
 					<vCol cols="12" lg="6">
-						<VSelect label="Course" :items="courses" :rules="studentProfileRules.course"
-							:disabled="!editProfile || loading" :loading="loading" v-model="studentProfileForm.course" />
+						<VSelect label="Course" :items="courses" :rules="studentProfileRules.course" :disabled="!editProfile"
+							v-model="studentProfileForm.course" />
 					</vCol>
 
 					<template v-if="editProfile">
 						<vCol cols="12" lg="6">
-							<VBtn text="Save" block type="submit" color="primary" :loading="loading" />
+							<VBtn text="Save" block type="submit" color="primary" />
 						</vCol>
 
 						<vCol cols="12" lg="6">
-							<VBtn text="Cancel" block type="button" color="error" @click="editProfile = false" :loading="loading" />
+							<VBtn text="Cancel" block type="button" color="error" @click="editProfile = false" />
 						</vCol>
 					</template>
 

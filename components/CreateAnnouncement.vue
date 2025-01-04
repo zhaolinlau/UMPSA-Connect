@@ -38,37 +38,41 @@ const randomNumber = async () => {
 }
 
 const createAnnouncement = async () => {
-	loading.value = true
-	const { valid } = await announcementFormRef.value.validate()
+	try {
+		loading.value = true
+		const { valid } = await announcementFormRef.value.validate()
 
-	if (valid) {
-		await randomNumber()
+		if (valid) {
+			await randomNumber()
 
-		if (announcementForm.media) {
-			await client.storage.from('images')
-				.upload(`announcements/${media_id.value}/${announcementForm.media.name}`, announcementForm.media, {
-					cacheControl: '3600',
-					upsert: false
-				})
-		}
-
-		await $fetch('/api/announcements', {
-			method: 'post',
-			body: {
-				title: announcementForm.title,
-				target_user: announcementForm.target_user,
-				content: announcementForm.content,
-				media: announcementForm.media ? `${media_id.value}/${announcementForm.media.name}` : null
+			if (announcementForm.media) {
+				await client.storage.from('images')
+					.upload(`announcements/${media_id.value}/${announcementForm.media.name}`, announcementForm.media, {
+						cacheControl: '3600',
+						upsert: false
+					})
 			}
-		})
+
+			await $fetch('/api/announcements', {
+				method: 'post',
+				body: {
+					title: announcementForm.title,
+					target_user: announcementForm.target_user,
+					content: announcementForm.content,
+					media: announcementForm.media ? `${media_id.value}/${announcementForm.media.name}` : null
+				}
+			})
 
 
-		await announcementFormRef.value.reset()
-		announcementFormDialog.value = false
-		announcementSnackbar.value = true
+			await announcementFormRef.value.reset()
+			announcementFormDialog.value = false
+			announcementSnackbar.value = true
+		}
+	} catch (error) {
+		console.error(error.message)
+	} finally {
+		loading.value = false
 	}
-
-	loading.value = false
 }
 
 const faculties = ref([
@@ -84,7 +88,7 @@ const faculties = ref([
 </script>
 
 <template>
-	<VOverlay class="align-center justify-center" :model-value="loading ? true : false">
+	<VOverlay class="align-center justify-center" persistent v-model="loading">
 		<VProgressCircular color="primary" size="64" indeterminate />
 	</VOverlay>
 
@@ -102,11 +106,12 @@ const faculties = ref([
 		<VCard title="Create Announcement">
 			<VForm @submit.prevent="createAnnouncement" ref="announcementFormRef">
 				<VContainer>
-					<VTextField prepend-icon="i-mdi:format-title" v-model="announcementForm.title" label="Title" :rules="announcementRules.title" />
-					<VSelect prepend-icon="i-mdi:shape" v-model="announcementForm.target_user" label="Target User" :items="faculties"
-						:rules="announcementRules.target_user" />
-					<VTextarea prepend-icon="i-mdi:text" v-model="announcementForm.content" :rules="announcementRules.content" label="Content"
-						clearable />
+					<VTextField prepend-icon="i-mdi:format-title" v-model="announcementForm.title" label="Title"
+						:rules="announcementRules.title" />
+					<VSelect prepend-icon="i-mdi:shape" v-model="announcementForm.target_user" label="Target User"
+						:items="faculties" :rules="announcementRules.target_user" />
+					<VTextarea prepend-icon="i-mdi:text" v-model="announcementForm.content" :rules="announcementRules.content"
+						label="Content" clearable />
 					<VFileInput accept="image/*" v-model:model-value="announcementForm.media" label="Media" />
 				</VContainer>
 				<VCardActions>

@@ -114,43 +114,49 @@ const updateStaff = async () => {
 }
 
 const updateStaffProfile = async () => {
-	loading.value = true
+	try {
+		loading.value = true
+		const { valid } = await staffFormRef.value.validate()
 
-	const { valid } = await staffFormRef.value.validate()
-
-	if (valid) {
-		await updateProfile()
-		await updateStaff()
-		editProfile.value = false
+		if (valid) {
+			await updateProfile()
+			await updateStaff()
+			editProfile.value = false
+		}
+	} catch (error) {
+		console.error(error.message)
+	} finally {
+		loading.value = false
 	}
-
-	loading.value = false
 }
 
 const uploadAvatarFile = async () => {
-	loading.value = true
+	try {
+		loading.value = true
+		const { valid } = await avatarFormRef.value.validate()
 
-	const { valid } = await avatarFormRef.value.validate()
+		if (valid) {
+			if (props.profile.avatar) {
+				await deleteMedia()
+			}
 
-	if (valid) {
-		if (props.profile.avatar) {
-			await deleteMedia()
+			await randomNumber()
+			await client.storage.from('images').upload(`profiles/${media_id.value}/${avatarFile.value.name}`, avatarFile.value, {
+				cacheControl: '3600',
+				upsert: false
+			})
+
+			staffProfileForm.avatar = `${media_id.value}/${avatarFile.value.name}`
+			await updateProfile()
+			await updateStaff()
+			avatarFile.value = null
+			uploadAvatar.value = false
 		}
-
-		await randomNumber()
-		await client.storage.from('images').upload(`profiles/${media_id.value}/${avatarFile.value.name}`, avatarFile.value, {
-			cacheControl: '3600',
-			upsert: false
-		})
-
-		staffProfileForm.avatar = `${media_id.value}/${avatarFile.value.name}`
-		await updateProfile()
-		await updateStaff()
-		avatarFile.value = null
-		uploadAvatar.value = false
+	} catch (error) {
+		console.error(error.message)
+	} finally {
+		loading.value = false
 	}
-
-	loading.value = false
 }
 
 const deleteMedia = async () => {
@@ -171,6 +177,10 @@ const deleteMedia = async () => {
 </script>
 
 <template>
+	<VOverlay class="align-center justify-center" persistent v-model="loading">
+		<VProgressCircular color="primary" size="64" indeterminate />
+	</VOverlay>
+
 	<vRow>
 		<vCol cols="12">
 			<p>PROFILE INFORMATION</p>
@@ -190,16 +200,13 @@ const deleteMedia = async () => {
 				<vCol cols="12" lg="5">
 					<div class="mx-3">
 						<VForm @submit.prevent="uploadAvatarFile" class="ml-3" v-if="uploadAvatar" ref="avatarFormRef">
-							<VFileInput :rules="avatarRule.avatar" label="Avatar File" v-model="avatarFile" :loading="loading"
-								:disabled="loading" />
-							<VBtn block type="submit" color="primary" text="Save" :loading="loading" />
-							<VBtn type="button" block class="mt-3" color="error" text="Cancel" :loading="loading"
-								@click="uploadAvatar = false" />
+							<VFileInput :rules="avatarRule.avatar" label="Avatar File" v-model="avatarFile" :disabled="loading" />
+							<VBtn block type="submit" color="primary" text="Save" />
+							<VBtn type="button" block class="mt-3" color="error" text="Cancel" @click="uploadAvatar = false" />
 						</VForm>
 
 						<div class="d-flex justify-center justify-lg-start" v-else>
-							<VBtn type="button" color="secondary" text="Upload" class="ml-3" :loading="loading"
-								@click="uploadAvatar = true" />
+							<VBtn type="button" color="secondary" text="Upload" class="ml-3" @click="uploadAvatar = true" />
 						</div>
 					</div>
 				</vCol>
@@ -211,41 +218,41 @@ const deleteMedia = async () => {
 				<VRow>
 					<vCol cols="12" lg="6">
 						<vTextField label="Name" :rules="staffProfileRules.name" clearable v-model="staffProfileForm.name"
-							:disabled="!editProfile || loading" :loading="loading" />
+							:disabled="!editProfile" />
 					</vCol>
 
 					<vCol cols="12" lg="6">
 						<VSelect label="Gender" :rules="staffProfileRules.gender" :items="['Male', 'Female']"
-							v-model="staffProfileForm.gender" :disabled="!editProfile || loading" :loading="loading" />
+							v-model="staffProfileForm.gender" :disabled="!editProfile" />
 					</vCol>
 
 					<vCol cols="12" lg="6">
 						<VSelect label="Nationality" :rules="staffProfileRules.nationality" :items="['Local', 'International']"
-							v-model="staffProfileForm.nationality" :disabled="!editProfile || loading" :loading="loading" />
+							v-model="staffProfileForm.nationality" :disabled="!editProfile" />
 					</vCol>
 
 					<vCol cols="12" lg="6">
 						<vTextField label="Employee ID" :rules="staffProfileRules.employee_id"
-							v-model="staffProfileForm.employee_id" :disabled="!editProfile || loading" :loading="loading" />
+							v-model="staffProfileForm.employee_id" :disabled="!editProfile" />
 					</vCol>
 
 					<vCol cols="12" lg="6">
 						<VSelect label="Department" :rules="staffProfileRules.department" :items="departments"
-							v-model="staffProfileForm.department" :disabled="!editProfile || loading" :loading="loading" />
+							v-model="staffProfileForm.department" :disabled="!editProfile" />
 					</vCol>
 
 					<vCol cols="12" lg="6">
 						<VSelect label="Position" :rules="staffProfileRules.position" :items="positions"
-							v-model="staffProfileForm.position" :disabled="!editProfile || loading" :loading="loading" />
+							v-model="staffProfileForm.position" :disabled="!editProfile" />
 					</vCol>
 
 					<template v-if="editProfile">
 						<vCol cols="12" lg="6">
-							<VBtn text="Save" block type="submit" color="primary" :loading="loading" />
+							<VBtn text="Save" block type="submit" color="primary" />
 						</vCol>
 
 						<vCol cols="12" lg="6">
-							<VBtn text="Cancel" block type="button" color="error" @click="editProfile = false" :loading="loading" />
+							<VBtn text="Cancel" block type="button" color="error" @click="editProfile = false" />
 						</vCol>
 					</template>
 

@@ -4,7 +4,7 @@ const commentForm = reactive({
 	content: '',
 	media: null
 })
-const commenting = ref(false)
+const loading = ref(false)
 const commentFormRef = ref(null)
 const commentRules = ref({
 	content: [
@@ -24,45 +24,48 @@ const randomNumber = async () => {
 const client = useSupabaseClient()
 
 const createComment = async () => {
-	commenting.value = true
+	try {
+		loading.value = true
+		const { valid } = await commentFormRef.value.validate()
 
-	const { valid } = await commentFormRef.value.validate()
-
-	if (valid) {
-		if (commentForm.media) {
-			console.log(commentForm.media)
-			await randomNumber();
-			await client.storage.from('images').upload(`comments/${media_id.value}/${commentForm.media.name}`, commentForm.media, {
-				cacheControl: '3600',
-				upsert: false
-			})
-		}
-
-		await $fetch('/api/comments', {
-			method: 'post',
-			body: {
-				post_id: route.params.id,
-				content: commentForm.content,
-				media: commentForm.media ? `${media_id.value}/${commentForm.media.name}` : ''
+		if (valid) {
+			if (commentForm.media) {
+				console.log(commentForm.media)
+				await randomNumber();
+				await client.storage.from('images').upload(`comments/${media_id.value}/${commentForm.media.name}`, commentForm.media, {
+					cacheControl: '3600',
+					upsert: false
+				})
 			}
-		})
 
-		await resetCommentForm()
+			await $fetch('/api/comments', {
+				method: 'post',
+				body: {
+					post_id: route.params.id,
+					content: commentForm.content,
+					media: commentForm.media ? `${media_id.value}/${commentForm.media.name}` : ''
+				}
+			})
+
+			await commentFormRef.value.reset()
+		}
+	} catch (error) {
+		console.error(error.message)
+	} finally {
+		loading.value = false
 	}
-
-	commenting.value = false
-}
-
-const resetCommentForm = async () => {
-	commentFormRef.value.reset()
 }
 </script>
 
 <template>
+	<VOverlay class="align-center justify-center" persistent v-model="loading">
+		<VProgressCircular color="primary" size="64" indeterminate />
+	</VOverlay>
+
 	<VForm validate-on="submit" @submit.prevent="createComment" ref="commentFormRef">
-		<VTextarea :disabled="commenting" :loading="commenting" label="Comment" placeholder="Add a comment..."
-			:rules="commentRules.content" v-model="commentForm.content" />
-		<VFileInput v-model="commentForm.media" accept="image/*" label="Media" :loading="commenting" :disabled="commenting" />
-		<VBtn :loading="commenting" color="primary" text="Comment" type="submit" />
+		<VTextarea label="Comment" placeholder="Add a comment..." :rules="commentRules.content"
+			v-model="commentForm.content" />
+		<VFileInput v-model="commentForm.media" accept="image/*" label="Media" />
+		<VBtn color="primary" text="Comment" type="submit" />
 	</VForm>
 </template>

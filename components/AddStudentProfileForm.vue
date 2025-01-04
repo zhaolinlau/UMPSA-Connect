@@ -1,5 +1,6 @@
 <script setup>
 const addStudentDialog = ref(false)
+const loading = ref(false)
 const visible = ref(false)
 const addStudentForm = reactive({
 	email: '@adab.umpsa.edu.my',
@@ -30,6 +31,7 @@ const randomNumber = async () => {
 
 const addStudent = async () => {
 	try {
+		loading.value = true
 		const { valid } = await addStudentFormRef.value.validate()
 
 		if (valid) {
@@ -79,6 +81,8 @@ const addStudent = async () => {
 	} catch (error) {
 		addStudentError.value = error.message
 		addStudentAlert.value = true
+	} finally {
+		loading.value = false
 	}
 }
 
@@ -154,6 +158,10 @@ const uploadAvatarFile = async () => {
 </script>
 
 <template>
+	<VOverlay class="align-center justify-center" persistent v-model="loading">
+		<VProgressCircular color="primary" size="64" indeterminate />
+	</VOverlay>
+
 	<VBtn text="Add Student" color="primary" variant="elevated" @click="addStudentDialog = true" />
 
 	<VDialog v-model="addStudentDialog" max-width="750">

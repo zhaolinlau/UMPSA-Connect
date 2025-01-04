@@ -58,21 +58,31 @@ const generalNavItems = ref(
 	}
 )
 
+const loading = ref(false)
+
 const logout = async () => {
-	const { error } = await client.auth.signOut()
+	try {
+		loading.value = true
+		const { error } = await client.auth.signOut()
 
-	if (error) {
-		throw createError({
-			statusCode: error.code,
-			statusMessage: error.message
-		})
+		if (error) {
+			throw createError(error)
+		}
+
+		await navigateTo('/login')
+	} catch (error) {
+		console.error(error.message)
+	} finally {
+		loading.value = false
 	}
-
-	return reloadNuxtApp()
 }
 </script>
 
 <template>
+	<VOverlay class="align-center justify-center" persistent v-model="loading">
+		<VProgressCircular color="primary" size="64" indeterminate />
+	</VOverlay>
+
 	<VAppBar scroll-behavior="hide" :color="profile.role == 'admin' ? 'secondary' : 'primary'">
 		<template #prepend>
 			<VAppBarNavIcon @click.stop="drawer = !drawer" class="hidden-lg-and-up" />

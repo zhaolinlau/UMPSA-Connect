@@ -31,46 +31,46 @@ const randomNumber = async () => {
 }
 
 const createEvent = async () => {
-	loading.value = true
-	const { valid } = await eventFormRef.value.validate()
-	if (valid) {
-		await randomNumber()
+	try {
+		loading.value = true
+		const { valid } = await eventFormRef.value.validate()
+		if (valid) {
+			await randomNumber()
 
-		if (eventForm.media) {
-			await client.storage.from('images')
-				.upload(`events/${media_id.value}/${eventForm.media.name}`, eventForm.media, {
-					cacheControl: '3600',
-					upsert: false
-				})
-		}
-
-		await $fetch('/api/events', {
-			method: 'post',
-			body: {
-				title: eventForm.title,
-				category: eventForm.category,
-				content: eventForm.content,
-				media: eventForm.media ? `${media_id.value}/${eventForm.media.name}` : ''
+			if (eventForm.media) {
+				await client.storage.from('images')
+					.upload(`events/${media_id.value}/${eventForm.media.name}`, eventForm.media, {
+						cacheControl: '3600',
+						upsert: false
+					})
 			}
-		})
 
-		await resetEventForm()
+			await $fetch('/api/events', {
+				method: 'post',
+				body: {
+					title: eventForm.title,
+					category: eventForm.category,
+					content: eventForm.content,
+					media: eventForm.media ? `${media_id.value}/${eventForm.media.name}` : ''
+				}
+			})
+
+			eventFormDialog.value = false
+			eventSnackbar.value = true
+			await eventFormRef.value.reset()
+		}
+	} catch (error) {
+		console.error(error.message)
+	} finally {
+		loading.value = false
 	}
-
-	loading.value = false
-}
-
-const resetEventForm = async () => {
-	eventFormDialog.value = false
-	eventFormRef.value.reset()
-	eventSnackbar.value = true
 }
 
 const eventSnackbar = ref(false)
 </script>
 
 <template>
-	<VOverlay class="align-center justify-center" :model-value="loading ? true : false">
+	<VOverlay class="align-center justify-center" persistent v-model="loading">
 		<VProgressCircular color="primary" size="64" indeterminate />
 	</VOverlay>
 

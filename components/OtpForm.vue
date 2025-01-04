@@ -10,29 +10,37 @@ const OtpSuccessAlert = ref(false)
 
 const sendOtp = async () => {
 	loading.value = true
-	const { error } = await client.auth.signInWithOtp({
-		email: email.value,
-		options: {
-			emailRedirectTo: `${config.public.siteUrl}/confirm`,
-			shouldCreateUser: false
-		}
-	})
+	try {
+		const { error } = await client.auth.signInWithOtp({
+			email: email.value,
+			options: {
+				emailRedirectTo: `${config.public.siteUrl}/confirm`,
+				shouldCreateUser: false
+			}
+		})
 
-	if (error) {
-		OtpError.value = error.message
-		OtpErrorAlert.value = true
-		OtpSuccessAlert.value = false
-	} else {
+		if (error) {
+			throw createError(error)
+		}
+
 		OtpError.value = ''
 		OtpErrorAlert.value = false
 		OtpSuccessAlert.value = true
+	} catch (error) {
+		OtpError.value = error.message
+		OtpErrorAlert.value = true
+		OtpSuccessAlert.value = false
+	} finally {
+		loading.value = false
 	}
-
-	loading.value = false
 }
 </script>
 
 <template>
+	<VOverlay class="align-center justify-center" persistent v-model="loading">
+		<VProgressCircular color="primary" size="64" indeterminate />
+	</VOverlay>
+
 	<VRow>
 		<VCol cols="12">
 			<VAlert @click:close="OtpErrorAlert = false" v-model="OtpErrorAlert" border="start" color="red" variant="elevated"
@@ -47,13 +55,11 @@ const sendOtp = async () => {
 			<VForm @submit.prevent="sendOtp" ref="OtpFormRef">
 
 				<VTextField label="Email" placeholder="you@example.com" v-model="email" prepend-inner-icon="i-mdi:email-outline"
-					type="email" :loading="loading" :disabled="loading" />
+					type="email" />
 
-				<VBtn text="Send" prepend-icon="i-mdi:send" class="mt-3" color="primary" type="submit" block
-					:loading="loading" />
+				<VBtn text="Send" prepend-icon="i-mdi:send" class="mt-3" color="primary" type="submit" block />
 
-				<VBtn text="Back to login" prepend-icon="i-mdi:arrow-left" class="mt-3" type="button" block :loading="loading"
-					to="/login" />
+				<VBtn text="Back to login" prepend-icon="i-mdi:arrow-left" class="mt-3" type="button" block to="/login" />
 			</VForm>
 		</VCol>
 	</VRow>

@@ -6,7 +6,7 @@ const postForm = ref({
 	category: '',
 	media: null
 })
-const posting = ref(false)
+const loading = ref(false)
 const media_id = ref('')
 const postFormRef = ref(null)
 
@@ -32,48 +32,48 @@ const randomNumber = async () => {
 }
 
 const createPost = async () => {
-	posting.value = true
-	const { valid } = await postFormRef.value.validate()
-	if (valid) {
-		await randomNumber()
+	try {
+		loading.value = true
+		const { valid } = await postFormRef.value.validate()
+		if (valid) {
+			await randomNumber()
 
-		if (postForm.value.media) {
-			await client.storage.from('images')
-				.upload(`posts/${media_id.value}/${postForm.value.media.name}`, postForm.value.media, {
-					cacheControl: '3600',
-					upsert: false
-				})
-		}
-
-		await $fetch('/api/posts', {
-			method: 'post',
-			body: {
-				title: postForm.value.title,
-				category: postForm.value.category,
-				content: postForm.value.content,
-				media: postForm.value.media ? `${media_id.value}/${postForm.value.media.name}` : ''
+			if (postForm.value.media) {
+				await client.storage.from('images')
+					.upload(`posts/${media_id.value}/${postForm.value.media.name}`, postForm.value.media, {
+						cacheControl: '3600',
+						upsert: false
+					})
 			}
-		})
 
-		await navigateTo('/')
+			await $fetch('/api/posts', {
+				method: 'post',
+				body: {
+					title: postForm.value.title,
+					category: postForm.value.category,
+					content: postForm.value.content,
+					media: postForm.value.media ? `${media_id.value}/${postForm.value.media.name}` : ''
+				}
+			})
 
-		await resetPostForm()
+			await navigateTo('/')
+
+			postFormDialog.value = false
+			postSnackbar.value = true
+			await postFormRef.value.reset()
+		}
+	} catch (error) {
+		console.error(error.message)
+	} finally {
+		loading.value = false
 	}
-
-	posting.value = false
-}
-
-const resetPostForm = async () => {
-	postFormDialog.value = false
-	postFormRef.value.reset()
-	postSnackbar.value = true
 }
 
 const postSnackbar = ref(false)
 </script>
 
 <template>
-	<VOverlay class="align-center justify-center" :model-value="posting ? true : false">
+	<VOverlay class="align-center justify-center" persistent v-model="loading">
 		<VProgressCircular color="primary" size="64" indeterminate />
 	</VOverlay>
 

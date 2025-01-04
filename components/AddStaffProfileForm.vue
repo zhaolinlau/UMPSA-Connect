@@ -1,6 +1,7 @@
 <script setup>
 const addStaffDialog = ref(false)
 const visible = ref(false)
+const loading = ref(false)
 const addStaffForm = reactive({
 	email: '@umpsa.edu.my',
 	password: '',
@@ -30,6 +31,7 @@ const randomNumber = async () => {
 
 const addStaff = async () => {
 	try {
+		loading.value = true
 		const { valid } = await addStaffFormRef.value.validate()
 		if (valid) {
 			if (addStaffForm.password == addStaffForm.confirm_password) {
@@ -78,6 +80,8 @@ const addStaff = async () => {
 	} catch (error) {
 		addStaffError.value = error.message
 		addStaffAlert.value = true
+	} finally {
+		loading.value = false
 	}
 }
 
@@ -160,6 +164,10 @@ const uploadAvatarFile = async () => {
 </script>
 
 <template>
+	<VOverlay class="align-center justify-center" persistent v-model="loading">
+		<VProgressCircular color="primary" size="64" indeterminate />
+	</VOverlay>
+
 	<VBtn text="Add Staff" color="primary" variant="elevated" @click="addStaffDialog = true" />
 
 	<VDialog v-model="addStaffDialog" max-width="750">

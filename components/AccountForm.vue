@@ -14,34 +14,42 @@ const passwordForm = reactive({
 const loading = ref(false)
 
 const updatePassword = async () => {
-	loading.value = true
-
-	if (passwordForm.new_password != passwordForm.confirm_password) {
-		passwordError.value = 'Passwords do not match.'
-		PasswordErrorAlert.value = true
-	} else {
-		const { error } = await client.auth.updateUser({
-			password: passwordForm.new_password
-		})
-
-		if (error) {
-			passwordError.value = error.message
+	try {
+		loading.value = true
+		if (passwordForm.new_password != passwordForm.confirm_password) {
+			passwordError.value = 'Passwords do not match.'
 			PasswordErrorAlert.value = true
-			PasswordSuccessAlert.value = false
 		} else {
-			PasswordSuccessAlert.value = true
-			PasswordErrorAlert.value = false
-			editPassword.value = false
-		}
-	}
+			const { error } = await client.auth.updateUser({
+				password: passwordForm.new_password
+			})
 
-	passwordForm.new_password = ''
-	passwordForm.confirm_password = ''
-	loading.value = false
+			if (error) {
+				throw createError(error)
+			} else {
+				PasswordSuccessAlert.value = true
+				PasswordErrorAlert.value = false
+				editPassword.value = false
+			}
+		}
+
+		passwordForm.new_password = ''
+		passwordForm.confirm_password = ''
+	} catch (error) {
+		passwordError.value = error.message
+		PasswordErrorAlert.value = true
+		PasswordSuccessAlert.value = false
+	} finally {
+		loading.value = false
+	}
 }
 </script>
 
 <template>
+	<VOverlay class="align-center justify-center" persistent v-model="loading">
+		<VProgressCircular color="primary" size="64" indeterminate />
+	</VOverlay>
+
 	<VRow>
 		<VCol cols="12" v-if="editPassword && (PasswordErrorAlert || PasswordSuccessAlert)">
 			<VAlert @click:close="PasswordErrorAlert = false" v-model="PasswordErrorAlert" border="start" color="red"
@@ -59,19 +67,18 @@ const updatePassword = async () => {
 			<VForm @submit.prevent="updatePassword">
 				<VTextField label="New Password" :type="visible ? 'text' : 'password'" v-model="passwordForm.new_password"
 					type="password" :append-inner-icon="visible ? 'i-mdi:eye-off' : 'i-mdi:eye'"
-					@click:append-inner="visible = !visible" :disabled="!editPassword || loading" :loading="loading" />
+					@click:append-inner="visible = !visible" :disabled="!editPassword" />
 
 				<VTextField label="Confirm New Password" :type="visible ? 'text' : 'password'"
 					v-model="passwordForm.confirm_password" type="password"
 					:append-inner-icon="visible ? 'i-mdi:eye-off' : 'i-mdi:eye'" @click:append-inner="visible = !visible"
-					:disabled="!editPassword || loading" :loading="loading" />
+					:disabled="!editPassword" />
 
 				<VBtn text="Edit" block type="button" color="secondary" @click="editPassword = true" v-if="!editPassword" />
 
 				<template v-else>
-					<VBtn text="Save" type="submit" color="primary" :loading="loading" block />
-					<VBtn text="Cancel" class="mt-3" color="error" type="button" block @click="editPassword = false"
-						:loading="loading" />
+					<VBtn text="Save" type="submit" color="primary" block />
+					<VBtn text="Cancel" class="mt-3" color="error" type="button" block @click="editPassword = false" />
 				</template>
 			</vForm>
 		</VCol>
