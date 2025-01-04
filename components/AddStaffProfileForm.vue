@@ -29,57 +29,55 @@ const randomNumber = async () => {
 }
 
 const addStaff = async () => {
-	const { valid } = await addStaffFormRef.value.validate()
-	if (valid) {
-		if (addStaffForm.password == addStaffForm.confirm_password) {
-			const user = await $fetch('/api/users', {
-				method: 'POST',
-				body: {
-					email: addStaffForm.email.toLowerCase(),
-					password: addStaffForm.password
-				}
-			}).catch((error) => {
-				addStaffError.value = error.data.message
-				addStaffAlert.value = true
-			})
-
-			if (user) {
-				await randomNumber()
-				const profile = await $fetch('/api/profiles', {
+	try {
+		const { valid } = await addStaffFormRef.value.validate()
+		if (valid) {
+			if (addStaffForm.password == addStaffForm.confirm_password) {
+				const user = await $fetch('/api/users', {
 					method: 'POST',
 					body: {
-						name: addStaffForm.name,
-						role: addStaffForm.role,
-						avatar: addStaffForm.avatar ? `${media_id.value}/${addStaffForm.avatar.name}` : '',
-						gender: addStaffForm.gender,
-						nationality: addStaffForm.nationality,
-						user_id: user.id
+						email: addStaffForm.email.toLowerCase(),
+						password: addStaffForm.password
 					}
-				}).catch((error) => {
-					addStaffError.value = error.data.message
-					addStaffAlert.value = true
 				})
 
-				if (profile) {
-					await uploadAvatarFile()
-				}
-
-				if (profile) {
-					await $fetch('/api/staffs', {
+				if (user) {
+					await randomNumber()
+					const profile = await $fetch('/api/profiles', {
 						method: 'POST',
 						body: {
-							employee_id: addStaffForm.employee_id.toUpperCase(),
-							department: addStaffForm.department,
-							position: addStaffForm.position,
+							name: addStaffForm.name,
+							role: addStaffForm.role,
+							avatar: addStaffForm.avatar ? `${media_id.value}/${addStaffForm.avatar.name}` : '',
+							gender: addStaffForm.gender,
+							nationality: addStaffForm.nationality,
 							user_id: user.id
 						}
-					}).catch((error) => {
-						addStaffError.value = error.data.message
-						addStaffAlert.value = true
 					})
+
+					if (profile) {
+						await uploadAvatarFile()
+					}
+
+					if (profile) {
+						await $fetch('/api/staffs', {
+							method: 'POST',
+							body: {
+								employee_id: addStaffForm.employee_id.toUpperCase(),
+								department: addStaffForm.department,
+								position: addStaffForm.position,
+								user_id: user.id
+							}
+						})
+
+						addStaffDialog.value = false
+					}
 				}
 			}
 		}
+	} catch (error) {
+		addStaffError.value = error.message
+		addStaffAlert.value = true
 	}
 }
 
