@@ -21,9 +21,9 @@ const staffProfiles = useArrayMap(profiles, profile => {
 
 	return {
 		...profile,
-		matric_id: staff.value.matric_id,
-		faculty: staff.value.faculty,
-		course: staff.value.course
+		employee_id: staff.value.employee_id,
+		department: staff.value.department,
+		position: staff.value.position
 	}
 })
 
@@ -51,17 +51,6 @@ onUnmounted(async () => {
 	await client.removeChannel(profilesChannel)
 	await client.removeChannel(staffsChannel)
 })
-
-
-const deleteStaff = async (user_id, avatar) => {
-	await $fetch('/api/users', {
-		method: 'DELETE',
-		body: {
-			user_id: user_id,
-			avatar: avatar
-		}
-	})
-}
 </script>
 
 <template>
@@ -100,7 +89,7 @@ const deleteStaff = async (user_id, avatar) => {
 					<td>{{ item.department }}</td>
 					<td>{{ item.position }}</td>
 					<td class="d-inline-flex align-center">
-						<vBtn icon="i-mdi:pencil" color="secondary" />
+						<VBtn icon="i-mdi:eye" color="blue" :to="`/admin/staffs/${item.user_id}`" />
 						<DeleteStaffAccount :staff="item" />
 					</td>
 				</tr>

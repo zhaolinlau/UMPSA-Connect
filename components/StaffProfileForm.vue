@@ -4,6 +4,8 @@ const props = defineProps({
 	staff: Object
 })
 
+const route = useRoute()
+
 const departments = useDepartment()
 
 const positions = usePosition()
@@ -22,6 +24,57 @@ const randomNumber = async () => {
 	media_id.value = Math.random()
 }
 
+const staffFormRef = ref()
+const avatarFormRef = ref()
+
+const avatarRule = ref({
+	avatar: [
+		value => {
+			if (value.length > 0) return true
+			return 'Avatar is required.'
+		}
+	],
+})
+
+const staffProfileRules = ref({
+	employee_id: [
+		value => {
+			if (value) return true
+			return 'Employee ID is required.'
+		}
+	],
+	name: [
+		value => {
+			if (value) return true
+			return 'Name is required.'
+		}
+	],
+	gender: [
+		value => {
+			if (value) return true
+			return 'Gender is required.'
+		}
+	],
+	nationality: [
+		value => {
+			if (value) return true
+			return 'Nationality is required.'
+		}
+	],
+	department: [
+		value => {
+			if (value) return true
+			return 'Department is required.'
+		}
+	],
+	position: [
+		value => {
+			if (value) return true
+			return 'Position is required.'
+		}
+	]
+})
+
 const avatarFile = ref(null)
 
 const staffProfileForm = reactive({
@@ -34,9 +87,7 @@ const staffProfileForm = reactive({
 	position: props.staff.position,
 })
 
-const updateStaffProfile = async () => {
-	loading.value = true
-
+const updateProfile = async () => {
 	await $fetch('/api/profiles', {
 		method: 'put',
 		body: {
@@ -48,7 +99,9 @@ const updateStaffProfile = async () => {
 			role: props.profile.role
 		}
 	})
+}
 
+const updateStaff = async () => {
 	await $fetch('/api/staffs', {
 		method: 'put',
 		body: {
@@ -58,6 +111,18 @@ const updateStaffProfile = async () => {
 			position: staffProfileForm.position,
 		}
 	})
+}
+
+const updateStaffProfile = async () => {
+	loading.value = true
+
+	const { valid } = await staffFormRef.value.validate()
+
+	if (valid) {
+		await updateProfile()
+		await updateStaff()
+		editProfile.value = false
+	}
 
 	loading.value = false
 }
@@ -65,26 +130,43 @@ const updateStaffProfile = async () => {
 const uploadAvatarFile = async () => {
 	loading.value = true
 
-	if (props.profile.avatar) {
-		await deleteMedia()
+	const { valid } = await avatarFormRef.value.validate()
+
+	if (valid) {
+		if (props.profile.avatar) {
+			await deleteMedia()
+		}
+
+		await randomNumber()
+		await client.storage.from('images').upload(`profiles/${media_id.value}/${avatarFile.value.name}`, avatarFile.value, {
+			cacheControl: '3600',
+			upsert: false
+		})
+
+		staffProfileForm.avatar = `${media_id.value}/${avatarFile.value.name}`
+		await updateProfile()
+		await updateStaff()
+		avatarFile.value = null
+		uploadAvatar.value = false
 	}
 
-	await randomNumber()
-	await client.storage.from('images').upload(`profiles/${media_id.value}/${avatarFile.value.name}`, avatarFile.value, {
-		cacheControl: '3600',
-		upsert: false
-	})
-
-	staffProfileForm.avatar = `${media_id.value}/${avatarFile.value.name}`
-	await updateStaffProfile()
-	avatarFile.value = ''
-	uploadAvatar.value = false
 	loading.value = false
 }
 
 const deleteMedia = async () => {
-	await client.storage.from('images').remove([`profiles/${props.profile.avatar}`])
-	await client.from('profiles').update({ avatar: '' }).eq('id', props.profile.id)
+	await $fetch('/api/storage', {
+		method: 'DELETE',
+		body: {
+			path: `profiles/${props.profile.avatar}`
+		}
+	})
+	await $fetch('/api/profiles', {
+		method: 'PUT',
+		body: {
+			delete_avatar: true,
+			user_id: props.profile.user_id
+		}
+	})
 }
 </script>
 
@@ -96,58 +178,65 @@ const deleteMedia = async () => {
 		</vCol>
 
 		<vCol cols="12">
-			<VRow align="center">
-				<vCol cols="1">
-					<VAvatar
-						:image="profile.avatar ? client.storage.from('images').getPublicUrl(`profiles/${profile.avatar}`).data.publicUrl : '/img/blank-profile-picture-973460_1280.png'"
-						size="100" rounded="circle" accept="image/*" />
+			<VRow align="center" justify="center" justify-lg="start">
+				<vCol cols="12" lg="1">
+					<div class="d-flex justify-center justify-lg-start">
+						<VAvatar
+							:image="profile.avatar ? client.storage.from('images').getPublicUrl(`profiles/${profile.avatar}`).data.publicUrl : '/img/blank-profile-picture-973460_1280.png'"
+							size="100" rounded="circle" accept="image/*" />
+					</div>
 				</vCol>
 
-				<vCol cols="5">
-					<VForm @submit.prevent="uploadAvatarFile" class="ml-3" v-if="uploadAvatar">
-						<VFileInput label="Avatar File" v-model="avatarFile" :loading="loading" :disabled="loading" />
-						<VBtn block type="submit" color="primary" text="Save" :loading="loading" />
-						<VBtn type="button" block class="mt-3" color="error" text="Cancel" :loading="loading"
-							@click="uploadAvatar = false" />
-					</VForm>
+				<vCol cols="12" lg="5">
+					<div class="mx-3">
+						<VForm @submit.prevent="uploadAvatarFile" class="ml-3" v-if="uploadAvatar" ref="avatarFormRef">
+							<VFileInput :rules="avatarRule.avatar" label="Avatar File" v-model="avatarFile" :loading="loading"
+								:disabled="loading" />
+							<VBtn block type="submit" color="primary" text="Save" :loading="loading" />
+							<VBtn type="button" block class="mt-3" color="error" text="Cancel" :loading="loading"
+								@click="uploadAvatar = false" />
+						</VForm>
 
-					<VBtn type="button" color="secondary" text="Upload" class="ml-3" :loading="loading"
-						@click="uploadAvatar = true" v-else />
+						<div class="d-flex justify-center justify-lg-start" v-else>
+							<VBtn type="button" color="secondary" text="Upload" class="ml-3" :loading="loading"
+								@click="uploadAvatar = true" />
+						</div>
+					</div>
 				</vCol>
 			</VRow>
 		</vCol>
 
 		<vCol cols="12">
-			<vForm @submit.prevent="updateStaffProfile">
+			<vForm @submit.prevent="updateStaffProfile" ref="staffFormRef">
 				<VRow>
 					<vCol cols="12" lg="6">
-						<vTextField label="Name" clearable v-model="staffProfileForm.name" :disabled="!editProfile || loading"
-							:loading="loading" />
-					</vCol>
-
-					<vCol cols="12" lg="6">
-						<VSelect label="Gender" :items="['Male', 'Female']" v-model="staffProfileForm.gender"
+						<vTextField label="Name" :rules="staffProfileRules.name" clearable v-model="staffProfileForm.name"
 							:disabled="!editProfile || loading" :loading="loading" />
 					</vCol>
 
 					<vCol cols="12" lg="6">
-						<VSelect label="Nationality" :items="['Local', 'International']" v-model="staffProfileForm.nationality"
-							:disabled="!editProfile || loading" :loading="loading" />
+						<VSelect label="Gender" :rules="staffProfileRules.gender" :items="['Male', 'Female']"
+							v-model="staffProfileForm.gender" :disabled="!editProfile || loading" :loading="loading" />
 					</vCol>
 
 					<vCol cols="12" lg="6">
-						<vTextField label="Employee ID" v-model="staffProfileForm.employee_id" :disabled="!editProfile || loading"
-							:loading="loading" />
+						<VSelect label="Nationality" :rules="staffProfileRules.nationality" :items="['Local', 'International']"
+							v-model="staffProfileForm.nationality" :disabled="!editProfile || loading" :loading="loading" />
 					</vCol>
 
 					<vCol cols="12" lg="6">
-						<VSelect label="Department" :items="departments" v-model="staffProfileForm.department"
-							:disabled="!editProfile || loading" :loading="loading" />
+						<vTextField label="Employee ID" :rules="staffProfileRules.employee_id"
+							v-model="staffProfileForm.employee_id" :disabled="!editProfile || loading" :loading="loading" />
 					</vCol>
 
 					<vCol cols="12" lg="6">
-						<VSelect label="Position" :items="positions" v-model="staffProfileForm.position"
-							:disabled="!editProfile || loading" :loading="loading" />
+						<VSelect label="Department" :rules="staffProfileRules.department" :items="departments"
+							v-model="staffProfileForm.department" :disabled="!editProfile || loading" :loading="loading" />
+					</vCol>
+
+					<vCol cols="12" lg="6">
+						<VSelect label="Position" :rules="staffProfileRules.position" :items="positions"
+							v-model="staffProfileForm.position" :disabled="!editProfile || loading" :loading="loading" />
 					</vCol>
 
 					<template v-if="editProfile">
@@ -160,9 +249,15 @@ const deleteMedia = async () => {
 						</vCol>
 					</template>
 
-					<vCol cols="12" lg="6" v-else>
-						<VBtn text="Edit" block type="button" color="secondary" @click="editProfile = true" :loading="loading" />
-					</vCol>
+					<template v-else>
+						<vCol cols="12" lg="6">
+							<VBtn text="Edit" block type="button" color="secondary" @click="editProfile = true" />
+						</vCol>
+						<VCol cols="12" lg="6">
+							<VBtn text="Back" block type="button" color="grey" to="/admin/staffs"
+								v-if="route.params.user_id == props.profile.user_id" />
+						</VCol>
+					</template>
 				</VRow>
 			</vForm>
 		</vCol>
