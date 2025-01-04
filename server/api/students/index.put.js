@@ -8,7 +8,7 @@ export default defineEventHandler(async (event) => {
 		matric_id: body.matric_id || '',
 		faculty: body.faculty || '',
 		course: body.course || '',
-	}).eq('id', body.id)
+	}).eq('user_id', body.user_id)
 
 	if (error) {
 		throw createError({

@@ -8,7 +8,7 @@ export default defineEventHandler(async (event) => {
 		employee_id: body.employee_id || '',
 		department: body.department || '',
 		position: body.position || ''
-	}).eq('id', body.id)
+	}).eq('user_id', body.user_id)
 
 	if (error) {
 		throw createError({

@@ -10,7 +10,7 @@ export default defineEventHandler(async (event) => {
 		nationality: body.nationality || '',
 		avatar: body.avatar || '',
 		role: body.role || ''
-	}).eq('id', body.id)
+	}).eq('user_id', body.user_id)
 
 	if (error) {
 		throw createError({

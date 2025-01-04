@@ -4,26 +4,18 @@ export default defineEventHandler(async (event) => {
 	const service_role = serverSupabaseServiceRole(event)
 	const body = await readBody(event)
 
-	const { data: signUp, error: signUpError } = await service_role.auth.signUp({
+	const { data: newUser, error: newUserError } = await service_role.auth.admin.createUser({
 		email: body.email,
-		password: body.password
+		password: body.password,
+		email_confirm: true
 	})
 
-	if (signUpError) {
+	if (newUserError) {
 		throw createError({
-			statusCode: signUpError.code,
-			statusMessage: signUpError.message
+			statusCode: newUserError.code,
+			statusMessage: newUserError.message
 		})
 	}
 
-	const { data: profile } = await service_role.from('profiles').select('*').eq('user_id', signUp.user.id).single()
-
-	if (profile) {
-		throw createError({
-			statusCode: 409,
-			statusMessage: 'User already registered'
-		})
-	}
-
-	return signUp.user
+	return newUser.user
 })

@@ -1,9 +1,7 @@
 <script setup>
 const props = defineProps({
-	profile: Object,
 	student: Object
 })
-
 const faculties = useFaculty()
 
 const courses = useCourse()
@@ -170,83 +168,75 @@ const deleteMedia = async () => {
 </script>
 
 <template>
-	<vRow>
-		<vCol cols="12">
-			<p>PROFILE INFORMATION</p>
-			<VDivider class="mb-3" />
-		</vCol>
+	<vBtn icon="i-mdi:pencil" color="secondary" @click="editStudentDialog = true" />
 
-		<vCol cols="12">
-			<VRow align="center">
-				<vCol cols="1">
-					<VAvatar
-						:image="profile.avatar ? client.storage.from('images').getPublicUrl(`profiles/${profile.avatar}`).data.publicUrl : '/img/blank-profile-picture-973460_1280.png'"
-						size="100" rounded="circle" accept="image/*" />
-				</vCol>
-
-				<vCol cols="5">
-					<VForm @submit.prevent="uploadAvatarFile" class="ml-3" v-if="uploadAvatar" ref="avatarFormRef">
-						<VFileInput label="Avatar File" v-model="avatarFile" :loading="loading" :rules="avatarRule.avatar"
-							:disabled="loading" />
-						<VBtn block type="submit" color="primary" text="Save" :loading="loading" />
-						<VBtn type="button" block class="mt-3" color="error" text="Cancel" :loading="loading"
-							@click="uploadAvatar = false" />
-					</VForm>
-
-					<VBtn type="button" color="secondary" text="Upload" class="ml-3" :loading="loading"
-						@click="uploadAvatar = true" v-else />
-				</vCol>
-			</VRow>
-		</vCol>
-
-		<vCol cols="12">
-			<vForm @submit.prevent="updateStudentProfile" ref="studentFormRef">
-				<VRow>
-					<vCol cols="12" lg="6">
-						<vTextField label="Name" v-model="studentProfileForm.name" :rules="studentProfileRules.name"
-							:loading="loading" :disabled="!editProfile || loading" />
+	<VDialog v-model="editStudentDialog" max-width="750">
+		<VCard title="Edit Student">
+			<VContainer>
+				<VRow align="center">
+					<vCol cols="1">
+						<VAvatar
+							:image="profile.avatar ? client.storage.from('images').getPublicUrl(`profiles/${profile.avatar}`).data.publicUrl : '/img/blank-profile-picture-973460_1280.png'"
+							size="100" rounded="circle" accept="image/*" />
 					</vCol>
 
-					<vCol cols="12" lg="6">
-						<VSelect label="Gender" :items="['Male', 'Female']" :rules="studentProfileRules.gender"
-							v-model="studentProfileForm.gender" :disabled="!editProfile || loading" :loading="loading" />
-					</vCol>
+					<vCol cols="5">
+						<VForm @submit.prevent="uploadAvatarFile" class="ml-3" v-if="uploadAvatar" ref="avatarFormRef">
+							<VFileInput label="Avatar File" v-model="avatarFile" :loading="loading" :rules="avatarRule.avatar"
+								:disabled="loading" />
+							<VBtn block type="submit" color="primary" text="Save" :loading="loading" />
+							<VBtn type="button" block class="mt-3" color="error" text="Cancel" :loading="loading"
+								@click="uploadAvatar = false" />
+						</VForm>
 
-					<vCol cols="12" lg="6">
-						<VSelect label="Nationality" :items="['Local', 'International']" :rules="studentProfileRules.nationality"
-							:disabled="!editProfile || loading" :loading="loading" v-model="studentProfileForm.nationality" />
+						<VBtn type="button" color="secondary" text="Upload" class="ml-3" :loading="loading"
+							@click="uploadAvatar = true" v-else />
 					</vCol>
+				</VRow>
 
-					<vCol cols="12" lg="6">
-						<vTextField label="Matric ID" v-model="studentProfileForm.matric_id" :rules="studentProfileRules.matric_id"
-							disabled :loading="loading" />
-					</vCol>
+				<vForm @submit.prevent="updateStudentProfile" ref="studentFormRef">
+					<VRow>
+						<vCol cols="12" lg="6">
+							<vTextField label="Name" v-model="studentProfileForm.name" :rules="studentProfileRules.name"
+								:loading="loading" :disabled="!editProfile || loading" />
+						</vCol>
 
-					<vCol cols="12" lg="6">
-						<VSelect label="Faculty" :items="faculties" :rules="studentProfileRules.faculty"
-							:disabled="!editProfile || loading" :loading="loading" v-model="studentProfileForm.faculty" />
-					</vCol>
+						<vCol cols="12" lg="6">
+							<VSelect label="Gender" :items="['Male', 'Female']" :rules="studentProfileRules.gender"
+								v-model="studentProfileForm.gender" :disabled="!editProfile || loading" :loading="loading" />
+						</vCol>
 
-					<vCol cols="12" lg="6">
-						<VSelect label="Course" :items="courses" :rules="studentProfileRules.course"
-							:disabled="!editProfile || loading" :loading="loading" v-model="studentProfileForm.course" />
-					</vCol>
+						<vCol cols="12" lg="6">
+							<VSelect label="Nationality" :items="['Local', 'International']" :rules="studentProfileRules.nationality"
+								:disabled="!editProfile || loading" :loading="loading" v-model="studentProfileForm.nationality" />
+						</vCol>
 
-					<template v-if="editProfile">
+						<vCol cols="12" lg="6">
+							<vTextField label="Matric ID" v-model="studentProfileForm.matric_id"
+								:rules="studentProfileRules.matric_id" disabled :loading="loading" />
+						</vCol>
+
+						<vCol cols="12" lg="6">
+							<VSelect label="Faculty" :items="faculties" :rules="studentProfileRules.faculty"
+								:disabled="!editProfile || loading" :loading="loading" v-model="studentProfileForm.faculty" />
+						</vCol>
+
+						<vCol cols="12" lg="6">
+							<VSelect label="Course" :items="courses" :rules="studentProfileRules.course"
+								:disabled="!editProfile || loading" :loading="loading" v-model="studentProfileForm.course" />
+						</vCol>
+
 						<vCol cols="12" lg="6">
 							<VBtn text="Save" block type="submit" color="primary" :loading="loading" />
 						</vCol>
 
 						<vCol cols="12" lg="6">
-							<VBtn text="Cancel" block type="button" color="error" @click="editProfile = false" :loading="loading" />
+							<VBtn text="Cancel" block type="button" color="error" @click="editStudentDialog = false"
+								:loading="loading" />
 						</vCol>
-					</template>
-
-					<vCol cols="12" lg="6" v-else>
-						<VBtn text="Edit" block type="button" color="secondary" @click="editProfile = true" />
-					</vCol>
-				</VRow>
-			</vForm>
-		</vCol>
-	</vRow>
+					</VRow>
+				</vForm>
+			</VContainer>
+		</VCard>
+	</VDialog>
 </template>

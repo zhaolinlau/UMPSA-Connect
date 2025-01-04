@@ -22,7 +22,7 @@ const randomNumber = async () => {
 	media_id.value = Math.random()
 }
 
-const avatarFile = ref('')
+const avatarFile = ref(null)
 
 const staffProfileForm = reactive({
 	name: props.profile.name,
@@ -40,7 +40,7 @@ const updateStaffProfile = async () => {
 	await $fetch('/api/profiles', {
 		method: 'put',
 		body: {
-			id: props.profile.id,
+			user_id: props.profile.user_id,
 			name: staffProfileForm.name,
 			gender: staffProfileForm.gender,
 			nationality: staffProfileForm.nationality,
@@ -52,7 +52,7 @@ const updateStaffProfile = async () => {
 	await $fetch('/api/staffs', {
 		method: 'put',
 		body: {
-			id: props.staff.id,
+			user_id: props.staff.user_id,
 			employee_id: staffProfileForm.employee_id,
 			department: staffProfileForm.department,
 			position: staffProfileForm.position,
