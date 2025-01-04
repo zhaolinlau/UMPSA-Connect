@@ -18,7 +18,7 @@ UMPSA Connect has successfully passed all web security tests on the [Mozilla Dev
 
 ![performance_test.png](public/img/performance_test.png)
 
-UMPSA Connect scored 100 on [Google PageSpeed Insights](https://pagespeed.web.dev/), with key metrics like a First Contentful Paint of 0.4 seconds, Largest Contentful Paint of 0.5 seconds, and a Cumulative Layout Shift of 0. For detailed results, view the [Full Analysis Report](https://pagespeed.web.dev/analysis/https-umpsa-connect-vercel-app/useednrfkh?form_factor=desktop).
+UMPSA Connect scored 100 on [Google PageSpeed Insights](https://pagespeed.web.dev/), with key metrics like a First Contentful Paint of 0.4 seconds, Largest Contentful Paint of 0.5 seconds, and a Cumulative Layout Shift of 0. For detailed results, view the [Full Analysis Report](https://pagespeed.web.dev/analysis/https-umpsa-connect-vercel-app/k9xgpscd3z?form_factor=desktop).
 
 ## Progressive Web Application Support
 
