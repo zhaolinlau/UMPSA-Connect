@@ -81,6 +81,7 @@ const deleteMedia = async (post_id, post_media) => {
 
 	postForm.value.media = null
 }
+const route = useRoute()
 
 const deletePost = async (post_id, post_media) => {
 	await $fetch('/api/posts', {
@@ -91,7 +92,11 @@ const deletePost = async (post_id, post_media) => {
 		}
 	})
 
-	await navigateTo('/')
+	if (route.path == `/admin/reports/${route.params.id}`) {
+		return
+	} else {
+		await navigateTo('/')
+	}
 }
 
 const createVote = async (post_id) => {
@@ -274,8 +279,8 @@ const deleteBookmark = async (id) => {
 			</VCardSubtitle>
 		</VCardItem>
 
-		<VImg cover max-height="500" :src="client.storage.from('images').getPublicUrl(`posts/${post.media}`).data.publicUrl"
-			:alt="post.media" v-if="post.media" :draggable="false" />
+		<VImg :src="client.storage.from('images').getPublicUrl(`posts/${post.media}`).data.publicUrl" :alt="post.media"
+			v-if="post.media" :draggable="false" />
 
 		<VCardText v-if="post.content">
 			{{ post.content }}
