@@ -225,7 +225,9 @@ const deleteMedia = async () => {
 
 					<vCol cols="12" lg="6">
 						<vTextField label="Matric ID" v-model="studentProfileForm.matric_id" :rules="studentProfileRules.matric_id"
-							disabled :loading="loading" />
+							:loading="loading" :disabled="!editProfile || loading" v-if="route.params.user_id == profile.user_id" />						
+						<vTextField label="Matric ID" v-model="studentProfileForm.matric_id" :rules="studentProfileRules.matric_id"
+							:loading="loading" disabled v-else />
 					</vCol>
 
 					<vCol cols="12" lg="6">
