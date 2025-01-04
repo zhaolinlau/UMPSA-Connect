@@ -188,16 +188,18 @@ const deleteMedia = async () => {
 				</vCol>
 
 				<vCol cols="12" lg="5">
-					<VForm @submit.prevent="uploadAvatarFile" v-if="uploadAvatar" ref="avatarFormRef">
-						<VFileInput label="Avatar File" v-model="avatarFile" :loading="loading" :rules="avatarRule.avatar"
-							:disabled="loading" />
-						<VBtn block type="submit" color="primary" text="Save" :loading="loading" />
-						<VBtn type="button" block class="mt-3" color="error" text="Cancel" :loading="loading"
-							@click="uploadAvatar = false" />
-					</VForm>
+					<div class="mx-3">
+						<VForm @submit.prevent="uploadAvatarFile" v-if="uploadAvatar" ref="avatarFormRef">
+							<VFileInput label="Avatar File" v-model="avatarFile" :loading="loading" :rules="avatarRule.avatar"
+								:disabled="loading" />
+							<VBtn block type="submit" color="primary" text="Save" :loading="loading" />
+							<VBtn type="button" block class="mt-3" color="error" text="Cancel" :loading="loading"
+								@click="uploadAvatar = false" />
+						</VForm>
 
-					<div class="d-flex justify-center justify-lg-start" v-else>
-						<VBtn type="button" color="secondary" text="Upload" :loading="loading" @click="uploadAvatar = true" />
+						<div class="d-flex justify-center justify-lg-start" v-else>
+							<VBtn type="button" color="secondary" text="Upload" :loading="loading" @click="uploadAvatar = true" />
+						</div>
 					</div>
 				</vCol>
 			</VRow>

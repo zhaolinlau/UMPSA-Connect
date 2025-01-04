@@ -44,5 +44,16 @@ onUnmounted(async () => {
 </script>
 
 <template>
-	<StudentProfileForm :profile="profile" :student="student" />
+	<VContainer class="fill-height">
+		<VRow>
+			<VCol cols="12">
+				<p class="text-lg-h4 text-h5">
+					Student Profile
+				</p>
+			</VCol>
+			<VCol cols="12">
+				<StudentProfileForm :profile="profile" :student="student" />
+			</VCol>
+		</VRow>
+	</VContainer>
 </template>
