@@ -29,57 +29,56 @@ const randomNumber = async () => {
 }
 
 const addStudent = async () => {
-	const { valid } = await addStudentFormRef.value.validate()
-	if (valid) {
-		if (addStudentForm.password == addStudentForm.confirm_password) {
-			const user = await $fetch('/api/users', {
-				method: 'POST',
-				body: {
-					email: addStudentForm.matric_id.toLowerCase() + addStudentForm.email,
-					password: addStudentForm.password
-				}
-			}).catch((error) => {
-				addStudentError.value = error.data.message
-				addStudentAlert.value = true
-			})
+	try {
+		const { valid } = await addStudentFormRef.value.validate()
 
-			if (user) {
-				await randomNumber()
-				const profile = await $fetch('/api/profiles', {
+		if (valid) {
+			if (addStudentForm.password == addStudentForm.confirm_password) {
+				const user = await $fetch('/api/users', {
 					method: 'POST',
 					body: {
-						name: addStudentForm.name,
-						role: addStudentForm.role,
-						avatar: addStudentForm.avatar ? `${media_id.value}/${addStudentForm.avatar.name}` : '',
-						gender: addStudentForm.gender,
-						nationality: addStudentForm.nationality,
-						user_id: user.id
+						email: addStudentForm.matric_id.toLowerCase() + addStudentForm.email,
+						password: addStudentForm.password
 					}
-				}).catch((error) => {
-					addStudentError.value = error.data.message
-					addStudentAlert.value = true
 				})
 
-				if (profile) {
-					await uploadAvatarFile()
-				}
-
-				if (profile) {
-					await $fetch('/api/students', {
+				if (user) {
+					await randomNumber()
+					const profile = await $fetch('/api/profiles', {
 						method: 'POST',
 						body: {
-							matric_id: addStudentForm.matric_id.toUpperCase(),
-							faculty: addStudentForm.faculty,
-							course: addStudentForm.course,
+							name: addStudentForm.name,
+							role: addStudentForm.role,
+							avatar: addStudentForm.avatar ? `${media_id.value}/${addStudentForm.avatar.name}` : '',
+							gender: addStudentForm.gender,
+							nationality: addStudentForm.nationality,
 							user_id: user.id
 						}
-					}).catch((error) => {
-						addStudentError.value = error.data.message
-						addStudentAlert.value = true
 					})
+
+					if (profile) {
+						await uploadAvatarFile()
+					}
+
+					if (profile) {
+						await $fetch('/api/students', {
+							method: 'POST',
+							body: {
+								matric_id: addStudentForm.matric_id.toUpperCase(),
+								faculty: addStudentForm.faculty,
+								course: addStudentForm.course,
+								user_id: user.id
+							}
+						})
+
+						addStudentDialog.value = false
+					}
 				}
 			}
 		}
+	} catch (error) {
+		addStudentError.value = error.message
+		addStudentAlert.value = true
 	}
 }
 
@@ -148,8 +147,7 @@ const uploadAvatarFile = async () => {
 		})
 
 		if (error) {
-			addStudentError.value = error.message
-			addStudentAlert.value = true
+			throw createError(error)
 		}
 	}
 }

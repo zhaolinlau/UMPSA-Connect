@@ -1,22 +1,22 @@
 import { serverSupabaseServiceRole } from '#supabase/server'
 
 export default defineEventHandler(async (event) => {
-	const client = serverSupabaseServiceRole(event)
+	const service_role = serverSupabaseServiceRole(event)
 	const query = getQuery(event)
 
 	if (query.single) {
-		const { data, error } = await client.auth.admin.getUserById(query.id)
+		const { data, error } = await service_role.auth.admin.getUserById(query.id)
 
 		if (error) {
 			throw createError({
 				statusCode: error.code,
 				statusMessage: error.message
 			})
-		} else {
-			return data.user
 		}
+
+		return data.user
 	} else {
-		const { data, error } = await client.auth.admin.listUsers({
+		const { data, error } = await service_role.auth.admin.listUsers({
 			perPage: 1000
 		})
 
@@ -25,8 +25,8 @@ export default defineEventHandler(async (event) => {
 				statusCode: error.code,
 				statusMessage: error.message
 			})
-		} else {
-			return data.users
 		}
+
+		return data.users
 	}
 })
