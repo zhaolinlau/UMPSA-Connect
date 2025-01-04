@@ -1,10 +1,10 @@
-import { serverSupabaseClient } from '#supabase/server'
+import { serverSupabaseServiceRole } from '#supabase/server'
 
 export default defineEventHandler(async (event) => {
-	const client = await serverSupabaseClient(event)
+	const service_role = serverSupabaseServiceRole(event)
 	const body = await readBody(event)
 
-	const { error } = await client.from('students').update({
+	const { error } = await service_role.from('students').update({
 		matric_id: body.matric_id || '',
 		faculty: body.faculty || '',
 		course: body.course || '',

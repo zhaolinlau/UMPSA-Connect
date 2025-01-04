@@ -87,7 +87,7 @@ onUnmounted(async () => {
 					<td>{{ item.faculty }}</td>
 					<td>{{ item.course }}</td>
 					<td class="d-inline-flex align-center">
-						<EditStudentProfileForm :student="item" />
+						<VBtn icon="i-mdi:eye" color="blue" :to="`/admin/students/${item.user_id}`" />
 						<DeleteStudentAccount :student="item" />
 					</td>
 				</tr>

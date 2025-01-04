@@ -35,18 +35,6 @@ const avatarRule = ref({
 })
 
 const studentProfileRules = ref({
-	password: [
-		value => {
-			if (value) return true
-			return 'Password is required.'
-		}
-	],
-	confirm_password: [
-		value => {
-			if (value) return true
-			return 'Confirm Password is required.'
-		}
-	],
 	matric_id: [
 		value => {
 			if (value) return true
@@ -164,8 +152,19 @@ const uploadAvatarFile = async () => {
 }
 
 const deleteMedia = async () => {
-	await client.storage.from('images').remove([`profiles/${props.profile.avatar}`])
-	await client.from('profiles').update({ avatar: '' }).eq('id', props.profile.id)
+	await $fetch('/api/storage', {
+		method: 'DELETE',
+		body: {
+			path: `profiles/${props.profile.avatar}`
+		}
+	})
+	await $fetch('/api/profiles', {
+		method: 'PUT',
+		body: {
+			delete_avatar: true,
+			user_id: props.profile.user_id
+		}
+	})
 }
 </script>
 
