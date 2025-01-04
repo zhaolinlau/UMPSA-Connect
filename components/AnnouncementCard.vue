@@ -1,6 +1,7 @@
 <script setup>
 const props = defineProps({
-	announcement: Object
+	announcement: Object,
+	student: Object
 })
 const client = useSupabaseClient()
 const route = useRoute()
@@ -10,7 +11,7 @@ const announcementForm = reactive({
 	target_user: '',
 	media: null
 })
-
+const loading = ref(false)
 const editAnnouncementDialog = ref(false)
 
 const toggleEditAnnouncement = async (announcement) => {
@@ -52,50 +53,71 @@ const randomNumber = async () => {
 const editAnnouncementSnackbar = ref(false)
 
 const editAnnouncement = async (id, media) => {
-	const { valid } = await editAnnouncementRef.value.validate()
-	if (valid) {
-		await randomNumber()
-		if (announcementForm.media) {
-			await client.storage.from('images')
-				.upload(`announcements/${media_id.value}/${announcementForm.media.name}`, announcementForm.media, {
-					cacheControl: '3600',
-					upsert: false
-				})
-		}
-
-		await $fetch('/api/announcements', {
-			method: 'put',
-			body: {
-				id: id,
-				title: announcementForm.title,
-				content: announcementForm.content,
-				target_user: announcementForm.target_user,
-				media: announcementForm.media != media ? `${media_id.value}/${announcementForm.media.name}` : media
+	try {
+		loading.value = true
+		const { valid } = await editAnnouncementRef.value.validate()
+		if (valid) {
+			await randomNumber()
+			if (announcementForm.media) {
+				await client.storage.from('images')
+					.upload(`announcements/${media_id.value}/${announcementForm.media.name}`, announcementForm.media, {
+						cacheControl: '3600',
+						upsert: false
+					})
 			}
-		})
 
-		editAnnouncementSnackbar.value = true
-		editAnnouncementDialog.value = false
+			await $fetch('/api/announcements', {
+				method: 'put',
+				body: {
+					id: id,
+					title: announcementForm.title,
+					content: announcementForm.content,
+					target_user: announcementForm.target_user,
+					media: announcementForm.media != media ? `${media_id.value}/${announcementForm.media.name}` : media
+				}
+			})
+
+			editAnnouncementSnackbar.value = true
+			editAnnouncementDialog.value = false
+		}
+	} catch (error) {
+		console.error(error.message)
+	} finally {
+		loading.value = false
 	}
 }
 
 const deleteMedia = async (id, media) => {
-	await client.storage.from('images').remove([`announcements/${media}`])
-	await client.from('announcements').update({ media: null }).eq('id', id).select()
+	try {
+		loading.value = true
+		await client.storage.from('images').remove([`announcements/${media}`])
+		await client.from('announcements').update({ media: null }).eq('id', id).select()
 
-	announcementForm.media = null
+		announcementForm.media = null
+	} catch (error) {
+		console.error(error.message)
+	} finally {
+		loading.value = false
+	}
 }
 
 const deleteAnnouncement = async (id, media) => {
-	await $fetch('/api/announcements', {
-		method: 'delete',
-		body: {
-			id,
-			media
-		}
-	})
+	try {
+		loading.value = true
+		await $fetch('/api/announcements', {
+			method: 'delete',
+			body: {
+				id,
+				media
+			}
+		})
 
-	await navigateTo('/announcements')
+		await navigateTo('/announcements')
+	} catch (error) {
+		console.error(error.message)
+	} finally {
+		loading.value = false
+	}
 }
 
 const id = useId()
@@ -127,42 +149,65 @@ onUnmounted(async () => {
 const addBookmarkSnackbar = ref(false)
 
 const createBookmark = async (announcement_id) => {
-	await $fetch('/api/bookmarks', {
-		method: 'post',
-		body: {
-			announcement_id
-		}
-	})
+	try {
+		loading.value = true
+		await $fetch('/api/bookmarks', {
+			method: 'post',
+			body: {
+				announcement_id
+			}
+		})
 
-	addBookmarkSnackbar.value = true
+		addBookmarkSnackbar.value = true
+	} catch (error) {
+		console.error(error.message)
+	} finally {
+		loading.value = false
+	}
 }
 
 const deleteBookmarkSnackbar = ref(false)
 
 const deleteBookmark = async (id) => {
-	await $fetch('/api/bookmarks', {
-		method: 'delete',
-		body: {
-			id
-		}
-	})
+	try {
+		loading.value = true
+		await $fetch('/api/bookmarks', {
+			method: 'delete',
+			body: {
+				id
+			}
+		})
 
-	deleteBookmarkSnackbar.value = true
+		deleteBookmarkSnackbar.value = true
+	} catch (error) {
+		console.error(error.message)
+	} finally {
+		loading.value = false
+	}
 }
 
-const faculties = ref([
-	'Faculty of Computing',
-	'Faculty of Chemical and Process Engineering Technology',
-	'Faculty of Civil Engineering Technology',
-	'Faculty of Electrical and Electronics Engineering Technology',
-	'Faculty of Manufacturing and Mechatronic Engineering Technology',
-	'Faculty of Mechanical and Automotive Engineering Technology',
-	'Faculty of Industrial Sciences and Technology',
-	'Faculty of Industrial Management'
-])
+const faculties = useFaculty()
+
+const { show } = useWebNotification({
+	title: props.announcement.title,
+	body: props.announcement.content,
+	dir: 'auto',
+	lang: 'en',
+	tag: 'Announcement',
+})
+
+onMounted(async () => {
+	if (props.student && props.student.faculty == props.announcement.target_user) {
+		await show()
+	}
+})
 </script>
 
 <template>
+	<VOverlay class="align-center justify-center" persistent v-model="loading">
+		<VProgressCircular color="primary" size="64" indeterminate />
+	</VOverlay>
+
 	<VSnackbar position="relative" variant="elevated" location="bottom right" timer="success" text="Added to bookmark."
 		v-model="addBookmarkSnackbar">
 		<template v-slot:actions>
@@ -220,6 +265,9 @@ const faculties = ref([
 
 					<VTextarea prepend-icon="i-mdi:text" v-model="announcementForm.content" :rules="announcementRules.content"
 						label="Content" clearable />
+
+					<VSelect prepend-icon="i-mdi:shape" v-model="announcementForm.target_user" label="Target User"
+						:items="faculties" :rules="announcementRules.target_user" />
 
 					<VSelect prepend-icon="i-mdi:shape" v-model="announcementForm.target_user" label="Target User"
 						:items="faculties" :rules="announcementRules.target_user" />
