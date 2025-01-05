@@ -166,7 +166,7 @@ const createReport = async () => {
 
 	<VCard hover density border :title="comment_user.email.split('@')[0].toLocaleUpperCase()"
 		:subtitle="new Date(comment.created_at).toLocaleString('en-GB', { timeZone: 'Asia/Kuala_Lumpur', hour12: true })"
-		:text="comment.content">
+		:text="comment.content" @click="navigateTo(`/posts/${comment.post_id}`)">
 
 		<VImg :src="client.storage.from('images').getPublicUrl(`comments/${comment.media}`).data.publicUrl"
 			:alt="comment.media" :draggable="false" cover />
