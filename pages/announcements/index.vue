@@ -2,8 +2,18 @@
 const client = useSupabaseClient()
 const id = useId()
 const user = useSupabaseUser()
-const faculties = useFaculty()
-const target_user = ref('')
+const faculties = ref([
+	'All',
+	'Faculty of Computing',
+	'Faculty of Chemical and Process Engineering Technology',
+	'Faculty of Civil Engineering Technology',
+	'Faculty of Electrical and Electronics Engineering Technology',
+	'Faculty of Manufacturing and Mechatronic Engineering Technology',
+	'Faculty of Mechanical and Automotive Engineering Technology',
+	'Faculty of Industrial Sciences and Technology',
+	'Faculty of Industrial Management'
+])
+const target_user = ref('All')
 
 const { data: profile } = await useFetch('/api/profiles', {
 	method: 'GET',
@@ -53,14 +63,12 @@ onUnmounted(async () => {
 </script>
 
 <template>
-	<VRow v-if="profile.role == 'admin'">
-		<VCol cols="12">
+	<VRow justify="center">
+		<VCol cols="12" lg="7" v-if="profile.role == 'admin'">
 			<CreateAnnouncement />
 		</VCol>
-	</VRow>
-	<VRow justify="center">
-		<VCol cols="12">
-			<VSelect :items="faculties" v-model="target_user" />
+		<VCol cols="12" lg="7">
+			<VSelect :items="faculties" v-model="target_user" label="Sort by" />
 		</VCol>
 		<VCol cols="12" lg="7" v-for="n in 2" v-if="!announcements">
 			<VSkeletonLoader type="chip, heading, subtitle, image, text, actions" />

@@ -15,7 +15,7 @@ export default defineEventHandler(async (event) => {
 		} else {
 			return data
 		}
-	} else if (query.target_user) {
+	} else if (query.target_user && query.target_user != 'All') {
 		const { data, error } = await client.from('announcements').select('*').eq('target_user', query.target_user).order('created_at', { ascending: false })
 
 		if (error) {
