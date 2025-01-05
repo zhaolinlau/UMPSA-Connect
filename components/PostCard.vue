@@ -84,6 +84,16 @@ const deleteMedia = async (post_id, post_media) => {
 const route = useRoute()
 
 const deletePost = async (post_id, post_media) => {
+	if (route.path == `/admin/reports/${route.params.id}`) {
+		await $fetch('/api/reports', {
+			method: 'PUT',
+			body: {
+				post_id: post_id,
+				status: 'resolved'
+			}
+		})
+	}
+
 	await $fetch('/api/posts', {
 		method: 'delete',
 		body: {

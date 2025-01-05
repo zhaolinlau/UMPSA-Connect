@@ -20,8 +20,19 @@ const toggleEditComment = async (comment) => {
 	commentForm.content = comment.content
 	commentForm.media = comment.media
 }
+const route = useRoute()
 
 const deleteComment = async (id, media) => {
+	if (route.path == `/admin/reports/${route.params.id}`) {
+		await $fetch('/api/reports', {
+			method: 'PUT',
+			body: {
+				comment_id: id,
+				status: 'resolved'
+			}
+		})
+	}
+
 	await $fetch('/api/comments', {
 		method: 'delete',
 		body: {

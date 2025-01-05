@@ -12,7 +12,7 @@ const { data: profile } = await useFetch('/api/profiles', {
 	}
 })
 
-const { data: report } = await useFetch('/api/reports', {
+const { data: report, refresh: refreshReport } = await useFetch('/api/reports', {
 	method: 'GET',
 	query: {
 		single: true,
@@ -36,6 +36,12 @@ const { data: comment, refresh: refreshComment } = await useFetch('/api/comments
 	}
 })
 
+const reportChannel = client.channel(`${id}:report`).on(
+	'postgres_changes',
+	{ event: '*', schema: 'public', table: 'reports' },
+	async () => await refreshReport()
+)
+
 const postChannel = client.channel(`${id}:post`).on(
 	'postgres_changes',
 	{ event: '*', schema: 'public', table: 'posts' },
@@ -49,11 +55,13 @@ const commentChannel = client.channel(`${id}:comment`).on(
 )
 
 onMounted(async () => {
+	reportChannel.subscribe()
 	postChannel.subscribe()
 	commentChannel.subscribe()
 })
 
 onUnmounted(async () => {
+	await client.removeChannel(reportChannel)
 	await client.removeChannel(postChannel)
 	await client.removeChannel(commentChannel)
 })
@@ -96,8 +104,6 @@ const editReport = async () => {
 					status: reportForm.status
 				}
 			})
-
-			reportFormRef.value.reset()
 		}
 	} catch (error) {
 		console.error(error.message)
@@ -105,6 +111,10 @@ const editReport = async () => {
 		loading.value = false
 	}
 }
+
+watch(report, async () => {
+	reportForm.status = report.value.status
+})
 </script>
 
 <template>
