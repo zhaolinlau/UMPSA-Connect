@@ -3,6 +3,14 @@ const client = useSupabaseClient()
 const id = useId()
 const user = useSupabaseUser()
 
+const { data: profile } = await useFetch('/api/profiles', {
+	method: 'GET',
+	query: {
+		single: true,
+		user_id: user.value.id
+	}
+})
+
 const { data: student, refresh: refreshStudent } = await useFetch('/api/students', {
 	method: 'GET',
 	query: {
@@ -36,7 +44,7 @@ onUnmounted(async () => {
 </script>
 
 <template>
-	<VRow>
+	<VRow v-if="profile.role == 'admin'">
 		<VCol cols="12">
 			<CreateAnnouncement />
 		</VCol>
