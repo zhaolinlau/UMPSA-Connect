@@ -27,5 +27,11 @@ onUnmounted(async () => {
 </script>
 
 <template>
-	<AnnouncementCard :announcement="announcement" />
+	<VContainer>
+		<VRow>
+			<VCol cols="12">
+				<AnnouncementCard :announcement="announcement" />
+			</VCol>
+		</VRow>
+	</VContainer>
 </template>

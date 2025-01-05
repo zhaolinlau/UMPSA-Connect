@@ -9,7 +9,8 @@ export default defineEventHandler(async (event) => {
 			title: body.title,
 			content: body.content,
 			media: body.media,
-			target_user: body.target_user
+			target_user: body.target_user,
+			user_id: body.user_id
 		}
 	])
 

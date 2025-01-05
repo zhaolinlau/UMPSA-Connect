@@ -2,6 +2,8 @@
 const client = useSupabaseClient()
 const id = useId()
 const user = useSupabaseUser()
+const faculties = useFaculty()
+const target_user = ref('')
 
 const { data: profile } = await useFetch('/api/profiles', {
 	method: 'GET',
@@ -17,11 +19,14 @@ const { data: student, refresh: refreshStudent } = await useFetch('/api/students
 		single: true,
 		user_id: user.value.id
 	}
-
 })
 
 const { data: announcements, refresh: refreshAnnouncements } = await useFetch('/api/announcements', {
-	method: 'get'
+	method: 'get',
+	query: {
+		target_user
+	},
+	watch: [target_user]
 })
 
 const announcementsChannel = client.channel(`${id}:announcements`).on('postgres_changes', {
@@ -50,11 +55,12 @@ onUnmounted(async () => {
 		</VCol>
 	</VRow>
 	<VRow justify="center">
-		<template v-if="!announcements">
-			<VCol cols="12" lg="7" v-for="n in 2">
-				<VSkeletonLoader type="chip, heading, subtitle, image, text, actions" />
-			</VCol>
-		</template>
+		<VCol cols="12">
+			<VSelect :items="faculties" v-model="target_user" />
+		</VCol>
+		<VCol cols="12" lg="7" v-for="n in 2" v-if="!announcements">
+			<VSkeletonLoader type="chip, heading, subtitle, image, text, actions" />
+		</VCol>
 		<VCol cols="12" lg="7" v-for="announcement in announcements" :key="announcement.id" v-auto-animate>
 			<AnnouncementCard :announcement="announcement" :student="student" />
 		</VCol>

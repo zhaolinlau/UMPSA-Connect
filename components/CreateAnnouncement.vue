@@ -36,7 +36,7 @@ const announcementRules = ref({
 const randomNumber = async () => {
 	media_id.value = Math.random()
 }
-
+const user = useSupabaseUser()
 const createAnnouncement = async () => {
 	try {
 		loading.value = true
@@ -59,7 +59,8 @@ const createAnnouncement = async () => {
 					title: announcementForm.title,
 					target_user: announcementForm.target_user,
 					content: announcementForm.content,
-					media: announcementForm.media ? `${media_id.value}/${announcementForm.media.name}` : null
+					media: announcementForm.media ? `${media_id.value}/${announcementForm.media.name}` : null,
+					user_id: user.value.id
 				}
 			})
 
@@ -75,16 +76,7 @@ const createAnnouncement = async () => {
 	}
 }
 
-const faculties = ref([
-	'Faculty of Computing',
-	'Faculty of Chemical and Process Engineering Technology',
-	'Faculty of Civil Engineering Technology',
-	'Faculty of Electrical and Electronics Engineering Technology',
-	'Faculty of Manufacturing and Mechatronic Engineering Technology',
-	'Faculty of Mechanical and Automotive Engineering Technology',
-	'Faculty of Industrial Sciences and Technology',
-	'Faculty of Industrial Management'
-])
+const faculties = useFaculty()
 </script>
 
 <template>
