@@ -41,6 +41,19 @@ const { data: comments, refresh: refreshComments } = await useFetch('/api/commen
 	}
 })
 
+const { data: votes, refresh: refreshVotes } = await useFetch('/api/votes', {
+	method: 'get',
+	query: {
+		user_id: user.value.id
+	}
+})
+
+const votesChannel = client.channel(`${id}:votes`).on(
+	'postgres_changes',
+	{ event: '*', schema: 'public', table: 'votes' },
+	async () => await refreshVotes()
+)
+
 const commentsChannel = client.channel(`${id}:comments`).on(
 	'postgres_changes',
 	{ event: '*', schema: 'public', table: 'comments' },
@@ -72,6 +85,7 @@ const refreshProfileDetails = async () => {
 }
 
 onMounted(async () => {
+	votesChannel.subscribe()
 	commentsChannel.subscribe()
 	postsChannel.subscribe()
 	profileChannel.subscribe()
@@ -80,6 +94,7 @@ onMounted(async () => {
 })
 
 onUnmounted(async () => {
+	await client.removeChannel(votesChannel)
 	await client.removeChannel(commentsChannel)
 	await client.removeChannel(profileChannel)
 	await client.removeChannel(studentChannel)
@@ -142,16 +157,28 @@ onUnmounted(async () => {
 
 					<VTabsWindowItem value="votes">
 						<VRow>
-							<VCol cols="12">
+							<template v-if="votes">
+								<VCol cols="12" v-for="vote in votes" :key="vote.id">
+									<PostCard :post="vote.posts" :profile="profile" />
+								</VCol>
+							</template>
 
+							<VCol cols="12" v-else>
+								No data available
 							</VCol>
 						</VRow>
 					</VTabsWindowItem>
 
 					<VTabsWindowItem value="bookmarks">
 						<VRow>
-							<VCol cols="12">
+							<template v-if="posts">
+								<VCol cols="12" v-for="post in posts" :key="post.id">
+									<PostCard :post="post" :profile="profile" />
+								</VCol>
+							</template>
 
+							<VCol cols="12" v-else>
+								No data available
 							</VCol>
 						</VRow>
 					</VTabsWindowItem>
