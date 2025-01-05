@@ -21,6 +21,10 @@ const { data: student, refresh: refreshStudent } = await useFetch('/api/students
 	}
 })
 
+if (student.value) {
+	target_user.value = student.value.faculty
+}
+
 const { data: announcements, refresh: refreshAnnouncements } = await useFetch('/api/announcements', {
 	method: 'get',
 	query: {
