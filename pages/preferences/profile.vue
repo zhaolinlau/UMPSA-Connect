@@ -48,6 +48,20 @@ const { data: votes, refresh: refreshVotes } = await useFetch('/api/votes', {
 	}
 })
 
+const { data: bookmarks, refresh: refreshBookmarks } = await useFetch('/api/bookmarks', {
+	method: 'get',
+	query: {
+		profile: true,
+		user_id: user.value.id
+	}
+})
+
+const bookmarksChannel = client.channel(`${id}:bookmarks`).on(
+	'postgres_changes',
+	{ event: '*', schema: 'public', table: 'bookmarks' },
+	async () => await refreshBookmarks()
+)
+
 const votesChannel = client.channel(`${id}:votes`).on(
 	'postgres_changes',
 	{ event: '*', schema: 'public', table: 'votes' },
@@ -85,6 +99,7 @@ const refreshProfileDetails = async () => {
 }
 
 onMounted(async () => {
+	bookmarksChannel.subscribe()
 	votesChannel.subscribe()
 	commentsChannel.subscribe()
 	postsChannel.subscribe()
@@ -94,6 +109,7 @@ onMounted(async () => {
 })
 
 onUnmounted(async () => {
+	await client.removeChannel(bookmarksChannel)
 	await client.removeChannel(votesChannel)
 	await client.removeChannel(commentsChannel)
 	await client.removeChannel(profileChannel)
@@ -171,9 +187,11 @@ onUnmounted(async () => {
 
 					<VTabsWindowItem value="bookmarks">
 						<VRow>
-							<template v-if="posts">
-								<VCol cols="12" v-for="post in posts" :key="post.id">
-									<PostCard :post="post" :profile="profile" />
+							<template v-if="bookmarks">
+								<VCol cols="12" v-for="bookmark in bookmarks" :key="bookmark.id">
+									<AnnouncementCard :announcement="bookmark.announcements" :student="student" v-if="bookmark.announcement_id" />
+									<EventCard :event="bookmark.events" v-else-if="bookmark.event_id" />
+									<PostCard :post="bookmark.posts" :profile="profile" v-else-if="bookmark.post_id" />
 								</VCol>
 							</template>
 
