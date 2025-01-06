@@ -248,9 +248,101 @@ const deleteBookmark = async (id) => {
 
 	deleteBookmarkSnackbar.value = true
 }
+
+const translateFormDialog = ref(false)
+const translateFormRef = ref(null)
+const language = ref('')
+const translated = ref('')
+const loading = ref(false)
+const languages = ref([
+	'Arabic',
+	'Bengali',
+	'Bulgarian',
+	'Chinese simplified',
+	'Chinese traditional',
+	'Croatian',
+	'Czech',
+	'Danish',
+	'Dutch',
+	'English',
+	'Estonian',
+	'Finnish',
+	'French',
+	'German',
+	'Greek',
+	'Hebrew',
+	'Hindi',
+	'Hungarian',
+	'Italian',
+	'Japanese',
+	'Korean',
+	'Latvian',
+	'Lithuanian',
+	'Norwegian',
+	'Polish',
+	'Portuguese',
+	'Romanian',
+	'Russian',
+	'Serbian',
+	'Slovak',
+	'Slovenian',
+	'Spanish',
+	'Swahili',
+	'Swedish',
+	'Thai',
+	'Turkish',
+	'Ukrainian',
+	'Vietnamese'
+])
+
+const translated_lang = ref('')
+
+const translateRules = ref({
+	language: [
+		value => {
+			if (value) return true
+			return 'Please select a language.'
+		}
+	]
+})
+
+const translate = async () => {
+	try {
+		loading.value = true
+		const { valid } = await translateFormRef.value.validate()
+
+		if (valid) {
+			const data = await $fetch('/api/gemini', {
+				method: 'post',
+				body: {
+					translate: true,
+					text: `Translate into ${language.value}: ${props.post.content}`
+				}
+			})
+
+			translated.value = data
+			translated_lang.value = language.value
+			translateFormRef.value.reset()
+		}
+	} catch (error) {
+		console.error(error.message)
+	} finally {
+		loading.value = false
+	}
+}
+
+const cancelTranslateDialog = async () => {
+	translated_lang.value = ''
+	language.value = ''
+	translated.value = ''
+	translateFormDialog.value = false
+}
 </script>
 
 <template>
+	<VOverlay class="align-center justify-center" persistent v-model="loading">
+		<VProgressCircular color="primary" size="64" indeterminate />
+	</VOverlay>
 
 	<VSnackbar variant="elevated" location="bottom right" timer="success" text="Report has been submitted."
 		v-model="reportSnackbar">
@@ -315,6 +407,7 @@ const deleteBookmark = async (id) => {
 				</template>
 
 				<VList>
+					<VListItem title="Translate" prepend-icon="i-mdi:translate" @click="translateFormDialog = true" />
 
 					<VListItem title="Edit" prepend-icon="i-mdi:pencil" v-if="post.user_id == user.id || profile.role == 'admin'"
 						@click="toggleEditPost(post)" />
@@ -332,6 +425,27 @@ const deleteBookmark = async (id) => {
 			</VMenu>
 		</VCardActions>
 	</VCard>
+
+	<VDialog max-width="500" v-model="translateFormDialog">
+		<VCard title="Translation">
+			<VForm @submit.prevent="translate" ref="translateFormRef">
+				<VContainer>
+					<VSelect label="Language to translate" v-model="language" :items="languages"
+						:rules="translateRules.language" />
+				</VContainer>
+				<VCardActions>
+					<VSpacer />
+					<VBtn @click="cancelTranslateDialog" type="button" color="red" variant="elevated" text="Cancel" />
+					<VBtn text="Translate" color="primary" type="submit" variant="elevated" />
+				</VCardActions>
+			</VForm>
+
+			<VCardText v-if="translated">
+				<h3>Translated into {{ translated_lang }}:</h3>
+				<VueMarkdown :markdown="translated" />
+			</VCardText>
+		</VCard>
+	</VDialog>
 
 	<VDialog max-width="500" v-model="reportFormDialog">
 		<VCard title="Submit a report"
