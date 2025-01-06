@@ -43,13 +43,54 @@ onUnmounted(async () => {
 	await client.removeChannel(studentChannel)
 	await client.removeChannel(notificationsChannel)
 })
+
+const readNotifications = async () => {
+	await $fetch('/api/notifications', {
+		method: 'PUT',
+		body: {
+			read_all: true,
+			user_id: user.value.id
+		}
+	})
+}
+
+const tab = ref(null)
 </script>
 
 <template>
 	<VContainer>
 		<VRow>
-			<VCol cols="12" v-for="notification in notifications" :key="notification.id">
-				<AnnouncementCard :announcement="notification.announcements" :profile="profile" :student="student" />
+			<VCol cols="12">
+				<VBtn text="Read all" color="primary" @click="readNotifications" />
+			</VCol>
+			<VCol cols="12">
+				<VTabs v-model="tab" color="primary">
+					<VTab value="unread">Unread</VTab>
+					<VTab value="read">Read</VTab>
+				</VTabs>
+
+				<VDivider />
+
+				<VTabsWindow v-model="tab">
+					<VTabsWindowItem value="unread">
+						<VRow>
+							<VCol cols="12" v-for="notification in notifications" :key="notification.id">
+								<AnnouncementCard :announcement="notification.announcements" :profile="profile" :student="student"
+									v-if="!notification.read" />
+							</VCol>
+						</VRow>
+					</VTabsWindowItem>
+
+					<VTabsWindowItem value="read">
+						<VRow>
+							<VCol cols="12" v-for="notification in notifications" :key="notification.id">
+								<AnnouncementCard :announcement="notification.announcements" :profile="profile" :student="student"
+									v-if="notification.read" />
+							</VCol>
+						</VRow>
+					</VTabsWindowItem>
+				</VTabsWindow>
+
 			</VCol>
 		</VRow>
 	</VContainer>
