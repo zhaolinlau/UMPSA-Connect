@@ -27,6 +27,17 @@ export default defineEventHandler(async (event) => {
 		}
 
 		return data
+	} else if (query.search_input) {
+		const { data, error } = await client.from('posts').select('*').or(`title.ilike.%${query.search_input}%,content.ilike.%${query.search_input}%`).order('created_at', { ascending: false })
+
+		if (error) {
+			throw createError({
+				statusCode: error.code,
+				statusMessage: error.message
+			})
+		}
+
+		return data
 	} else {
 		const { data, error } = await client.from('posts').select('*').order('created_at', { ascending: false })
 

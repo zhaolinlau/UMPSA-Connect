@@ -77,6 +77,37 @@ const logout = async () => {
 		loading.value = false
 	}
 }
+
+const searchDialog = ref(false)
+
+const searchPostsRules = ref({
+	search_input: [
+		value => {
+			if (value) return true
+			return 'Search input is required.'
+		}
+	]
+})
+
+const searchFormRef = ref(null)
+
+const searchInput = ref('')
+
+const searchPosts = async () => {
+	try {
+		loading.value = true
+		const { valid } = await searchFormRef.value.validate()
+		if (valid) {
+			await navigateTo(`/?search_input=${searchInput.value}`)
+			await searchFormRef.value.reset()
+			searchDialog.value = false
+		}
+	} catch (error) {
+		console.error(error.message)
+	} finally {
+		loading.value = false
+	}
+}
 </script>
 
 <template>
@@ -90,7 +121,7 @@ const logout = async () => {
 			<VAppBarTitle class="cursor-pointer ml-3" @click="navigateTo('/')" text="UMPSA Connect" />
 		</template>
 		<template #append>
-			<VBtn icon="i-mdi:magnify" />
+			<VBtn icon="i-mdi:magnify" @click="searchDialog = true" />
 			<CreatePost />
 			<VBtn icon="i-mdi:bell" to="/notifications">
 				<VBadge color="warning" :content="notifications > 99 ? '99+' : notifications">
@@ -99,6 +130,18 @@ const logout = async () => {
 			</VBtn>
 		</template>
 	</VAppBar>
+
+	<VDialog v-model="searchDialog" max-width="500">
+		<VCard title="Search Posts">
+			<VForm @submit.prevent="searchPosts" ref="searchFormRef">
+				<VContainer>
+					<VTextField label="Search Input" v-model="searchInput" :rules="searchPostsRules.search_input" />
+					<VBtn type="submit" text="Search" color="primary" />
+					<VBtn type="button" text="Cancel" color="error" @click="searchDialog = false" />
+				</VContainer>
+			</VForm>
+		</VCard>
+	</VDialog>
 
 	<VNavigationDrawer v-model="drawer">
 		<VList>
