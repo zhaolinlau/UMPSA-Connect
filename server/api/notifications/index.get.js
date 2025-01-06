@@ -9,9 +9,9 @@ export default defineEventHandler(async (event) => {
 
 		return data
 	} else if (query.count) {
-		const { data } = await client.from('notifications').select('*').eq('user_id', query.user_id).eq('read', false)
+		const { count } = await client.from('notifications').select('*', { count: 'exact', head: true }).eq('user_id', query.user_id).eq('read', false)
 
-		return data
+		return count
 	} else {
 		const { data } = await client.from('notifications').select('*, announcements(*)').eq('user_id', query.user_id).order('created_at', { ascending: false })
 

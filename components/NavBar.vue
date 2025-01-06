@@ -1,7 +1,8 @@
 <script setup>
 const props = defineProps({
 	profile: Object,
-	user: Object
+	user: Object,
+	notifications: Number
 })
 
 const router = useRouter()
@@ -91,7 +92,11 @@ const logout = async () => {
 		<template #append>
 			<VBtn icon="i-mdi:magnify" />
 			<CreatePost />
-			<VBtn icon="i-mdi:bell" to="/notifications" />
+			<VBtn icon="i-mdi:bell" to="/notifications">
+				<VBadge color="warning" :content="notifications > 99 ? '99+' : notifications">
+					<VIcon icon="i-mdi:bell" />
+				</VBadge>
+			</VBtn>
 		</template>
 	</VAppBar>
 

@@ -9,7 +9,7 @@ const { data: profile } = await useFetch('/api/profiles', {
 	}
 })
 
-const { data: notifications } = await useFetch('/api/notifications', {
+const { data: notifications, refresh: refreshNotifications } = await useFetch('/api/notifications', {
 	method: 'get',
 	query: {
 		count: true,
@@ -40,9 +40,14 @@ const studentChannel = client.channel(`${id}:student`).on('postgres_changes', {
 	event: '*', schema: 'public', table: 'students'
 }, async () => await refreshStudent())
 
+const notificationsChannel = client.channel(`${id}:notifications`).on('postgres_changes', {
+	event: '*', schema: 'public', table: 'notifications'
+}, async () => await refreshNotifications())
+
 onMounted(async () => {
 	announcementsChannel.subscribe()
 	studentChannel.subscribe()
+	notificationsChannel.subscribe()
 	await fetchNotifications()
 })
 
@@ -93,6 +98,7 @@ watch(announcements, async () => {
 })
 
 onUnmounted(async () => {
+	await client.removeChannel(notificationsChannel)
 	await client.removeChannel(announcementsChannel)
 	await client.removeChannel(studentChannel)
 })
