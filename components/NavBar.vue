@@ -135,9 +135,16 @@ const searchPosts = async () => {
 		<VCard title="Search Posts">
 			<VForm @submit.prevent="searchPosts" ref="searchFormRef">
 				<VContainer>
-					<VTextField label="Search Input" v-model="searchInput" :rules="searchPostsRules.search_input" />
-					<VBtn type="submit" text="Search" color="primary" />
-					<VBtn type="button" text="Cancel" color="error" @click="searchDialog = false" />
+					<VRow>
+						<VCol cols="12">
+							<VTextField label="Search Input" v-model="searchInput" :rules="searchPostsRules.search_input" />
+						</VCol>
+
+						<VCol cols="12">
+							<VBtn block type="submit" text="Search" color="primary" />
+							<VBtn block class="mt-3" type="button" text="Cancel" color="error" @click="searchDialog = false" />
+						</VCol>
+					</VRow>
 				</VContainer>
 			</VForm>
 		</VCard>
