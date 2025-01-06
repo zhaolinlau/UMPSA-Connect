@@ -1,7 +1,8 @@
 <script setup>
 const props = defineProps({
 	announcement: Object,
-	student: Object
+	student: Object,
+	profile: Object
 })
 const client = useSupabaseClient()
 const route = useRoute()
@@ -187,20 +188,6 @@ const deleteBookmark = async (id) => {
 }
 
 const faculties = useFaculty()
-
-const { show } = useWebNotification({
-	title: props.announcement.title,
-	body: props.announcement.content,
-	dir: 'auto',
-	lang: 'en',
-	tag: 'Announcement',
-})
-
-onMounted(async () => {
-	if (props.student && props.student.faculty == props.announcement.target_user) {
-		await show()
-	}
-})
 </script>
 
 <template>
@@ -239,7 +226,7 @@ onMounted(async () => {
 				:active="bookmark ? true : false" color="primary" />
 			<VSpacer />
 
-			<VMenu location="top">
+			<VMenu location="top" v-if="profile.role == 'admin'">
 				<template v-slot:activator="{ props }">
 					<VBtn icon="i-mdi:dots-horizontal" v-bind="props" />
 				</template>

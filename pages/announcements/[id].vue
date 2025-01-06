@@ -2,12 +2,29 @@
 const client = useSupabaseClient()
 const route = useRoute()
 const id = useId()
+const user = useSupabaseUser()
 
 const { data: announcement, refresh: refreshAnnouncement } = await useFetch('/api/announcements', {
 	method: 'get',
 	query: {
 		id: route.params.id,
 		single: true
+	}
+})
+
+const { data: profile } = await useFetch('/api/profiles', {
+	method: 'GET',
+	query: {
+		single: true,
+		user_id: user.value.id
+	}
+})
+
+const { data: student } = await useFetch('/api/students', {
+	method: 'GET',
+	query: {
+		single: true,
+		user_id: user.value.id
 	}
 })
 
@@ -30,7 +47,7 @@ onUnmounted(async () => {
 	<VContainer>
 		<VRow>
 			<VCol cols="12">
-				<AnnouncementCard :announcement="announcement" />
+				<AnnouncementCard :announcement="announcement" :profile="profile" :student="student" />
 			</VCol>
 		</VRow>
 	</VContainer>

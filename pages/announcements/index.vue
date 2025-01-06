@@ -56,6 +56,48 @@ onMounted(async () => {
 	studentChannel.subscribe()
 })
 
+watch(announcements, async () => {
+	if (student.value && announcements.value) {
+		for (const announcement of announcements.value) {
+			if (student.value.faculty == announcement.target_user) {
+				try {
+					const notificationResponse = await $fetch('/api/notifications', {
+						method: 'GET',
+						query: {
+							single: true,
+							user_id: student.value.user_id,
+							announcement_id: announcement.id
+						}
+					})
+
+					if (!notificationResponse) {
+						await $fetch('/api/notifications', {
+							method: 'POST',
+							body: {
+								announcement_id: announcement.id,
+								user_id: student.value.user_id
+							}
+						})
+
+						const { show, onClick } = useWebNotification({
+							title: announcement.title,
+							body: announcement.content,
+							dir: 'auto',
+							lang: 'en',
+							tag: 'Announcement',
+						})
+
+						await show()
+						onClick(async () => await navigateTo(`/announcements/${announcement.id}`))
+					}
+				} catch (error) {
+					console.error(error)
+				}
+			}
+		}
+	}
+})
+
 onUnmounted(async () => {
 	await client.removeChannel(announcementsChannel)
 	await client.removeChannel(studentChannel)
@@ -74,7 +116,7 @@ onUnmounted(async () => {
 			<VSkeletonLoader type="chip, heading, subtitle, image, text, actions" />
 		</VCol>
 		<VCol cols="12" lg="7" v-for="announcement in announcements" :key="announcement.id" v-auto-animate>
-			<AnnouncementCard :announcement="announcement" :student="student" />
+			<AnnouncementCard :announcement="announcement" :student="student" :profile="profile" />
 		</VCol>
 	</VRow>
 </template>

@@ -91,7 +91,7 @@ const logout = async () => {
 		<template #append>
 			<VBtn icon="i-mdi:magnify" />
 			<CreatePost />
-			<VBtn icon="i-mdi:bell" />
+			<VBtn icon="i-mdi:bell" to="/notifications" />
 		</template>
 	</VAppBar>
 
