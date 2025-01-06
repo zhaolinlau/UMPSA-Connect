@@ -55,3 +55,9 @@ onMounted(async () => {
 		</NuxtLayout>
 	</VApp>
 </template>
+
+<style>
+:root {
+	scroll-behavior: smooth;
+}
+</style>

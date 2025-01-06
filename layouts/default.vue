@@ -106,7 +106,7 @@ onUnmounted(async () => {
 
 <template>
 	<NavBar :profile="profile" :user="user" :notifications="notifications" />
-
+	<BackTop />
 	<VMain>
 		<VContainer>
 			<slot />
