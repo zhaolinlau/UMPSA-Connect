@@ -1,6 +1,7 @@
 <script setup>
 const props = defineProps({
-	event: Object
+	event: Object,
+	profile: Object
 })
 
 const client = useSupabaseClient()
@@ -176,7 +177,7 @@ const deleteBookmark = async (id) => {
 				color="primary" />
 			<VSpacer />
 
-			<VMenu location="top">
+			<VMenu location="top" v-if="profile.role == 'admin'">
 				<template v-slot:activator="{ props }">
 					<VBtn icon="i-mdi:dots-horizontal" v-bind="props" />
 				</template>

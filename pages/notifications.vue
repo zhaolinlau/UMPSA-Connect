@@ -59,11 +59,11 @@ const tab = ref(null)
 
 <template>
 	<VContainer>
-		<VRow>
-			<VCol cols="12">
+		<VRow justify="center">
+			<VCol cols="12" lg="7">
 				<VBtn text="Read all" color="primary" @click="readNotifications" />
 			</VCol>
-			<VCol cols="12">
+			<VCol cols="12" lg="7">
 				<VTabs v-model="tab" color="primary">
 					<VTab value="unread">Unread</VTab>
 					<VTab value="read">Read</VTab>

@@ -1,9 +1,18 @@
 <script setup>
 const client = useSupabaseClient()
 const id = useId()
+const user = useSupabaseUser()
 
 const { data: events, refresh: refreshEvents } = await useFetch('/api/events', {
 	method: 'get'
+})
+
+const { data: profile } = await useFetch('/api/profiles', {
+	method: 'GET',
+	query: {
+		single: true,
+		user_id: user.value.id
+	}
 })
 
 const eventsChannel = client.channel(`${id}:events`).on(
@@ -22,19 +31,15 @@ onUnmounted(async () => {
 </script>
 
 <template>
-	<VRow>
-		<VCol cols="12">
+	<VRow justify="center">
+		<VCol cols="12" lg="7">
 			<CreateEvent />
 		</VCol>
-	</VRow>
-	<VRow justify="center">
-		<template v-if="!events">
-			<VCol cols="12" lg="7" v-for="n in 2">
-				<v-skeleton-loader type="chip, heading, subtitle, image, text, actions"></v-skeleton-loader>
-			</VCol>
-		</template>
+		<VCol cols="12" lg="7" v-for="n in 2" v-if="!events">
+			<v-skeleton-loader type="chip, heading, subtitle, image, text, actions"></v-skeleton-loader>
+		</VCol>
 		<VCol cols="12" lg="7" v-for="event in events" :key="event.id" v-auto-animate>
-			<EventCard :event="event" />
+			<EventCard :event="event" :profile="profile" />
 		</VCol>
 	</VRow>
 </template>
