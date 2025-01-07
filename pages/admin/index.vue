@@ -40,8 +40,8 @@ const { data: notifications, refresh: refreshNotifications } = await useFetch('/
 					</VCol>
 
 					<VCol cols="12">
-						<VCard title="Number of Posts">
-							<PostsChart :posts="posts" />
+						<VCard title="Number of Announcements">
+							<AnnouncementsChart :announcements="announcements" />
 						</VCard>
 					</VCol>
 				</VRow>
@@ -50,10 +50,11 @@ const { data: notifications, refresh: refreshNotifications } = await useFetch('/
 			<VCol cols="12" lg="6">
 				<VRow>
 					<VCol cols="12">
-						<VCard title="Number of Announcements">
-							<AnnouncementsChart :announcements="announcements" />
+						<VCard title="Number of Posts">
+							<PostsChart :posts="posts" />
 						</VCard>
 					</VCol>
+					
 					<VCol cols="12">
 						<VCard title="Number of Bookmarks">
 							<BookmarksChart :bookmarks="bookmarks" />
