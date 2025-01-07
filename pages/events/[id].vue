@@ -2,12 +2,21 @@
 const client = useSupabaseClient()
 const route = useRoute()
 const id = useId()
+const user = useSupabaseUser()
 
 const { data: event, refresh: refreshEvent } = await useFetch('/api/events', {
 	method: 'get',
 	query: {
 		id: route.params.id,
 		single: true
+	}
+})
+
+const { data: profile } = await useFetch('/api/profiles', {
+	method: 'GET',
+	query: {
+		single: true,
+		user_id: user.value.id
 	}
 })
 
@@ -27,5 +36,5 @@ onUnmounted(async () => {
 </script>
 
 <template>
-	<EventCard :event="event" />
+	<EventCard :event="event" :profile="profile" />
 </template>
