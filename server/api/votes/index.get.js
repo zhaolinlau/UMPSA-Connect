@@ -15,8 +15,19 @@ export default defineEventHandler(async (event) => {
 		}
 
 		return data
-	} else {
+	} else if (query.post_id) {
 		const { data, error } = await client.from('votes').select('id, user_id').eq('post_id', query.post_id)
+
+		if (error) {
+			throw createError({
+				statusCode: error.code,
+				statusMessage: error.message
+			})
+		}
+
+		return data
+	} else {
+		const { data, error } = await client.from('votes').select('*')
 
 		if (error) {
 			throw createError({

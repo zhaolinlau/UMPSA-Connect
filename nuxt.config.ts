@@ -2,18 +2,7 @@
 export default defineNuxtConfig({
 	devtools: { enabled: true },
 	compatibilityDate: "2024-08-06",
-	modules: [
-		'vuetify-nuxt-module',
-		'@nuxtjs/supabase',
-		'nuxt-security',
-		'@nuxtjs/robots',
-		'@vite-pwa/nuxt',
-		'nuxt-gtag',
-		'nuxt-delay-hydration',
-		'@unocss/nuxt',
-		'@formkit/auto-animate/nuxt',
-		'@vueuse/nuxt'
-	],
+	modules: ['vuetify-nuxt-module', '@nuxtjs/supabase', 'nuxt-security', '@nuxtjs/robots', '@vite-pwa/nuxt', 'nuxt-gtag', 'nuxt-delay-hydration', '@unocss/nuxt', '@formkit/auto-animate/nuxt', '@vueuse/nuxt'],
 
 	vuetify: {
 		vuetifyOptions: {

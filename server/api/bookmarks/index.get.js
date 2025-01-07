@@ -48,5 +48,16 @@ export default defineEventHandler(async (event) => {
 		}
 
 		return data
+	} else {
+		const { data, error } = await client.from('bookmarks').select('*')
+
+		if (error) {
+			throw createError({
+				statusCode: error.code,
+				statusMessage: error.message
+			})
+		}
+
+		return data
 	}
 })

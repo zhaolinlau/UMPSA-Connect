@@ -7,8 +7,7 @@ export default defineEventHandler(async (event) => {
 	const { error } = await client.from('events').update({
 		title: body.title,
 		content: body.content,
-		media: body.media,
-		approval_status: body.approval_status
+		media: body.media
 	}).eq('id', body.id)
 
 	if (error) {
