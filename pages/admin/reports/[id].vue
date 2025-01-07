@@ -1,4 +1,8 @@
 <script setup>
+definePageMeta({
+	middleware: ['admin']
+})
+
 const route = useRoute()
 const user = useSupabaseUser()
 const client = useSupabaseClient()
