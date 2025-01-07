@@ -36,7 +36,7 @@ const sendText = async () => {
 				}
 			})
 
-			contents.value.push(data)			
+			contents.value.push(data)
 		}
 
 	} catch (error) {
@@ -44,6 +44,10 @@ const sendText = async () => {
 	} finally {
 		loading.value = false
 	}
+}
+
+const resetChat = async () => {
+	contents.value = []
 }
 </script>
 
@@ -65,9 +69,10 @@ const sendText = async () => {
 
 			<VCol cols="12" lg="7">
 				<VForm @submit.prevent="sendText" ref="textFormRef">
-					<VTextarea v-model="textForm.text" label="Text" :rules="textRules.text" :loading="loading"
-						:disabled="loading" />
-					<VBtn text="Send" color="primary" variant="elevated" type="submit" :loading="loading" id="send_text" />
+					<VTextField v-model="textForm.text" label="Text" :rules="textRules.text" :loading="loading"
+						:disabled="loading" placeholder="Ask anything" />
+					<VBtn text="Send" color="primary" variant="elevated" type="submit" :loading="loading" />
+					<VBtn text="Reset" class="ml-3" color="grey" variant="elevated" type="button" :loading="loading" @click="resetChat" />
 				</VForm>
 			</VCol>
 		</VRow>
