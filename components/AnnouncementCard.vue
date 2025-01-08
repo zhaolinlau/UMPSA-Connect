@@ -256,9 +256,6 @@ const faculties = useFaculty()
 					<VSelect prepend-icon="i-mdi:shape" v-model="announcementForm.target_user" label="Target User"
 						:items="faculties" :rules="announcementRules.target_user" />
 
-					<VSelect prepend-icon="i-mdi:shape" v-model="announcementForm.target_user" label="Target User"
-						:items="faculties" :rules="announcementRules.target_user" />
-
 					<VRow align="center" justify="center" class="mb-3" v-if="announcement.media">
 						<VCol cols="3">
 							<VImg max-height="250"
