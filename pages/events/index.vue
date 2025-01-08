@@ -32,7 +32,7 @@ onUnmounted(async () => {
 
 <template>
 	<VRow justify="center">
-		<VCol cols="12" lg="7">
+		<VCol cols="12" lg="7" v-if="profile.role == 'admin'">
 			<CreateEvent />
 		</VCol>
 		<VCol cols="12" lg="7" v-for="n in 2" v-if="!events">
