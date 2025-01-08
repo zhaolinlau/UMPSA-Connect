@@ -45,7 +45,7 @@ onUnmounted(async () => {
 
 <template>
 	<VContainer>
-		<VRow>
+		<VRow justify="center">
 			<VCol cols="12" lg="7">
 				<AnnouncementCard :announcement="announcement" :profile="profile" :student="student" />
 			</VCol>
