@@ -1,10 +1,10 @@
-import { serverSupabaseClient } from '#supabase/server'
+import { serverSupabaseServiceRole } from '#supabase/server'
 
 export default defineEventHandler(async (event) => {
-	const client = await serverSupabaseClient(event)
+	const service_role = serverSupabaseServiceRole(event)
 	const body = await readBody(event)
 
-	const { error } = await client.storage.from('images').remove([`events/${body.media}`])
+	const { error } = await service_role.storage.from('images').remove([`events/${body.media}`])
 
 	if (error) {
 		throw createError({
@@ -12,7 +12,7 @@ export default defineEventHandler(async (event) => {
 			statusMessage: error.message
 		})
 	} else {
-		const { error } = await client.from('events').delete().eq('id', body.id)
+		const { error } = await service_role.from('events').delete().eq('id', body.id)
 
 		if (error) {
 			throw createError({

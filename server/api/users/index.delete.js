@@ -1,4 +1,4 @@
-import { serverSupabaseClient, serverSupabaseServiceRole } from '#supabase/server'
+import { serverSupabaseServiceRole } from '#supabase/server'
 
 export default defineEventHandler(async (event) => {
 	const client = await serverSupabaseClient(event)
@@ -14,7 +14,7 @@ export default defineEventHandler(async (event) => {
 		})
 	}
 
-	const { error: deleteAvatarError } = await client.storage.from('images').remove([`profiles/${body.avatar}`])
+	const { error: deleteAvatarError } = await service_role.storage.from('images').remove([`profiles/${body.avatar}`])
 
 	if (deleteAvatarError) {
 		throw createError({
