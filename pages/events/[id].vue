@@ -36,5 +36,11 @@ onUnmounted(async () => {
 </script>
 
 <template>
-	<EventCard :event="event" :profile="profile" />
+	<Container>
+		<VRow>
+			<VCol cols="12" lg="7">
+				<EventCard :event="event" :profile="profile" />
+			</VCol>
+		</VRow>
+	</Container>
 </template>
