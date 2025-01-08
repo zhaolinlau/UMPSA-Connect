@@ -189,8 +189,9 @@ onUnmounted(async () => {
 						<VRow>
 							<template v-if="bookmarks">
 								<VCol cols="12" v-for="bookmark in bookmarks" :key="bookmark.id">
-									<AnnouncementCard :announcement="bookmark.announcements" :student="student" v-if="bookmark.announcement_id" />
-									<EventCard :event="bookmark.events" v-else-if="bookmark.event_id" />
+									<AnnouncementCard :profile="profile" :announcement="bookmark.announcements" :student="student"
+										v-if="bookmark.announcement_id" />
+									<EventCard :profile="profile" :event="bookmark.events" v-else-if="bookmark.event_id" />
 									<PostCard :post="bookmark.posts" :profile="profile" v-else-if="bookmark.post_id" />
 								</VCol>
 							</template>
