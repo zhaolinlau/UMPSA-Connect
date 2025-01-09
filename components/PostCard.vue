@@ -209,7 +209,10 @@ const deleteBookmark = async () => {
 const translateFormDialog = ref(false)
 const translateFormRef = ref(null)
 const language = ref('')
-const translated = ref('')
+const translated = ref({
+	title: '',
+	content: ''
+})
 const loading = ref(false)
 const languages = ref([
 	'Arabic',
@@ -269,15 +272,28 @@ const translate = async () => {
 		const { valid } = await translateFormRef.value.validate()
 
 		if (valid) {
-			const data = await $fetch('/api/gemini', {
+			const title = await $fetch('/api/gemini', {
 				method: 'post',
 				body: {
 					translate: true,
-					text: `Translate into ${language.value}: ${props.post.content}`
+					text: `Translate into ${language.value}: ${props.post.title}`
 				}
 			})
 
-			translated.value = data
+			translated.value.title = title
+
+			if (props.post.content) {
+				const content = await $fetch('/api/gemini', {
+					method: 'post',
+					body: {
+						translate: true,
+						text: `Translate into ${language.value}: ${props.post.content}`
+					}
+				})
+
+				translated.value.content = content
+			}
+
 			translated_lang.value = language.value
 			translateFormRef.value.reset()
 		}
@@ -291,7 +307,8 @@ const translate = async () => {
 const cancelTranslateDialog = async () => {
 	translated_lang.value = ''
 	language.value = ''
-	translated.value = ''
+	translated.value.title = ''
+	translated.value.content = ''
 	translateFormDialog.value = false
 }
 </script>
@@ -398,9 +415,17 @@ const cancelTranslateDialog = async () => {
 				</VCardActions>
 			</VForm>
 
-			<VCardText v-if="translated">
+			<VCardText v-if="translated.title || translated.content">
 				<h3>Translated into {{ translated_lang }}:</h3>
-				<VueMarkdown :markdown="translated" />
+				<template v-if="translated.title">
+					<h4>Title:</h4>
+					<VueMarkdown :markdown="translated.title" />
+				</template>
+
+				<template v-if="translated.content">
+					<h4>Content:</h4>
+					<VueMarkdown :markdown="translated.content" />
+				</template>
 			</VCardText>
 		</VCard>
 	</VDialog>
