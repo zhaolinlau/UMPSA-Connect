@@ -59,26 +59,33 @@ const { data: bookmarks, refresh: refreshBookmarks } = await useFetch('/api/book
 const bookmarksChannel = client.channel(`${id}:bookmarks`).on(
 	'postgres_changes',
 	{ event: '*', schema: 'public', table: 'bookmarks' },
-	async () => await refreshBookmarks()
+	async () => await refreshAll()
 )
 
 const votesChannel = client.channel(`${id}:votes`).on(
 	'postgres_changes',
 	{ event: '*', schema: 'public', table: 'votes' },
-	async () => await refreshVotes()
+	async () => await refreshAll()
 )
 
 const commentsChannel = client.channel(`${id}:comments`).on(
 	'postgres_changes',
 	{ event: '*', schema: 'public', table: 'comments' },
-	async () => await refreshComments()
+	async () => await refreshAll()
 )
 
 const postsChannel = client.channel(`${id}:posts`).on(
 	'postgres_changes',
 	{ event: '*', schema: 'public', table: 'posts' },
-	async () => await refreshPosts()
+	async () => await refreshAll()
 )
+
+const refreshAll = async () => {
+	await refreshBookmarks()
+	await refreshVotes()
+	await refreshComments()
+	await refreshPosts()
+}
 
 const profileChannel = client.channel(`${id}:profiles`).on('postgres_changes', {
 	event: '*', schema: 'public', table: 'profiles'

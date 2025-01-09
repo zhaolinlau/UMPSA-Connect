@@ -5,7 +5,7 @@ export default defineEventHandler(async (event) => {
 	const query = getQuery(event)
 
 	if (query.user_id) {
-		const { data, error } = await client.from('votes').select('*, posts(*)').eq('user_id', query.user_id).order('created_at', { ascending: false })
+		const { data, error } = await client.from('votes').select('*, posts(*, comments(*), votes(*), bookmarks(*))').eq('user_id', query.user_id).order('created_at', { ascending: false })
 
 		if (error) {
 			throw createError({
