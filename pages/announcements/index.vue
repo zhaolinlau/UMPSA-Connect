@@ -51,12 +51,19 @@ const studentChannel = client.channel(`${id}:student`).on('postgres_changes', {
 	event: '*', schema: 'public', table: 'students'
 }, async () => await refreshStudent())
 
+const bookmarksChannel = client.channel(`${id}:bookmarks`).on('postgres_changes', {
+	event: '*', schema: 'public', table: 'bookmarks'
+}, async () => await refreshAnnouncements())
+
+
 onMounted(async () => {
+	bookmarksChannel.subscribe()
 	announcementsChannel.subscribe()
 	studentChannel.subscribe()
 })
 
 onUnmounted(async () => {
+	await client.removeChannel(bookmarksChannel)
 	await client.removeChannel(announcementsChannel)
 	await client.removeChannel(studentChannel)
 })

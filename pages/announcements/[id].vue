@@ -28,6 +28,10 @@ const { data: student } = await useFetch('/api/students', {
 	}
 })
 
+const bookmarksChannel = client.channel(`${id}:bookmarks`).on('postgres_changes', {
+	event: '*', schema: 'public', table: 'bookmarks'
+}, async () => await refreshAnnouncement())
+
 const announcementChannel = client.channel(`${id}:announcement`).on(
 	'postgres_changes',
 	{ event: '*', schema: 'public', table: 'announcements' },
@@ -35,10 +39,12 @@ const announcementChannel = client.channel(`${id}:announcement`).on(
 )
 
 onMounted(async () => {
+	bookmarksChannel.subscribe()
 	announcementChannel.subscribe()
 })
 
 onUnmounted(async () => {
+	await client.removeChannel(bookmarksChannel)
 	await client.removeChannel(announcementChannel)
 })
 </script>

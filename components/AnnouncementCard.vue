@@ -6,6 +6,8 @@ const props = defineProps({
 })
 const client = useSupabaseClient()
 const route = useRoute()
+const id = useId()
+const user = useSupabaseUser()
 const announcementForm = reactive({
 	title: '',
 	content: '',
@@ -14,6 +16,10 @@ const announcementForm = reactive({
 })
 const loading = ref(false)
 const editAnnouncementDialog = ref(false)
+
+const bookmarked = computed(() => {
+	return props.announcement.bookmarks.find(bookmark => bookmark.announcement_id == props.announcement.id && bookmark.user_id == user.value.id)
+})
 
 const toggleEditAnnouncement = async (announcement) => {
 	editAnnouncementDialog.value = true
@@ -121,41 +127,15 @@ const deleteAnnouncement = async (id, media) => {
 	}
 }
 
-const id = useId()
-
-const user = useSupabaseUser()
-
-const { data: bookmark, refresh: refreshBookmark } = await useFetch('/api/bookmarks', {
-	method: 'get',
-	query: {
-		announcement_id: props.announcement.id,
-		user_id: user.value.id
-	}
-})
-
-const bookmarkChannel = client.channel(`${id}:bookmark`).on(
-	'postgres_changes',
-	{ event: '*', schema: 'public', table: 'bookmarks' },
-	async () => await refreshBookmark()
-)
-
-onMounted(async () => {
-	bookmarkChannel.subscribe()
-})
-
-onUnmounted(async () => {
-	await client.removeChannel(bookmarkChannel)
-})
-
 const addBookmarkSnackbar = ref(false)
 
-const createBookmark = async (announcement_id) => {
+const createBookmark = async () => {
 	try {
 		loading.value = true
 		await $fetch('/api/bookmarks', {
 			method: 'post',
 			body: {
-				announcement_id
+				announcement_id: props.announcement.id
 			}
 		})
 
@@ -169,13 +149,13 @@ const createBookmark = async (announcement_id) => {
 
 const deleteBookmarkSnackbar = ref(false)
 
-const deleteBookmark = async (id) => {
+const deleteBookmark = async () => {
 	try {
 		loading.value = true
 		await $fetch('/api/bookmarks', {
 			method: 'delete',
 			body: {
-				id
+				id: bookmarked.value.id
 			}
 		})
 
@@ -221,9 +201,10 @@ const faculties = useFaculty()
 			:alt="announcement.media" v-if="announcement.media && route.params.id == announcement.id" :draggable="false" />
 		<VCardActions>
 			<VBtn text="View" prepend-icon="i-mdi:eye" :to="`/announcements/${announcement.id}`" color="info" />
-			<VBtn text="Bookmark" prepend-icon="i-mdi:bookmark"
-				@click="bookmark ? deleteBookmark(bookmark.id) : createBookmark(announcement.id)"
-				:active="bookmark ? true : false" color="primary" />
+			<VBtn text="Bookmark" prepend-icon="i-mdi:bookmark" @click="deleteBookmark()" active color="primary"
+				v-if="bookmarked" />
+			<VBtn text="Bookmark" prepend-icon="i-mdi:bookmark" @click="createBookmark()" color="primary"
+				v-if="!bookmarked" />
 			<VSpacer />
 
 			<VMenu location="top" v-if="profile.role == 'admin'">
