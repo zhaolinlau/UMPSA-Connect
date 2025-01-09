@@ -3,6 +3,9 @@ definePageMeta({
 	middleware: ['admin']
 })
 
+const client = useSupabaseClient()
+const id = useId()
+
 const { data: posts, refresh: refreshPosts } = await useFetch('/api/posts')
 
 const { data: profiles, refresh: refreshProfiles } = await useFetch('/api/profiles')
@@ -22,7 +25,6 @@ const notificationsChannel = client.channel(`${id}:notifications`).on(
 	{ event: '*', schema: 'public', table: 'notifications' },
 	async () => await refreshNotifications()
 )
-
 
 const announcementsChannel = client.channel(`${id}:announcements`).on(
 	'postgres_changes',
@@ -67,7 +69,6 @@ onMounted(async () => {
 	studentsChannel.subscribe()
 	profilesChannel.subscribe()
 	bookmarksChannel.subscribe()
-	commentsChannel.subscribe()
 	postsChannel.subscribe()
 })
 
@@ -79,7 +80,6 @@ onUnmounted(async () => {
 	await client.removeChannel(profilesChannel)
 	await client.removeChannel(bookmarksChannel)
 	await client.removeChannel(postsChannel)
-	await client.removeChannel(commentsChannel)
 })
 </script>
 

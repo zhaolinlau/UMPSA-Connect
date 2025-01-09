@@ -21,7 +21,7 @@ const data = {
 	datasets: [
 		{
 			label: 'Number of Announcements',
-			backgroundColor: 'rgba(255,99,132,0.2)',
+			backgroundColor: '#04c8c5',
 			borderColor: '#04c8c5',
 			pointBackgroundColor: '#04c8c5',
 			pointBorderColor: '#fff',
