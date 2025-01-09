@@ -52,6 +52,24 @@ const postChannel = client.channel(`${id}:post`).on(
 	async () => await refreshPost()
 )
 
+const bookmarksChannel = client.channel(`${id}:bookmarks`).on(
+	'postgres_changes',
+	{ event: '*', schema: 'public', table: 'bookmarks' },
+	async () => await refreshPost()
+)
+
+const votesChannel = client.channel(`${id}:votes`).on(
+	'postgres_changes',
+	{ event: '*', schema: 'public', table: 'votes' },
+	async () => await refreshPost()
+)
+
+const commentsChannel = client.channel(`${id}:comments`).on(
+	'postgres_changes',
+	{ event: '*', schema: 'public', table: 'comments' },
+	async () => await refreshPost()
+)
+
 const commentChannel = client.channel(`${id}:comment`).on(
 	'postgres_changes',
 	{ event: '*', schema: 'public', table: 'comments' },
@@ -59,12 +77,18 @@ const commentChannel = client.channel(`${id}:comment`).on(
 )
 
 onMounted(async () => {
+	bookmarksChannel.subscribe()
+	votesChannel.subscribe()
+	commentsChannel.subscribe()
 	reportChannel.subscribe()
 	postChannel.subscribe()
 	commentChannel.subscribe()
 })
 
 onUnmounted(async () => {
+	await client.removeChannel(bookmarksChannel)
+	await client.removeChannel(votesChannel)
+	await client.removeChannel(commentsChannel)
 	await client.removeChannel(reportChannel)
 	await client.removeChannel(postChannel)
 	await client.removeChannel(commentChannel)
