@@ -214,46 +214,7 @@ const translated = ref({
 	content: ''
 })
 const loading = ref(false)
-const languages = ref([
-	'Arabic',
-	'Bengali',
-	'Bulgarian',
-	'Chinese simplified',
-	'Chinese traditional',
-	'Croatian',
-	'Czech',
-	'Danish',
-	'Dutch',
-	'English',
-	'Estonian',
-	'Finnish',
-	'French',
-	'German',
-	'Greek',
-	'Hebrew',
-	'Hindi',
-	'Hungarian',
-	'Italian',
-	'Japanese',
-	'Korean',
-	'Latvian',
-	'Lithuanian',
-	'Norwegian',
-	'Polish',
-	'Portuguese',
-	'Romanian',
-	'Russian',
-	'Serbian',
-	'Slovak',
-	'Slovenian',
-	'Spanish',
-	'Swahili',
-	'Swedish',
-	'Thai',
-	'Turkish',
-	'Ukrainian',
-	'Vietnamese'
-])
+const languages = useLanguage()
 
 const translated_lang = ref('')
 
