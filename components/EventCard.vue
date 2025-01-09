@@ -96,35 +96,17 @@ const id = useId()
 
 const user = useSupabaseUser()
 
-const { data: bookmark, refresh: refreshBookmark } = await useFetch('/api/bookmarks', {
-	method: 'get',
-	query: {
-		event_id: props.event.id,
-		user_id: user.value.id
-	}
-})
-
-const bookmarkChannel = client.channel(`${id}:bookmark`).on(
-	'postgres_changes',
-	{ event: '*', schema: 'public', table: 'bookmarks' },
-	async () => await refreshBookmark()
-)
-
-onMounted(async () => {
-	bookmarkChannel.subscribe()
-})
-
-onUnmounted(async () => {
-	await client.removeChannel(bookmarkChannel)
+const bookmarked = computed(() => {
+	return props.event.bookmarks.find(bookmark => bookmark.event_id == props.event.id && bookmark.user_id == user.value.id)
 })
 
 const addBookmarkSnackbar = ref(false)
 
-const createBookmark = async (event_id) => {
+const createBookmark = async () => {
 	await $fetch('/api/bookmarks', {
 		method: 'post',
 		body: {
-			event_id
+			event_id: props.event.id
 		}
 	})
 
@@ -133,11 +115,11 @@ const createBookmark = async (event_id) => {
 
 const deleteBookmarkSnackbar = ref(false)
 
-const deleteBookmark = async (id) => {
+const deleteBookmark = async () => {
 	await $fetch('/api/bookmarks', {
 		method: 'delete',
 		body: {
-			id
+			id: bookmarked.value.id
 		}
 	})
 
@@ -172,9 +154,10 @@ const deleteBookmark = async (id) => {
 			:alt="event.media" v-if="event.media && route.params.id == event.id" :draggable="false" />
 		<VCardActions>
 			<VBtn text="View" prepend-icon="i-mdi:eye" :to="`/events/${event.id}`" color="info" />
-			<VBtn text="Bookmark" prepend-icon="i-mdi:bookmark"
-				@click="bookmark ? deleteBookmark(bookmark.id) : createBookmark(event.id)" :active="bookmark ? true : false"
-				color="primary" />
+			<VBtn text="Bookmark" prepend-icon="i-mdi:bookmark" @click="deleteBookmark" active color="primary"
+				v-if="bookmarked" />
+
+			<VBtn text="Bookmark" prepend-icon="i-mdi:bookmark" @click="createBookmark" color="primary" v-if="!bookmarked" />
 			<VSpacer />
 
 			<VMenu location="top" v-if="profile.role == 'admin'">

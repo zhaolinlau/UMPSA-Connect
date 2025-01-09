@@ -5,7 +5,7 @@ export default defineEventHandler(async (event) => {
 	const query = getQuery(event)
 
 	if (query.single) {
-		const { data, error } = await client.from('events').select('*').eq('id', query.id).single()
+		const { data, error } = await client.from('events').select('*, bookmarks(*)').eq('id', query.id).single()
 
 		if (error) {
 			throw createError({
@@ -16,7 +16,7 @@ export default defineEventHandler(async (event) => {
 			return data
 		}
 	} else {
-		const { data, error } = await client.from('events').select('*').order('created_at', { ascending: false })
+		const { data, error } = await client.from('events').select('*, bookmarks(*)').order('created_at', { ascending: false })
 
 		if (error) {
 			throw createError({

@@ -21,11 +21,19 @@ const eventsChannel = client.channel(`${id}:events`).on(
 	async () => await refreshEvents()
 )
 
+const bookmarksChannel = client.channel(`${id}:bookmarks`).on(
+	'postgres_changes',
+	{ event: '*', schema: 'public', table: 'bookmarks' },
+	async () => await refreshEvents()
+)
+
 onMounted(async () => {
+	bookmarksChannel.subscribe()
 	eventsChannel.subscribe()
 })
 
 onUnmounted(async () => {
+	await client.removeChannel(bookmarksChannel)
 	await client.removeChannel(eventsChannel)
 })
 </script>

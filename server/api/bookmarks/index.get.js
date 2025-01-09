@@ -38,7 +38,7 @@ export default defineEventHandler(async (event) => {
 
 		return data
 	} else if (query.profile) {
-		const { data, error } = await client.from('bookmarks').select('*, announcements(*, bookmarks(*)), events(*), posts(*, comments(*), votes(*), bookmarks(*))').eq('user_id', query.user_id).order('created_at', { ascending: false })
+		const { data, error } = await client.from('bookmarks').select('*, announcements(*, bookmarks(*)), events(*, bookmarks(*)), posts(*, comments(*), votes(*), bookmarks(*))').eq('user_id', query.user_id).order('created_at', { ascending: false })
 
 		if (error) {
 			throw createError({
