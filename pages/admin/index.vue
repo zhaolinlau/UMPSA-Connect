@@ -16,6 +16,71 @@ const { data: announcements, refresh: refreshAnnouncements } = await useFetch('/
 const { data: bookmarks, refresh: refreshBookmarks } = await useFetch('/api/bookmarks')
 
 const { data: notifications, refresh: refreshNotifications } = await useFetch('/api/notifications')
+
+const notificationsChannel = client.channel(`${id}:notifications`).on(
+	'postgres_changes',
+	{ event: '*', schema: 'public', table: 'notifications' },
+	async () => await refreshNotifications()
+)
+
+
+const announcementsChannel = client.channel(`${id}:announcements`).on(
+	'postgres_changes',
+	{ event: '*', schema: 'public', table: 'announcements' },
+	async () => await refreshAnnouncements()
+)
+
+const staffsChannel = client.channel(`${id}:staffs`).on(
+	'postgres_changes',
+	{ event: '*', schema: 'public', table: 'staffs' },
+	async () => await refreshStaffs()
+)
+
+const studentsChannel = client.channel(`${id}:students`).on(
+	'postgres_changes',
+	{ event: '*', schema: 'public', table: 'students' },
+	async () => await refreshStudents()
+)
+
+const profilesChannel = client.channel(`${id}:profiles`).on(
+	'postgres_changes',
+	{ event: '*', schema: 'public', table: 'profiles' },
+	async () => await refreshProfiles()
+)
+
+const postsChannel = client.channel(`${id}:posts`).on(
+	'postgres_changes',
+	{ event: '*', schema: 'public', table: 'posts' },
+	async () => await refreshPosts()
+)
+
+const bookmarksChannel = client.channel(`${id}:bookmarks`).on(
+	'postgres_changes',
+	{ event: '*', schema: 'public', table: 'bookmarks' },
+	async () => refreshBookmarks()
+)
+
+onMounted(async () => {
+	notificationsChannel.subscribe()
+	announcementsChannel.subscribe()
+	staffsChannel.subscribe()
+	studentsChannel.subscribe()
+	profilesChannel.subscribe()
+	bookmarksChannel.subscribe()
+	commentsChannel.subscribe()
+	postsChannel.subscribe()
+})
+
+onUnmounted(async () => {
+	await client.removeChannel(notificationsChannel)
+	await client.removeChannel(announcementsChannel)
+	await client.removeChannel(staffsChannel)
+	await client.removeChannel(studentsChannel)
+	await client.removeChannel(profilesChannel)
+	await client.removeChannel(bookmarksChannel)
+	await client.removeChannel(postsChannel)
+	await client.removeChannel(commentsChannel)
+})
 </script>
 
 <template>
@@ -54,7 +119,7 @@ const { data: notifications, refresh: refreshNotifications } = await useFetch('/
 							<PostsChart :posts="posts" />
 						</VCard>
 					</VCol>
-					
+
 					<VCol cols="12">
 						<VCard title="Number of Bookmarks">
 							<BookmarksChart :bookmarks="bookmarks" />
