@@ -13,7 +13,7 @@ const { data: profile } = await useFetch('/api/profiles', {
 	}
 })
 
-const { data: posts, refresh: refreshPosts } = await useLazyFetch('/api/posts', {
+const { data: posts, refresh: refreshPosts } = await useFetch('/api/posts', {
 	method: 'get',
 	query: {
 		search_input
@@ -26,19 +26,43 @@ const postsChannel = client.channel(`${id}:posts`).on(
 	async () => await refreshPosts()
 )
 
+const commentsChannel = client.channel(`${id}:comments`).on(
+	'postgres_changes',
+	{ event: '*', schema: 'public', table: 'comments' },
+	async () => await refreshPosts()
+)
+
+const votesChannel = client.channel(`${id}:votes`).on(
+	'postgres_changes',
+	{ event: '*', schema: 'public', table: 'votes' },
+	async () => await refreshPosts()
+)
+
+const bookmarksChannel = client.channel(`${id}:bookmarks`).on(
+	'postgres_changes',
+	{ event: '*', schema: 'public', table: 'bookmarks' },
+	async () => await refreshPosts()
+)
+
 onMounted(async () => {
+	bookmarksChannel.subscribe()
+	votesChannel.subscribe()
+	commentsChannel.subscribe()
 	postsChannel.subscribe()
 	search_input.value = route.query.search_input
 })
 
 onUnmounted(async () => {
+	await client.removeChannel(bookmarksChannel)
 	await client.removeChannel(postsChannel)
+	await client.removeChannel(votesChannel)
+	await client.removeChannel(commentsChannel)
 })
 
 watch(route, async () => {
 	search_input.value = route.query.search_input
 	await refreshPosts()
-})
+}, { immediate: true })
 
 const categories = ref([
 	'All',
@@ -86,6 +110,6 @@ const category = ref('All')
 			<VCol cols="12" lg="7" v-for="post in posts" :key="post.id" v-auto-animate>
 				<PostCard :post="post" :profile="profile" v-if="post.category == 'Event'" />
 			</VCol>
-		</template>		
+		</template>
 	</VRow>
 </template>

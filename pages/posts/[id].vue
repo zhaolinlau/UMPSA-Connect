@@ -20,41 +20,53 @@ const { data: post, refresh: refreshPost } = await useFetch('/api/posts', {
 	}
 })
 
-const { data: comments, refresh: refreshComments } = await useFetch('/api/comments', {
-	method: 'get',
-	query: {
-		post_id: route.params.id
-	}
-})
-
 const commentsChannel = client.channel(`${id}:comments`).on(
 	'postgres_changes',
 	{ event: '*', schema: 'public', table: 'comments' },
-	async () => await refreshComments()
+	async () => await refreshPost()
 )
 
-const postChannel = client.channel(`${id}:posts`).on(
+const postChannel = client.channel(`${id}:post`).on(
 	'postgres_changes',
 	{ event: '*', schema: 'public', table: 'posts' },
 	async () => await refreshPost()
 )
 
+const votesChannel = client.channel(`${id}:votes`).on(
+	'postgres_changes',
+	{ event: '*', schema: 'public', table: 'votes' },
+	async () => await refreshPost()
+)
+
+const bookmarksChannel = client.channel(`${id}:bookmarks`).on(
+	'postgres_changes',
+	{ event: '*', schema: 'public', table: 'bookmarks' },
+	async () => await refreshPost()
+)
+
 onMounted(async () => {
+	bookmarksChannel.subscribe()
+	votesChannel.subscribe()
 	commentsChannel.subscribe()
 	postChannel.subscribe()
 })
 
 onUnmounted(async () => {
-	await client.removeChannel(commentsChannel)
+	await client.removeChannel(bookmarksChannel)
 	await client.removeChannel(postChannel)
+	await client.removeChannel(votesChannel)
+	await client.removeChannel(commentsChannel)
 })
 
+const comments = computed(() => {
+	return post.value.comments.reverse()
+})
 </script>
 
 <template>
 	{{ route.hash }}
 	<vRow justify="center">
-		<template v-if="!post || !comments">
+		<template v-if="!post || !post.comments">
 			<vCol cols="12" lg="7">
 				<VSkeletonLoader type="chip, heading, subtitle, image, text, actions" />
 			</vCol>
@@ -64,7 +76,7 @@ onUnmounted(async () => {
 		</template>
 		<template v-else>
 			<vCol cols="12" lg="7">
-				<PostCard :post="post" />
+				<PostCard :post="post" :profile="profile" />
 			</vCol>
 			<vCol cols="12" lg="7">
 				<CreateComment />

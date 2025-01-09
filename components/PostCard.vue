@@ -3,9 +3,18 @@ const props = defineProps({
 	post: Object,
 	profile: Object
 })
-const media_id = ref('')
 const client = useSupabaseClient()
 const user = useSupabaseUser()
+
+const bookmarked = computed(() => {
+	return props.post.bookmarks.find(bookmark => bookmark.user_id == user.value.id && bookmark.post_id == props.post.id)
+})
+
+const voted = computed(() => {
+	return props.post.votes.find(vote => vote.user_id == user.value.id)
+})
+
+const media_id = ref('')
 const editPostDialog = ref(false)
 const editPostRef = ref(null)
 const postForm = ref({
@@ -14,7 +23,6 @@ const postForm = ref({
 	category: '',
 	media: null
 })
-const id = useId()
 
 const randomNumber = async () => {
 	media_id.value = Math.random()
@@ -109,67 +117,24 @@ const deletePost = async (post_id, post_media) => {
 	}
 }
 
-const createVote = async (post_id) => {
+const createVote = async () => {
 	await $fetch('/api/votes', {
 		method: 'post',
 		body: {
-			post_id
+			post_id: props.post.id,
+			user_id: user.value.id
 		}
 	})
 }
 
-const deleteVote = async (vote_id) => {
+const deleteVote = async () => {
 	await $fetch('/api/votes', {
 		method: 'delete',
 		body: {
-			vote_id
+			vote_id: voted.value.id
 		}
 	})
 }
-
-const { data: comments, refresh: refreshComments } = await useFetch('/api/comments', {
-	method: 'get',
-	query: {
-		post_id: props.post.id,
-		count: true
-	}
-})
-
-const { data: votes, refresh: refreshVotes } = await useFetch('/api/votes', {
-	method: 'get',
-	query: {
-		post_id: props.post.id
-	}
-})
-
-const votesChannel = client.channel(`${id}:votes`).on(
-	'postgres_changes',
-	{ event: '*', schema: 'public', table: 'votes' },
-	async () => await refreshVotes()
-)
-
-const commentsChannel = client.channel(`${id}:comments`).on(
-	'postgres_changes',
-	{ event: '*', schema: 'public', table: 'comments' },
-	async () => await refreshComments()
-)
-
-const bookmarkChannel = client.channel(`${id}:bookmark`).on(
-	'postgres_changes',
-	{ event: '*', schema: 'public', table: 'bookmarks' },
-	async () => await refreshBookmark()
-)
-
-onMounted(async () => {
-	commentsChannel.subscribe()
-	votesChannel.subscribe()
-	bookmarkChannel.subscribe()
-})
-
-onUnmounted(async () => {
-	await client.removeChannel(commentsChannel)
-	await client.removeChannel(votesChannel)
-})
 
 const reportFormRef = ref(null)
 
@@ -217,32 +182,24 @@ const createReport = async () => {
 
 const addBookmarkSnackbar = ref(false)
 
-const createBookmark = async (post_id) => {
+const createBookmark = async () => {
 	await $fetch('/api/bookmarks', {
 		method: 'post',
 		body: {
-			post_id: post_id
+			post_id: props.post.id
 		}
 	})
 
 	addBookmarkSnackbar.value = true
 }
 
-const { data: bookmark, refresh: refreshBookmark } = await useFetch('/api/bookmarks', {
-	method: 'get',
-	query: {
-		post_id: props.post.id,
-		user_id: user.value.id
-	}
-})
-
 const deleteBookmarkSnackbar = ref(false)
 
-const deleteBookmark = async (id) => {
+const deleteBookmark = async () => {
 	await $fetch('/api/bookmarks', {
 		method: 'delete',
 		body: {
-			id: id
+			id: bookmarked.value.id
 		}
 	})
 
@@ -389,13 +346,12 @@ const cancelTranslateDialog = async () => {
 		</VCardText>
 
 		<VCardActions>
-			<VBadge color="primary" :content="votes.length > 99 ? '99+' : votes.length">
-				<VBtn color="primary" text="Upvote" prepend-icon="i-mdi:vote"
-					@click="votes.some(vote => vote.user_id == user.id) ? deleteVote(votes.find(vote => vote.user_id == user.id).id) : createVote(post.id)"
-					:active="votes.some(vote => vote.user_id == user.id) ? true : false" />
+			<VBadge color="primary" :content="post.votes.length > 99 ? '99+' : post.votes.length">
+				<VBtn color="primary" text="Upvote" prepend-icon="i-mdi:vote" @click="deleteVote()" active v-if="voted" />
+				<VBtn color="primary" text="Upvote" prepend-icon="i-mdi:vote" @click="createVote()" v-else />
 			</VBadge>
 
-			<VBadge color="secondary" :content="comments > 99 ? '99+' : comments">
+			<VBadge color="secondary" :content="post.comments.length > 99 ? '99+' : post.comments.length">
 				<VBtn color="secondary" text="Comment" prepend-icon="i-mdi:comment" :to="`/posts/${post.id}`" />
 			</VBadge>
 
@@ -412,15 +368,17 @@ const cancelTranslateDialog = async () => {
 					<VListItem title="Edit" prepend-icon="i-mdi:pencil" v-if="post.user_id == user.id || profile.role == 'admin'"
 						@click="toggleEditPost(post)" />
 
-					<VListItem @click="bookmark ? deleteBookmark(bookmark.id) : createBookmark(post.id)" title="Bookmark"
-						prepend-icon="i-mdi:bookmark" :active="bookmark ? true : false" color="primary" />
+					<VListItem @click="deleteBookmark()" title="Bookmark" prepend-icon="i-mdi:bookmark" active color="primary"
+						v-if="bookmarked" />
+
+					<VListItem @click="createBookmark()" title="Bookmark" prepend-icon="i-mdi:bookmark" color="primary"
+						v-if="!bookmarked" />
 
 					<VListItem @click="deletePost(post.id, post.media)" title="Delete" prepend-icon="i-mdi:delete"
 						v-if="post.user_id == user.id || profile.role == 'admin'" />
 
 					<VListItem v-if="post.user_id != user.id" @click="reportFormDialog = true" title="Report"
 						prepend-icon="i-mdi:alert" />
-
 				</VList>
 			</VMenu>
 		</VCardActions>
