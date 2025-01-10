@@ -8,6 +8,7 @@
 
 [![Vue.js](https://img.shields.io/badge/vuejs-%2335495e.svg?style=for-the-badge&logo=vuedotjs&logoColor=%234FC08D)](https://vuejs.org/) [![Vuetify](https://img.shields.io/badge/Vuetify-1867C0?style=for-the-badge&logo=vuetify&logoColor=AEDDFF)](https://vuetifyjs.com/en/) [![Nuxtjs](https://img.shields.io/badge/Nuxt-002E3B?style=for-the-badge&logo=nuxt&logoColor=#00DC82)](https://nuxt.com/) [![Supabase](https://img.shields.io/badge/Supabase-3ECF8E?style=for-the-badge&logo=supabase&logoColor=white)](https://supabase.com/) [![Vercel](https://img.shields.io/badge/vercel-%23000000.svg?style=for-the-badge&logo=vercel&logoColor=white)](https://vercel.com/)
 
+
 ## Web Security Test
 
 ![security_test.png](public/img/security_test.png)
@@ -19,6 +20,22 @@ UMPSA Connect has successfully passed all web security tests on the [Mozilla Dev
 ![performance_test.png](public/img/performance_test.png)
 
 UMPSA Connect scored 100 on [Google PageSpeed Insights](https://pagespeed.web.dev/), with key metrics like a First Contentful Paint of 0.4 seconds, Largest Contentful Paint of 0.5 seconds, and a Cumulative Layout Shift of 0. For detailed results, view the [Full Analysis Report](https://pagespeed.web.dev/analysis/https-umpsa-connect-vercel-app/k9xgpscd3z?form_factor=desktop).
+
+## AI-Powered
+
+UMPSA Connect integrates powerful AI capabilities to enhance user experience and engagement:
+
+### AI Chatbot
+
+A conversational assistant to answer queries, provide guidance, and improve productivity.
+
+### Multilingual Translation
+
+Supports 38 languages, ensuring inclusivity for users from diverse linguistic backgrounds.
+
+## Real-Time Communication
+
+Enables live updates and seamless interaction, ensuring instant communication and engagement across the platform.
 
 ## Progressive Web Application Support
 
@@ -33,3 +50,7 @@ Visit [UMPSA Connect](https://umpsa-connect.vercel.app/) using a modern browser 
 **Mobile**: 
 
 Open [UMPSA Connect](https://umpsa-connect.vercel.app/) in your mobile browser. Tap the browser menu and select "Add to Home Screen" to install the app.
+
+## Dark Mode Support
+
+UMPSA Connect automatically adjusts to the browser's dark mode setting, providing an optimized and visually comfortable experience for users.
