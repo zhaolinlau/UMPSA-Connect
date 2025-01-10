@@ -31,7 +31,7 @@
   "packageManager": "pnpm@9.15.3+sha512.1f79bc245a66eb0b07c5d4d83131240774642caaa86ef7d0434ab47c0d16f66b04e21e0c086eb61e62c77efc4d7f7ec071afad3796af64892fae66509173893a",
   "devDependencies": {
     "@iconify-json/mdi": "^1.2.2",
-    "@unocss/nuxt": "^0.65.4",
-    "unocss": "^0.65.4"
+    "@unocss/nuxt": "^65.4.0",
+    "unocss": "^65.4.0"
   }
 }
