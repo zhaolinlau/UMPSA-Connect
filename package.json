@@ -12,9 +12,9 @@
   "dependencies": {
     "@crazydos/vue-markdown": "^1.0.2",
     "@formkit/auto-animate": "^0.8.2",
-    "@google/generative-ai": "^0.21.0",
     "@nuxtjs/robots": "^5.1.0",
     "@nuxtjs/supabase": "^1.4.5",
+    "@nuxtjs/web-vitals": "0.2.7",
     "@vite-pwa/nuxt": "^0.10.6",
     "@vueuse/core": "^12.3.0",
     "@vueuse/nuxt": "^12.3.0",
