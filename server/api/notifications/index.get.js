@@ -13,7 +13,7 @@ export default defineEventHandler(async (event) => {
 
 		return count
 	} else if (query.user_id) {
-		const { data } = await client.from('notifications').select('*, announcements(*)').eq('user_id', query.user_id).order('created_at', { ascending: false })
+		const { data } = await client.from('notifications').select('*, announcements(*, bookmarks(*))').eq('user_id', query.user_id).order('created_at', { ascending: false })
 
 		return data
 	} else {

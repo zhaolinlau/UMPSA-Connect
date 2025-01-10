@@ -34,12 +34,18 @@ const notificationsChannel = client.channel(`${id}:notifications`).on('postgres_
 	event: '*', schema: 'public', table: 'notifications'
 }, async () => await refreshNotifications())
 
+const bookmarksChannel = client.channel(`${id}:bookmarks`).on('postgres_changes', {
+	event: '*', schema: 'public', table: 'bookmarks'
+}, async () => await refreshNotifications())
+
 onMounted(async () => {
+	bookmarksChannel.subscribe()
 	notificationsChannel.subscribe()
 	studentChannel.subscribe()
 })
 
 onUnmounted(async () => {
+	await client.removeChannel(bookmarksChannel)
 	await client.removeChannel(studentChannel)
 	await client.removeChannel(notificationsChannel)
 })
@@ -74,7 +80,7 @@ const tab = ref(null)
 				<VTabsWindow v-model="tab">
 					<VTabsWindowItem value="unread">
 						<VRow>
-							<VCol cols="12" v-for="notification in notifications" :key="notification.id">
+							<VCol cols="12" v-for="notification in notifications" :key="notification.id">								
 								<AnnouncementCard :announcement="notification.announcements" :profile="profile" :student="student"
 									v-if="!notification.read" />
 							</VCol>
@@ -83,7 +89,7 @@ const tab = ref(null)
 
 					<VTabsWindowItem value="read">
 						<VRow>
-							<VCol cols="12" v-for="notification in notifications" :key="notification.id">
+							<VCol cols="12" v-for="notification in notifications" :key="notification.id">								
 								<AnnouncementCard :announcement="notification.announcements" :profile="profile" :student="student"
 									v-if="notification.read" />
 							</VCol>
