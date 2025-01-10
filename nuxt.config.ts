@@ -8,19 +8,11 @@ export default defineNuxtConfig({
 		'nuxt-security',
 		'@nuxtjs/robots',
 		'@vite-pwa/nuxt',
-		'nuxt-gtag',
 		'nuxt-delay-hydration',
 		'@unocss/nuxt',
 		'@formkit/auto-animate/nuxt',
-		'@vueuse/nuxt',
-		'@nuxtjs/web-vitals'
+		'@vueuse/nuxt'
 	],
-
-	webVitals: {
-		ga: {
-			id: `${process.env.G_TAG_ID}`
-		}
-	},
 
 	vuetify: {
 		vuetifyOptions: {
@@ -154,10 +146,6 @@ export default defineNuxtConfig({
 		injectManifest: {
 			globPatterns: ['**\/*.{js,wasm,css,html,png,svg,ico,jpeg,webp}'],
 		}
-	},
-
-	gtag: {
-		id: process.env.G_TAG_ID
 	},
 
 	delayHydration: {
