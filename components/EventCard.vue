@@ -3,7 +3,7 @@ const props = defineProps({
 	event: Object,
 	profile: Object
 })
-
+const loading = ref(false)
 const client = useSupabaseClient()
 const route = useRoute()
 
@@ -47,29 +47,36 @@ const randomNumber = async () => {
 const editEventSnackbar = ref(false)
 
 const editEvent = async (id, media) => {
-	const { valid } = await editEventRef.value.validate()
-	if (valid) {
-		await randomNumber()
-		if (eventForm.media) {
-			await client.storage.from('images')
-				.upload(`events/${media_id.value}/${eventForm.media.name}`, eventForm.media, {
-					cacheControl: '3600',
-					upsert: false
-				})
-		}
-
-		await $fetch('/api/events', {
-			method: 'put',
-			body: {
-				id: id,
-				title: eventForm.title,
-				content: eventForm.content,
-				media: eventForm.media != media ? `${media_id.value}/${eventForm.media.name}` : media
+	try {
+		loading.value = true
+		const { valid } = await editEventRef.value.validate()
+		if (valid) {
+			await randomNumber()
+			if (eventForm.media) {
+				await client.storage.from('images')
+					.upload(`events/${media_id.value}/${eventForm.media.name}`, eventForm.media, {
+						cacheControl: '3600',
+						upsert: false
+					})
 			}
-		})
 
-		editEventSnackbar.value = true
-		editEventDialog.value = false
+			await $fetch('/api/events', {
+				method: 'put',
+				body: {
+					id: id,
+					title: eventForm.title,
+					content: eventForm.content,
+					media: eventForm.media != media ? `${media_id.value}/${eventForm.media.name}` : media
+				}
+			})
+
+			editEventSnackbar.value = true
+			editEventDialog.value = false
+		}
+	} catch (error) {
+		console.error(error.message)
+	} finally {
+		loading.value = false
 	}
 }
 
@@ -81,18 +88,23 @@ const deleteMedia = async (id, media) => {
 }
 
 const deleteEvent = async (id, media) => {
-	await $fetch('/api/events', {
-		method: 'delete',
-		body: {
-			id,
-			media
-		}
-	})
+	try {
+		loading.value = true
+		await $fetch('/api/events', {
+			method: 'delete',
+			body: {
+				id,
+				media
+			}
+		})
 
-	await navigateTo('/events')
+		await navigateTo('/events')
+	} catch (error) {
+		console.error(error.message)
+	} finally {
+		loading.value = false
+	}
 }
-
-const id = useId()
 
 const user = useSupabaseUser()
 
@@ -128,6 +140,10 @@ const deleteBookmark = async () => {
 </script>
 
 <template>
+	<VOverlay class="align-center justify-center" persistent v-model="loading">
+		<VProgressCircular color="primary" size="64" indeterminate />
+	</VOverlay>
+
 	<VSnackbar position="relative" variant="elevated" location="bottom right" timer="success" text="Added to bookmark."
 		v-model="addBookmarkSnackbar">
 		<template v-slot:actions>

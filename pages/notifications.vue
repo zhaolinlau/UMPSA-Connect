@@ -2,6 +2,8 @@
 const user = useSupabaseUser()
 const client = useSupabaseClient()
 const id = useId()
+const tab = ref(null)
+const loading = ref(false)
 
 const { data: profile } = await useFetch('/api/profiles', {
 	method: 'GET',
@@ -51,20 +53,29 @@ onUnmounted(async () => {
 })
 
 const readNotifications = async () => {
-	await $fetch('/api/notifications', {
-		method: 'PUT',
-		body: {
-			read_all: true,
-			user_id: user.value.id
-		}
-	})
+	try {
+		loading.value = true
+		await $fetch('/api/notifications', {
+			method: 'PUT',
+			body: {
+				read_all: true,
+				user_id: user.value.id
+			}
+		})
+	} catch (error) {
+		console.error(error.message)
+	} finally {
+		loading.value = false
+	}
 }
-
-const tab = ref(null)
 </script>
 
 <template>
 	<VContainer>
+		<VOverlay class="align-center justify-center" persistent v-model="loading">
+			<VProgressCircular color="primary" size="64" indeterminate />
+		</VOverlay>
+
 		<VRow justify="center">
 			<VCol cols="12" lg="7">
 				<VBtn text="Read all" color="primary" @click="readNotifications" />
@@ -80,7 +91,7 @@ const tab = ref(null)
 				<VTabsWindow v-model="tab">
 					<VTabsWindowItem value="unread">
 						<VRow>
-							<VCol cols="12" v-for="notification in notifications" :key="notification.id">								
+							<VCol cols="12" v-for="notification in notifications" :key="notification.id">
 								<AnnouncementCard :announcement="notification.announcements" :profile="profile" :student="student"
 									v-if="!notification.read" />
 							</VCol>
@@ -89,7 +100,7 @@ const tab = ref(null)
 
 					<VTabsWindowItem value="read">
 						<VRow>
-							<VCol cols="12" v-for="notification in notifications" :key="notification.id">								
+							<VCol cols="12" v-for="notification in notifications" :key="notification.id">
 								<AnnouncementCard :announcement="notification.announcements" :profile="profile" :student="student"
 									v-if="notification.read" />
 							</VCol>

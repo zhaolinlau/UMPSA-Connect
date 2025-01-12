@@ -5,6 +5,7 @@ const props = defineProps({
 })
 const client = useSupabaseClient()
 const user = useSupabaseUser()
+const loading = ref(false)
 
 const bookmarked = computed(() => {
 	return props.post.bookmarks.find(bookmark => bookmark.user_id == user.value.id && bookmark.post_id == props.post.id)
@@ -54,30 +55,37 @@ const toggleEditPost = async (post) => {
 const editPostSnackbar = ref(false)
 
 const editPost = async (post_id, post_media) => {
-	const { valid } = await editPostRef.value.validate()
-	if (valid) {
-		await randomNumber()
-		if (postForm.value.media) {
-			await client.storage.from('images')
-				.upload(`posts/${media_id.value}/${postForm.value.media.name}`, postForm.value.media, {
-					cacheControl: '3600',
-					upsert: false
-				})
-		}
-
-		await $fetch('/api/posts', {
-			method: 'put',
-			body: {
-				id: post_id,
-				title: postForm.value.title,
-				category: postForm.value.category,
-				content: postForm.value.content,
-				media: postForm.value.media != post_media ? `${media_id.value}/${postForm.value.media.name}` : post_media
+	try {
+		loading.value = true
+		const { valid } = await editPostRef.value.validate()
+		if (valid) {
+			await randomNumber()
+			if (postForm.value.media) {
+				await client.storage.from('images')
+					.upload(`posts/${media_id.value}/${postForm.value.media.name}`, postForm.value.media, {
+						cacheControl: '3600',
+						upsert: false
+					})
 			}
-		})
 
-		editPostSnackbar.value = true
-		editPostDialog.value = false
+			await $fetch('/api/posts', {
+				method: 'put',
+				body: {
+					id: post_id,
+					title: postForm.value.title,
+					category: postForm.value.category,
+					content: postForm.value.content,
+					media: postForm.value.media != post_media ? `${media_id.value}/${postForm.value.media.name}` : post_media
+				}
+			})
+
+			editPostSnackbar.value = true
+			editPostDialog.value = false
+		}
+	} catch (error) {
+		console.error(error.message)
+	} finally {
+		loading.value = false
 	}
 }
 
@@ -92,28 +100,36 @@ const deleteMedia = async (post_id, post_media) => {
 const route = useRoute()
 
 const deletePost = async (post_id, post_media) => {
-	if (route.path == `/admin/reports/${route.params.id}`) {
-		await $fetch('/api/reports', {
-			method: 'PUT',
+	try {
+		loading.value = true
+
+		if (route.path == `/admin/reports/${route.params.id}`) {
+			await $fetch('/api/reports', {
+				method: 'PUT',
+				body: {
+					post_id: post_id,
+					status: 'resolved'
+				}
+			})
+		}
+
+		await $fetch('/api/posts', {
+			method: 'delete',
 			body: {
-				post_id: post_id,
-				status: 'resolved'
+				post_id,
+				post_media
 			}
 		})
-	}
 
-	await $fetch('/api/posts', {
-		method: 'delete',
-		body: {
-			post_id,
-			post_media
+		if (route.path == `/admin/reports/${route.params.id}`) {
+			return
+		} else {
+			await navigateTo('/')
 		}
-	})
-
-	if (route.path == `/admin/reports/${route.params.id}`) {
-		return
-	} else {
-		await navigateTo('/')
+	} catch (error) {
+		console.error(error.message)
+	} finally {
+		loading.value = false
 	}
 }
 
@@ -213,7 +229,7 @@ const translated = ref({
 	title: '',
 	content: ''
 })
-const loading = ref(false)
+
 const languages = useLanguage()
 
 const translated_lang = ref('')

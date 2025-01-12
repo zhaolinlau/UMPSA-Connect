@@ -4,6 +4,8 @@ const props = defineProps({
 	profile: Object
 })
 
+const loading = ref(false)
+
 const { data: comment_user } = await useFetch('/api/users', {
 	method: 'get',
 	query: {
@@ -23,23 +25,30 @@ const toggleEditComment = async (comment) => {
 const route = useRoute()
 
 const deleteComment = async (id, media) => {
-	if (route.path == `/admin/reports/${route.params.id}`) {
-		await $fetch('/api/reports', {
-			method: 'PUT',
+	try {
+		loading.value = true
+		if (route.path == `/admin/reports/${route.params.id}`) {
+			await $fetch('/api/reports', {
+				method: 'PUT',
+				body: {
+					comment_id: id,
+					status: 'resolved'
+				}
+			})
+		}
+
+		await $fetch('/api/comments', {
+			method: 'delete',
 			body: {
-				comment_id: id,
-				status: 'resolved'
+				id,
+				media
 			}
 		})
+	} catch (error) {
+		console.error(error.message)
+	} finally {
+		loading.value = false
 	}
-
-	await $fetch('/api/comments', {
-		method: 'delete',
-		body: {
-			id,
-			media
-		}
-	})
 }
 
 const commentForm = reactive({
@@ -64,8 +73,6 @@ const randomNumber = async () => {
 }
 
 const editCommentSnackbar = ref(false)
-
-const loading = ref(false)
 
 const editComment = async (id, media) => {
 	loading.value = true
