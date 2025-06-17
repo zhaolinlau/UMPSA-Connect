@@ -30,7 +30,7 @@ const avatarFormRef = ref()
 const avatarRule = ref({
 	avatar: [
 		value => {
-			if (value.length > 0) return true
+			if (value) return true
 			return 'Avatar is required.'
 		}
 	],
