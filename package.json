@@ -13,7 +13,7 @@
     "@crazydos/vue-markdown": "^1.0.2",
     "@formkit/auto-animate": "^0.8.2",
     "@nuxtjs/robots": "^5.2.8",
-    "@nuxtjs/supabase": "^1.5.0",
+    "@nuxtjs/supabase": "^1.6.2",
     "@vite-pwa/nuxt": "^0.10.6",
     "@vueuse/core": "^12.8.2",
     "@vueuse/nuxt": "^12.8.2",
