@@ -3,10 +3,11 @@ export default defineEventHandler(async (event) => {
 	const body = await readBody(event)
 
 	if (body.translate) {
-		const gemini = await $fetch(`https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash-8b:generateContent?key=${config.geminiKey}`, {
+		const gemini = await $fetch(`https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash:generateContent`, {
 			method: 'post',
 			headers: {
-				'Content-Type': 'application/json'
+				'Content-Type': 'application/json',
+				'x-goog-api-key': config.geminiKey
 			},
 			body: {
 				contents: [{ 'parts': [{ 'text': body.text }] }]
@@ -15,10 +16,11 @@ export default defineEventHandler(async (event) => {
 
 		return gemini.candidates[0].content.parts[0].text
 	} else {
-		const gemini = await $fetch(`https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash-8b:generateContent?key=${config.geminiKey}`, {
+		const gemini = await $fetch(`https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash:generateContent`, {
 			method: 'post',
 			headers: {
-				'Content-Type': 'application/json'
+				'Content-Type': 'application/json',
+				'x-goog-api-key': config.geminiKey
 			},
 			body: {
 				contents: body.contents
